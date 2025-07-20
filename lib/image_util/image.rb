@@ -137,6 +137,7 @@ module ImageUtil
     end
     include Enumerable
     include Filter::Dither
+    include Filter::Background
 
     def length = dimensions.last
 

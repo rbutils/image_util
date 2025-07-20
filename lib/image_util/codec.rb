@@ -58,10 +58,12 @@ module ImageUtil
     autoload :Libturbojpeg, "image_util/codec/libturbojpeg"
     autoload :Pam, "image_util/codec/pam"
     autoload :ImageMagick, "image_util/codec/image_magick"
+    autoload :RubySixel, "image_util/codec/ruby_sixel"
 
     Libpng
     Libturbojpeg
     Pam
     ImageMagick
+    RubySixel
   end
 end

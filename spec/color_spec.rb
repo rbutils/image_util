@@ -91,4 +91,8 @@ RSpec.describe ImageUtil::Color do
     overlay = ImageUtil::Color[255, 0, 0, 0.5]
     (base + overlay).should == ImageUtil::Color.new(127.5, 0, 127.5, 255)
   end
+
+  it 'multiplies alpha with *' do
+    (ImageUtil::Color[1, 2, 3, 128] * 0.5).should == ImageUtil::Color[1, 2, 3, 64]
+  end
 end

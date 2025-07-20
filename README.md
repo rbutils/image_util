@@ -8,6 +8,7 @@ Features include:
 * Support for 8, 16 or 32 bit components and RGB or RGBA color values.
 * A `Color` helper class capable of parsing numbers, arrays and HTML style strings.
 * Conversion of an image to PAM or SIXEL for quick previews in compatible terminals.
+* Built-in SIXEL encoder that works without ImageMagick.
 * Convenience methods for iterating over pixel locations and setting values.
 * Overlaying colors with the `+` operator which blends using the alpha channel.
 

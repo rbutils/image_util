@@ -44,4 +44,10 @@ RSpec.describe ImageUtil::Converter::Sixel do
     sixel = described_class.convert(img)
     sixel.include?(';4').should be true
   end
+
+  it 'preserves colors when palette fits' do
+    img = ImageUtil::Image.new(10,5) { |x,y| ImageUtil::Color[x,y] }
+    sixel = described_class.convert(img)
+    sixel.scan(/#\d+;2/).length.should == 51
+  end
 end

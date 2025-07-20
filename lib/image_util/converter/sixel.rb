@@ -1,7 +1,7 @@
 module ImageUtil
   module Converter
     class Sixel
-      MAX_COLORS = 255
+      MAX_COLORS = 256
 
       def self.convert(image)
         new(image).convert
@@ -35,20 +35,22 @@ module ImageUtil
 
         @image.each_pixel_location do |loc|
           color = @image[*loc]
-          rgba  = [color.r, color.g, color.b, color.a]
-          qrgba = quantize(rgba)
-          idx   = map_color(qrgba)
+          rgba  = if color.a < 128
+                    [0, 0, 0, 0]
+                  else
+                    [color.r, color.g, color.b, 255]
+                  end
+          idx   = map_color(rgba)
           x     = loc[0]
           y     = loc[1] || 0
           @index[y][x] = idx
         end
 
-        # palette size is implicitly limited by quantization
       end
 
       def map_color(rgba)
         unless @map.key?(rgba)
-          if @palette.length <= MAX_COLORS
+          if @palette.length < MAX_COLORS
             @map[rgba] = @palette.length
             @palette << rgba
           else
@@ -58,14 +60,6 @@ module ImageUtil
         @map[rgba]
       end
 
-      def quantize(rgba)
-        r, g, b, a = rgba
-        r = ((r.to_f / 51).round * 51).clamp(0, 255)
-        g = ((g.to_f / 51).round * 51).clamp(0, 255)
-        b = ((b.to_f / 51).round * 51).clamp(0, 255)
-        a = a < 128 ? 0 : 255
-        [r, g, b, a]
-      end
 
       def find_closest_index(rgba)
         min_idx = 0

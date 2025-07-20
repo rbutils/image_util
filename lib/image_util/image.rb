@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ImageUtil
   class Image
     autoload :Buffer, "image_util/image/buffer"
@@ -15,7 +17,7 @@ module ImageUtil
       @buf = buffer
     end
 
-    def initialize_copy(other)
+    def initialize_copy(_other)
       @buf = @buf.dup
     end
 
@@ -156,7 +158,7 @@ module ImageUtil
         fill_buffer = "".b
       end
 
-      <<~END.b + @buf.get_string + fill_buffer
+      <<~PAM.b + @buf.get_string + fill_buffer
         P7
         WIDTH #{width}
         HEIGHT #{fill_height}
@@ -164,7 +166,7 @@ module ImageUtil
         MAXVAL #{color_bits ** 2 - 1}
         TUPLTYPE #{color_length == 3 ? "RGB" : "RGB_ALPHA"}
         ENDHDR
-      END
+      PAM
     end
 
     def to_sixel
@@ -188,13 +190,13 @@ module ImageUtil
       location_expand(locations).last.each(...)
     end
 
-    def each_pixel(locations = [ALL]*dimensions.length, &block)
+    def each_pixel(locations = [ALL] * dimensions.length, &_block)
       each_pixel_location(locations) do |location|
         yield self[*location]
       end
     end
 
-    def set_each_pixel_by_location(locations = [ALL]*dimensions.length, &block)
+    def set_each_pixel_by_location(locations = [ALL] * dimensions.length, &_block)
       each_pixel_location(locations) do |location|
         value = yield location
         self[*location] = value if value

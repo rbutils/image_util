@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ImageUtil
   class Color < Array
     def initialize(*args)
@@ -9,19 +11,30 @@ module ImageUtil
     def b = self[2]
     def a = self[3] || 255
 
-    def r=(val); self[0] = val; end
-    def g=(val); self[1] = val; end
-    def b=(val); self[2] = val; end
-    def a=(val); self[3] = val; end
+    def r=(val)
+      self[0] = val
+    end
+
+    def g=(val)
+      self[1] = val
+    end
+
+    def b=(val)
+      self[2] = val
+    end
+
+    def a=(val)
+      self[3] = val
+    end
 
     def self.component_from_number(number)
-      component = case number
+      case number
       when nil
         number
       when Integer
-        number.clamp(0,255)
+        number.clamp(0, 255)
       when Float
-        (number*255).clamp(0,255)
+        (number * 255).clamp(0, 255)
       else
         raise ArgumentError, "wrong type passed as component (passed: #{number})"
       end
@@ -62,7 +75,7 @@ module ImageUtil
       when String
         case value
         when /\A#(\h)(\h)(\h)\z/
-          new($1.to_i(16)*0x11, $2.to_i(16)*0x11, $3.to_i(16)*0x11)
+          new($1.to_i(16) * 0x11, $2.to_i(16) * 0x11, $3.to_i(16) * 0x11)
         when /\A#(\h{2})(\h{2})(\h{2})\z/
           new($1.to_i(16), $2.to_i(16), $3.to_i(16))
         when /\A#(\h{2})(\h{2})(\h{2})(\h{2})\z/
@@ -102,7 +115,11 @@ module ImageUtil
     end
 
     def ==(other)
-      other = Color.from(other) rescue nil
+      other = begin
+        Color.from(other)
+      rescue StandardError
+        nil
+      end
       return false unless other.is_a?(Color)
 
       self_rgb  = self[0, 3]

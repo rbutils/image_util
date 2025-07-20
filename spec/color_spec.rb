@@ -88,7 +88,7 @@ RSpec.describe ImageUtil::Color do
 
   it 'overlays colors with +' do
     base = ImageUtil::Color[0, 0, 255]
-    overlay = ImageUtil::Color[255, 0, 0, 128]
-    (base + overlay).should == ImageUtil::Color[128, 0, 127, 255]
+    overlay = ImageUtil::Color[255, 0, 0, 0.5]
+    (base + overlay).should == ImageUtil::Color.new(127.5, 0, 127.5, 255)
   end
 end

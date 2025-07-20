@@ -116,23 +116,21 @@ module ImageUtil
 
     # Overlays another color on top of this one taking the alpha
     # channel of both colors into account.
-    def +(other)
-      other = Color.from(other)
+      def +(other)
+        other = Color.from(other)
 
-      base_a   = a.to_f / 255
-      over_a   = other.a.to_f / 255
+        base_a = a.to_f / 255
+        over_a = other.a.to_f / 255
 
-      out_a = over_a + base_a * (1 - over_a)
+        out_a = over_a + base_a * (1 - over_a)
 
-      if out_a.zero?
-        return Color.new(0, 0, 0, 0)
+        return Color.new(0, 0, 0, 0) if out_a.zero?
+
+        out_r = (other.r * over_a + r * base_a * (1 - over_a)) / out_a
+        out_g = (other.g * over_a + g * base_a * (1 - over_a)) / out_a
+        out_b = (other.b * over_a + b * base_a * (1 - over_a)) / out_a
+
+        Color.new(out_r, out_g, out_b, out_a * 255)
       end
-
-      out_r = (other.r * over_a + r * base_a * (1 - over_a)) / out_a
-      out_g = (other.g * over_a + g * base_a * (1 - over_a)) / out_a
-      out_b = (other.b * over_a + b * base_a * (1 - over_a)) / out_a
-
-      Color.new(out_r.round, out_g.round, out_b.round, (out_a * 255).round)
-    end
   end
 end

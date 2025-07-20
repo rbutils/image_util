@@ -97,20 +97,20 @@ module ImageUtil
       end
     end
 
-    def pretty_print(q)
-      q.text inspect
-    end
-
-      def ==(other)
-        other = Color.from(other) rescue nil
-        return false unless other.is_a?(Color)
-
-        self_rgb  = self[0, 3]
-        other_rgb = other[0, 3]
-        return false unless self_rgb == other_rgb
-
-        (self[3] || 255) == (other[3] || 255)
+      def pretty_print(q)
+        q.text inspect
       end
+
+    def ==(other)
+      other = Color.from(other) rescue nil
+      return false unless other.is_a?(Color)
+
+      self_rgb  = self[0, 3]
+      other_rgb = other[0, 3]
+      return false unless self_rgb == other_rgb
+
+      (self[3] || 255) == (other[3] || 255)
+    end
 
     alias eql? ==
   end

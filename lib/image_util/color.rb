@@ -97,9 +97,9 @@ module ImageUtil
       end
     end
 
-      def pretty_print(q)
-        q.text inspect
-      end
+    def pretty_print(q)
+      q.text inspect
+    end
 
     def ==(other)
       other = Color.from(other) rescue nil

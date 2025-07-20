@@ -95,4 +95,24 @@ RSpec.describe ImageUtil::Color do
   it 'multiplies alpha with *' do
     (ImageUtil::Color[1, 2, 3, 128] * 0.5).should == ImageUtil::Color[1, 2, 3, 64]
   end
+
+  it 'handles integer component' do
+    ImageUtil::Color.component_from_number(128).should == 128
+  end
+
+  it 'raises on invalid component type' do
+    ->{ ImageUtil::Color.component_from_number("bad") }.should raise_error(ArgumentError)
+  end
+
+  it 'converts nested arrays' do
+    ImageUtil::Color[[1,2,3]].should == ImageUtil::Color[1,2,3]
+  end
+
+  it 'returns transparent when overlaying transparent colors' do
+    (ImageUtil::Color[0,0,0,0] + ImageUtil::Color[255,255,255,0]).should == ImageUtil::Color[0,0,0,0]
+  end
+
+  it 'raises when multiplying with non numeric' do
+    ->{ ImageUtil::Color[1,2,3] * Object.new }.should raise_error(TypeError)
+  end
 end

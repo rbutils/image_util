@@ -136,6 +136,7 @@ module ImageUtil
       to_a.each(...)
     end
     include Enumerable
+    include Filter::Dither
 
     def length = dimensions.last
 

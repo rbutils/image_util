@@ -19,18 +19,18 @@ module ImageUtil
         map = {}
         pixel_index = Array.new(height) { Array.new(width) }
 
-        height.times do |y|
-          width.times do |x|
-            color = @image.dimensions.length == 1 ? @image[x] : @image[x, y]
-            rgb = [color.r, color.g, color.b]
-            idx = map[rgb]
-            unless idx
-              idx = palette.length
-              palette << rgb
-              map[rgb] = idx
-            end
-            pixel_index[y][x] = idx
+        @image.each_pixel_location do |loc|
+          color = @image[*loc]
+          rgb = [color.r, color.g, color.b]
+          idx = map[rgb]
+          unless idx
+            idx = palette.length
+            palette << rgb
+            map[rgb] = idx
           end
+          x = loc[0]
+          y = loc[1] || 0
+          pixel_index[y][x] = idx
         end
 
         sixel = "\ePq"

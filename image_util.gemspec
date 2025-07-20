@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = 'Provides Color and Image classes for manipulating raw image data and converting buffers to standard formats.'
   spec.homepage = "https://github.com/rbutils/image_util"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.1.0"
+  spec.required_ruby_version = ">= 3.2.0"
 
   spec.metadata['allowed_push_host'] = 'https://rubygems.org'
 

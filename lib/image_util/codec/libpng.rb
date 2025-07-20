@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 module ImageUtil
   module Codec
+    # rubocop:disable Metrics/ModuleLength
     module Libpng
       SUPPORTED_FORMATS = [:png].freeze
 
@@ -58,7 +61,10 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(_format, image)
+      def encode(format, image)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
 
         unless image.is_a?(Image)
@@ -108,7 +114,10 @@ module ImageUtil
         io << encode(format, image)
       end
 
-      def decode(_format, data)
+      def decode(format, data)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
 
         img = PngImage.new
@@ -136,8 +145,7 @@ module ImageUtil
       def decode_io(format, io)
         decode(format, io.read)
       end
-
-      Codec.register(:png, self)
     end
+    # rubocop:enable Metrics/ModuleLength
   end
 end

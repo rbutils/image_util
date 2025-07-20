@@ -13,7 +13,10 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(_format, image)
+      def encode(format, image)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         unless image.dimensions.length == 2
           raise ArgumentError, "only 2D images supported"
         end
@@ -87,9 +90,6 @@ module ImageUtil
       def decode_io(*)
         raise UnsupportedFormatError, "decode not supported for sixel"
       end
-
-      Codec.register(:ruby_sixel, self)
-      Codec.register(:sixel, self) unless ImageMagick.supported?(:sixel)
     end
   end
 end

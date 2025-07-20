@@ -4,7 +4,7 @@ module ImageUtil
   module Codec
     # rubocop:disable Metrics/ModuleLength
     module Libturbojpeg
-      SUPPORTED_FORMATS = %i[jpeg jpg].freeze
+      SUPPORTED_FORMATS = [:jpeg].freeze
 
       begin
         require "ffi"
@@ -61,7 +61,10 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(_format, image, quality: 75)
+      def encode(format, image, quality: 75)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         raise UnsupportedFormatError, "libturbojpeg not available" unless AVAILABLE
 
         unless image.is_a?(Image)
@@ -101,7 +104,10 @@ module ImageUtil
         io << encode(format, image, **kwargs)
       end
 
-      def decode(_format, data)
+      def decode(format, data)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         raise UnsupportedFormatError, "libturbojpeg not available" unless AVAILABLE
 
         handle = tjInitDecompress
@@ -140,9 +146,6 @@ module ImageUtil
       def decode_io(format, io)
         decode(format, io.read)
       end
-
-      Codec.register(:jpeg, self)
-      Codec.register(:jpg, self)
     end
     # rubocop:enable Metrics/ModuleLength
   end

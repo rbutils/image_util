@@ -1,42 +1,46 @@
+# frozen_string_literal: true
+
 module ImageUtil
   module Codec
     class UnsupportedFormatError < Error; end
 
-    @registry = {}
+    @encoders = []
+    @decoders = []
 
     class << self
-      attr_reader :registry
+      attr_reader :encoders, :decoders
 
-      def register(format, mod)
-        registry[format.to_s.downcase] = mod
+      def register_encoder(codec_const, *formats)
+        encoders << { codec: codec_const, formats: formats.map { |f| f.to_s.downcase } }
+      end
+
+      def register_decoder(codec_const, *formats)
+        decoders << { codec: codec_const, formats: formats.map { |f| f.to_s.downcase } }
+      end
+
+      def register_codec(codec_const, *formats)
+        register_encoder(codec_const, *formats)
+        register_decoder(codec_const, *formats)
       end
 
       def supported?(format)
-        codec = registry[format.to_s.downcase]
-        return false unless codec
-
-        if codec.respond_to?(:supported?)
-          codec.supported?(format)
-        else
-          true
-        end
-      end
-
-      def fetch(format)
-        registry[format.to_s.downcase] ||
-          (raise UnsupportedFormatError, "unsupported format #{format}")
+        fmt = format.to_s.downcase
+        encoders.any? { |r| r[:formats].include?(fmt) && codec_supported?(r[:codec], fmt) } ||
+          decoders.any? { |r| r[:formats].include?(fmt) && codec_supported?(r[:codec], fmt) }
       end
 
       def encode(format, image, **kwargs)
-        fetch(format).encode(format, image, **kwargs)
+        codec = find_codec(encoders, format)
+        codec.encode(format, image, **kwargs)
       end
 
       def decode(format, data, **kwargs)
-        fetch(format).decode(format, data, **kwargs)
+        codec = find_codec(decoders, format)
+        codec.decode(format, data, **kwargs)
       end
 
       def encode_io(format, image, io, **kwargs)
-        codec = fetch(format)
+        codec = find_codec(encoders, format)
         if codec.respond_to?(:encode_io)
           codec.encode_io(format, image, io, **kwargs)
         else
@@ -45,12 +49,32 @@ module ImageUtil
       end
 
       def decode_io(format, io, **kwargs)
-        codec = fetch(format)
+        codec = find_codec(decoders, format)
         if codec.respond_to?(:decode_io)
           codec.decode_io(format, io, **kwargs)
         else
           codec.decode(format, io.read, **kwargs)
         end
+      end
+
+      private
+
+      def find_codec(list, format)
+        fmt = format.to_s.downcase
+        list.each do |r|
+          next unless r[:formats].include?(fmt)
+
+          codec = const_get(r[:codec])
+          next if codec.respond_to?(:supported?) && !codec.supported?(fmt.to_sym)
+
+          return codec
+        end
+        raise UnsupportedFormatError, "unsupported format #{format}"
+      end
+
+      def codec_supported?(codec_const, fmt)
+        codec = const_get(codec_const)
+        !codec.respond_to?(:supported?) || codec.supported?(fmt.to_sym)
       end
     end
 
@@ -60,10 +84,10 @@ module ImageUtil
     autoload :ImageMagick, "image_util/codec/image_magick"
     autoload :RubySixel, "image_util/codec/ruby_sixel"
 
-    Libpng
-    Libturbojpeg
-    Pam
-    ImageMagick
-    RubySixel
+    register_codec :Pam, :pam
+    register_codec :Libpng, :png
+    register_codec :Libturbojpeg, :jpeg
+    register_encoder :ImageMagick, :sixel
+    register_encoder :RubySixel, :sixel
   end
 end

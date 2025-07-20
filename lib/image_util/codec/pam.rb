@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "stringio"
 
 module ImageUtil
@@ -13,7 +15,10 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(_format, image, fill_to: nil)
+      def encode(format, image, fill_to: nil)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
         unless image.dimensions.length <= 2
           raise ArgumentError, "can't convert to PAM more than 2 dimensions"
         end
@@ -49,10 +54,18 @@ module ImageUtil
       end
 
       def decode(format, data)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
+
         decode_io(format, StringIO.new(data))
       end
 
-      def decode_io(_format, io)
+      def decode_io(format, io)
+        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+          raise UnsupportedFormatError, "unsupported format #{format}"
+        end
+
         header = {}
         while (line = io.gets)
           line = line.chomp
@@ -71,8 +84,6 @@ module ImageUtil
         buf = Image::Buffer.new([width, height], color_bits, depth, io_buf)
         Image.from_buffer(buf)
       end
-
-      Codec.register(:pam, self)
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Silence a warning.
 Warning[:experimental] = false
 
@@ -46,7 +48,7 @@ module ImageUtil
 
       def pixel_bytes = @color_length * @color_bytes
 
-      def initialize_copy(other)
+      def initialize_copy(_other)
         @buffer = @buffer.dup
       end
 
@@ -71,10 +73,13 @@ module ImageUtil
       def last_dimension(i)
         dimensions_without_last = dimensions[0..-2]
         remaining_dimensions = dimensions_without_last.length
-        o0 = offset_of(*[0]*remaining_dimensions, i)
-        o1 = offset_of(*[0]*remaining_dimensions, i+1)
-        Buffer.new(dimensions_without_last, @color_bits, @color_length,
-          @buffer.slice(o0, o1-o0)
+        o0 = offset_of(*[0] * remaining_dimensions, i)
+        o1 = offset_of(*[0] * remaining_dimensions, i + 1)
+        Buffer.new(
+          dimensions_without_last,
+          @color_bits,
+          @color_length,
+          @buffer.slice(o0, o1 - o0)
         )
       end
 

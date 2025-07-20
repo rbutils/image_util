@@ -2,6 +2,7 @@ module ImageUtil
   module Converter
     class Sixel
       MAX_COLORS = 256
+      QUANT      = 6
 
       def self.convert(image)
         new(image).convert
@@ -45,7 +46,11 @@ module ImageUtil
           pixels[y][x] = rgba
         end
 
-        reduce_palette(histogram)
+        @quantize = histogram.length > MAX_COLORS - 1
+
+        if @quantize
+          histogram, @bin_map = quantize_histogram(histogram)
+        end
 
         @palette = [[0, 0, 0, 0]] + histogram.keys
         @map     = {}
@@ -54,54 +59,54 @@ module ImageUtil
 
         pixels.each_with_index do |row, y|
           row.each_with_index do |rgba, x|
-            @index[y][x] = find_closest_index(rgba)
+            @index[y][x] = locate_index(rgba)
           end
         end
       end
 
-      def reduce_palette(hist)
-        while hist.length > MAX_COLORS - 1
-          pair = hist.keys.combination(2).min_by do |a, b|
-            freq = [hist[a], hist[b]].min
-            distance(a, b) * freq
-          end
-          a, b = pair
-          fa = hist.delete(a)
-          fb = hist.delete(b)
-          total = fa + fb
-          new_color = [
-            (a[0] * fa + b[0] * fb) / total,
-            (a[1] * fa + b[1] * fb) / total,
-            (a[2] * fa + b[2] * fb) / total,
-            (a[3] * fa + b[3] * fb) / total
-          ].map(&:round)
-          hist[new_color] += total
+      def quantize_histogram(hist)
+        bins = Hash.new { |h,k| h[k] = [0,0,0,0] } # rsum, gsum, bsum, count
+        hist.each do |rgba, count|
+          next if rgba[3] == 0
+          key = quant_key(rgba)
+          bin = bins[key]
+          bin[0] += rgba[0] * count
+          bin[1] += rgba[1] * count
+          bin[2] += rgba[2] * count
+          bin[3] += count
         end
+
+        quant_hist = {}
+        bin_map = {}
+        bins.each do |key, vals|
+          r = (vals[0] / vals[3].to_f).round
+          g = (vals[1] / vals[3].to_f).round
+          b = (vals[2] / vals[3].to_f).round
+          color = [r, g, b, 255]
+          quant_hist[color] = vals[3]
+          bin_map[key] = color
+        end
+
+        [quant_hist, bin_map]
       end
 
-      def distance(a, b)
-        (a[0] - b[0])**2 +
-        (a[1] - b[1])**2 +
-        (a[2] - b[2])**2 +
-        (a[3] - b[3])**2
+      def quant_key(rgba)
+        [
+          rgba[0] * (QUANT - 1) / 255,
+          rgba[1] * (QUANT - 1) / 255,
+          rgba[2] * (QUANT - 1) / 255
+        ]
       end
 
-
-
-      def find_closest_index(rgba)
-        min_idx = 0
-        min_dist = Float::INFINITY
-        @palette.each_with_index do |c, idx|
-          dist = (c[0] - rgba[0])**2 +
-                 (c[1] - rgba[1])**2 +
-                 (c[2] - rgba[2])**2 +
-                 (c[3] - rgba[3])**2
-          if dist < min_dist
-            min_dist = dist
-            min_idx = idx
-          end
+      def locate_index(rgba)
+        return 0 if rgba[3] == 0
+        if @quantize
+          key = quant_key(rgba)
+          pal_color = @bin_map[key]
+          @map[pal_color]
+        else
+          @map[rgba]
         end
-        min_idx
       end
 
       def encode

@@ -11,21 +11,10 @@ module ImageUtil
     def b = self[2]
     def a = self[3] || 255
 
-    def r=(val)
-      self[0] = val
-    end
-
-    def g=(val)
-      self[1] = val
-    end
-
-    def b=(val)
-      self[2] = val
-    end
-
-    def a=(val)
-      self[3] = val
-    end
+    def r=(val); self[0] = val; end
+    def g=(val); self[1] = val; end
+    def b=(val); self[2] = val; end
+    def a=(val); self[3] = val; end
 
     def self.component_from_number(number)
       case number

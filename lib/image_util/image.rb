@@ -140,40 +140,11 @@ module ImageUtil
     def length = dimensions.last
 
     def to_pam(fill_to: nil)
-      if dimensions.length > 2
-        raise ArgumentError, "can't convert to PAM more than 2 dimensions"
-      end
-
-      unless [3,4].include? color_length
-        raise ArgumentError, "can't convert to PAM if color length isn't 3 or 4"
-      end
-
-      if fill_to
-        remaining = (height || 1) % fill_to
-        added = remaining > 0 ? fill_to - remaining : 0
-        fill_height = (height || 1) + added
-        fill_buffer = "\0".b * added * pixel_bytes * width
-      else
-        fill_height = height || 1
-        fill_buffer = "".b
-      end
-
-      <<~PAM.b + @buf.get_string + fill_buffer
-        P7
-        WIDTH #{width}
-        HEIGHT #{fill_height}
-        DEPTH #{color_length}
-        MAXVAL #{color_bits ** 2 - 1}
-        TUPLTYPE #{color_length == 3 ? "RGB" : "RGB_ALPHA"}
-        ENDHDR
-      PAM
+      Codec::Pam.encode(self, fill_to: fill_to)
     end
 
     def to_sixel
-      io = IO.popen("magick pam:- sixel:-", "r+")
-      io << to_pam(fill_to: 6)
-      io.close_write
-      io.read
+      Codec::ImageMagick.encode(self)
     end
 
     alias inspect to_sixel

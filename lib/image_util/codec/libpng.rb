@@ -84,6 +84,10 @@ module ImageUtil
         png_image_free(img) if img
       end
 
+      def encode_io(image, io)
+        io << encode(image)
+      end
+
       def decode(data)
         img = PngImage.new
         img[:version] = PNG_IMAGE_VERSION
@@ -106,6 +110,12 @@ module ImageUtil
       ensure
         png_image_free(img) if img
       end
+
+      def decode_io(io)
+        decode(io.read)
+      end
+
+      Codec.register(:png, self)
     end
   end
 end

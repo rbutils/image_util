@@ -39,14 +39,23 @@ module ImageUtil
     end
 
     def to_buffer(color_bits, color_length)
-      map do |i|
+      mapped = map do |i|
         case color_bits
         when 8
           i
         else
           (i.to_f * 2**(color_bits - 8)).to_i
         end
-      end + [255] * (color_length - length)
+      end
+
+      if color_length == 4
+        mapped.fill(0, mapped.length...3)
+        mapped[3] ||= 255
+      else
+        mapped.fill(0, mapped.length...color_length)
+      end
+
+      mapped
     end
 
     def self.from(value)

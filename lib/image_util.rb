@@ -9,4 +9,5 @@ module ImageUtil
   autoload :Color, "image_util/color"
   autoload :Image, "image_util/image"
   autoload :Util, "image_util/util"
+  autoload :Converter, "image_util/converter"
 end

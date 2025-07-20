@@ -94,4 +94,9 @@ RSpec.describe ImageUtil::Image do
     pam = img.to_pam(fill_to: 6)
     pam.lines[2].should include('HEIGHT 6')
   end
+
+  it 'converts to sixel without external tools' do
+    img = described_class.new(1,1) { ImageUtil::Color[255,0,0] }
+    img.to_sixel.should == "\ePq#0;2;100;0;0#0@\e\\"
+  end
 end

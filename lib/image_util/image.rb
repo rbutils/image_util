@@ -168,10 +168,7 @@ module ImageUtil
     end
 
     def to_sixel
-      io = IO.popen("magick pam:- sixel:-", "r+")
-      io << to_pam(fill_to: 6)
-      io.close_write
-      io.read
+      Converter::Sixel.convert(self)
     end
 
     alias inspect to_sixel

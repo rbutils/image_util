@@ -85,4 +85,10 @@ RSpec.describe ImageUtil::Color do
   it 'raises on bad array values' do
     ->{ ImageUtil::Color.from([Object.new]) }.should raise_error(ArgumentError)
   end
+
+  it 'overlays colors with +' do
+    base = ImageUtil::Color[0, 0, 255]
+    overlay = ImageUtil::Color[255, 0, 0, 128]
+    (base + overlay).should == ImageUtil::Color[128, 0, 127, 255]
+  end
 end

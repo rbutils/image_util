@@ -9,6 +9,7 @@ Features include:
 * A `Color` helper class capable of parsing numbers, arrays and HTML style strings.
 * Conversion of an image to PAM or SIXEL for quick previews in compatible terminals.
 * Convenience methods for iterating over pixel locations and setting values.
+* Overlaying colors with the `+` operator which blends using the alpha channel.
 
 ## Installation
 

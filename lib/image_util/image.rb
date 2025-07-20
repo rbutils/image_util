@@ -123,11 +123,11 @@ module ImageUtil
       to_a.map do |i|
         case i
         when Image
-          deep_to_a(i)
+          i.deep_to_a
         else
           i
         end
-      end 
+      end
     end
 
     def each(...)

@@ -16,4 +16,18 @@ RSpec.describe ImageUtil::Image::Buffer do
     buffer.set_index(0, [1,2,3])
     buffer.last_dimension_split.first.get([0]).should == ImageUtil::Color[1,2,3]
   end
+
+  it 'raises on invalid color bits' do
+    ->{ described_class.new([1,1], 12, 3) }.should raise_error(ArgumentError)
+  end
+
+  it 'raises on wrong offset dimensions' do
+    ->{ buffer.offset_of(0,0,0) }.should raise_error(ArgumentError)
+  end
+
+  it 'duplicates buffer correctly' do
+    duped = buffer.dup
+    buffer.set([0,0], [1,2,3])
+    duped.get([0,0]).should == ImageUtil::Color[0,0,0]
+  end
 end

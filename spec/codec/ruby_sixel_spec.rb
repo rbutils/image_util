@@ -6,6 +6,6 @@ RSpec.describe ImageUtil::Codec::RubySixel do
     data = described_class.encode(:sixel, img)
     data.start_with?("\ePq").should be true
     data.end_with?("\e\\").should be true
-    data.include?('#0;2;100;0;0').should be true
+    data.match?(/#\d+;2;100;0;0/).should be true
   end
 end

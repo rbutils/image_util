@@ -33,9 +33,6 @@ jobs:
       - name: Install native libraries (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libturbojpeg
-      - name: Install native libraries (macOS)
-        if: runner.os == 'macOS'
-        run: brew install jpeg-turbo
       - name: Run the default task
         run: bundle exec rake
         shell: bash

@@ -138,5 +138,12 @@ module ImageUtil
 
       Color.new(out_r, out_g, out_b, out_a * 255)
     end
+
+    # Multiplies the alpha channel by the given factor and returns a new color.
+    def *(other)
+      raise TypeError, "factor must be numeric" unless other.is_a?(Numeric)
+
+      Color.new(r, g, b, (a * other).clamp(0, 255))
+    end
   end
 end

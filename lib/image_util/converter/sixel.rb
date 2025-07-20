@@ -112,9 +112,8 @@ module ImageUtil
       end
 
       def encode_palette(sixel)
-        @palette.each_with_index do |(r, g, b, a), idx|
+        @palette.each_with_index do |(r, g, b, _a), idx|
           args = [percent(r), percent(g), percent(b)].join(";")
-          args += ";4" if a < 255
           sixel << "##{idx};2;#{args}"
         end
       end

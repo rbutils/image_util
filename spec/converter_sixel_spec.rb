@@ -4,7 +4,7 @@ RSpec.describe ImageUtil::Converter::Sixel do
   it 'generates sixel for a single pixel' do
     img = ImageUtil::Image.new(1,1) { ImageUtil::Color[255,0,0] }
     sixel = described_class.convert(img)
-    sixel.start_with?("\ePq\"1;1;1;1#0;2;0;0;0;4#1;2;100;0;0").should be true
+    sixel.start_with?("\ePq\"1;1;1;1#0;2;0;0;0#1;2;100;0;0").should be true
     sixel.end_with?("\e\\").should be true
   end
 
@@ -20,7 +20,7 @@ RSpec.describe ImageUtil::Converter::Sixel do
   it 'defines transparent color for padding' do
     img = ImageUtil::Image.new(1,1) { ImageUtil::Color[0,0,255] }
     sixel = described_class.convert(img)
-    sixel.include?('#0;2;0;0;0;4').should be true
+    sixel.include?('#0;2;0;0;0').should be true
   end
 
   it 'encodes transparency using palette index 0' do
@@ -28,7 +28,7 @@ RSpec.describe ImageUtil::Converter::Sixel do
     img[0,0] = ImageUtil::Color[255,0,0]
     img[0,1] = ImageUtil::Color[0,0,0,0]
     sixel = described_class.convert(img)
-    sixel.include?('#0;2;0;0;0;4').should be true
+    sixel.include?('#0;2;0;0;0').should be true
     (sixel =~ /#0A/).nil?.should be false
   end
 
@@ -42,7 +42,7 @@ RSpec.describe ImageUtil::Converter::Sixel do
   it 'encodes transparent pixels' do
     img = ImageUtil::Image.new(1,1) { ImageUtil::Color[255,0,0,0] }
     sixel = described_class.convert(img)
-    sixel.include?(';4').should be true
+    sixel.include?('#0;2;0;0;0').should be true
   end
 
   it 'preserves colors when palette fits' do

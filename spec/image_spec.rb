@@ -98,7 +98,7 @@ RSpec.describe ImageUtil::Image do
   it 'converts to sixel without external tools' do
     img = described_class.new(1,1) { ImageUtil::Color[255,0,0] }
     sixel = img.to_sixel
-    sixel.start_with?("\ePq\"1;1;1;1#0;2;0;0;0;4#1;2;100;0;0").should be true
+    sixel.start_with?("\ePq\"1;1;1;1#0;2;0;0;0#1;2;100;0;0").should be true
     sixel.end_with?("\e\\").should be true
   end
 end

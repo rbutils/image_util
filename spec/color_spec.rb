@@ -28,6 +28,10 @@ RSpec.describe ImageUtil::Color do
     ImageUtil::Color[:red].should == ImageUtil::Color[255,0,0]
   end
 
+  it 'compares colors with implicit alpha as equal' do
+    ImageUtil::Color[1,2,3].should == ImageUtil::Color[1,2,3,255]
+  end
+
   it 'raises on bad array values' do
     ->{ ImageUtil::Color.from([Object.new]) }.should raise_error(ArgumentError)
   end

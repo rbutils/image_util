@@ -31,6 +31,7 @@ module ImageUtil
       def build_palette
         histogram = Hash.new(0)
         pixels    = Array.new(height) { Array.new(width) }
+        @coarse_map = nil
 
         @image.each_pixel_location do |loc|
           color = @image[*loc]
@@ -43,6 +44,23 @@ module ImageUtil
           x = loc[0]
           y = loc[1] || 0
           pixels[y][x] = rgba
+        end
+
+        if histogram.length > 4096
+          coarse_hist = Hash.new(0)
+          @coarse_map = {}
+          histogram.each do |color, count|
+            r, g, b, a = color
+            key = [r & 0xF0, g & 0xF0, b & 0xF0, a]
+            coarse_hist[key] += count
+            @coarse_map[color] = key
+          end
+          histogram = coarse_hist
+          pixels.each_with_index do |row, y|
+            row.each_with_index do |rgba, x|
+              pixels[y][x] = @coarse_map[rgba]
+            end
+          end
         end
 
         @quantize = histogram.length > MAX_COLORS - 1
@@ -85,11 +103,12 @@ module ImageUtil
 
       def locate_index(rgba)
         return 0 if rgba[3] == 0
+        color = @coarse_map ? @coarse_map[rgba] : rgba
         if @quantize
-          pal_color = @bin_map[rgba]
+          pal_color = @bin_map[color]
           @map[pal_color]
         else
-          @map[rgba]
+          @map[color]
         end
       end
 

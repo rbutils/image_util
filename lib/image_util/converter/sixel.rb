@@ -2,6 +2,7 @@ module ImageUtil
   module Converter
     class Sixel
       MAX_COLORS = 255
+
       def self.convert(image)
         new(image).convert
       end
@@ -41,21 +42,39 @@ module ImageUtil
           @index[y][x] = idx
         end
 
-        if @palette.length - 1 > MAX_COLORS
-          raise ArgumentError, "palette too large (#{@palette.length - 1} colors)"
-        end
+        # palette size is implicitly limited by map_color
       end
 
       def map_color(rgba)
         unless @map.key?(rgba)
-          @map[rgba] = @palette.length
-          @palette << rgba
+          if @palette.length <= MAX_COLORS
+            @map[rgba] = @palette.length
+            @palette << rgba
+          else
+            @map[rgba] = find_closest_index(rgba)
+          end
         end
         @map[rgba]
       end
 
+      def find_closest_index(rgba)
+        min_idx = 0
+        min_dist = Float::INFINITY
+        @palette.each_with_index do |c, idx|
+          dist = (c[0] - rgba[0])**2 +
+                 (c[1] - rgba[1])**2 +
+                 (c[2] - rgba[2])**2 +
+                 (c[3] - rgba[3])**2
+          if dist < min_dist
+            min_dist = dist
+            min_idx = idx
+          end
+        end
+        min_idx
+      end
+
       def encode
-        sixel = "\ePq"
+        sixel = "\ePq\"1;1;1;1"
         encode_palette(sixel)
         encode_pixels(sixel)
         sixel << "\e\\"

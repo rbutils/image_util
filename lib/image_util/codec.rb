@@ -54,8 +54,14 @@ module ImageUtil
       end
     end
 
-    require_relative "codec/libpng"
-    require_relative "codec/pam"
-    require_relative "codec/image_magick"
+    autoload :Libpng, "image_util/codec/libpng"
+    autoload :Libjpeg, "image_util/codec/libjpeg"
+    autoload :Pam, "image_util/codec/pam"
+    autoload :ImageMagick, "image_util/codec/image_magick"
+
+    Libpng
+    Libjpeg
+    Pam
+    ImageMagick
   end
 end

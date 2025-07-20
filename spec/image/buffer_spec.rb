@@ -30,4 +30,16 @@ RSpec.describe ImageUtil::Image::Buffer do
     buffer.set([0,0], [1,2,3])
     duped.get([0,0]).should == ImageUtil::Color[0,0,0]
   end
+
+  it 'supports 16 and 32 bit buffers' do
+    buf16 = described_class.new([1,1], 16, 3)
+    buf16.color_bytes.should == 2
+    buf16.set([0,0], [1,2,3])
+    buf16.get([0,0]).should == ImageUtil::Color[1,2,3]
+
+    buf32 = described_class.new([1,1], 32, 3)
+    buf32.color_bytes.should == 4
+    buf32.set([0,0], [1,2,3])
+    buf32.get([0,0]).should == ImageUtil::Color[1,2,3]
+  end
 end

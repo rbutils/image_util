@@ -101,15 +101,16 @@ module ImageUtil
       q.text inspect
     end
 
-    def ==(other)
-      other = Color.from(other) rescue nil
-      return false unless other.is_a?(Color)
+      def ==(other)
+        other = Color.from(other) rescue nil
+        return false unless other.is_a?(Color)
 
-      max_len = [length, other.length].max
-      l = self + [255] * (max_len - length)
-      r = other + [255] * (max_len - other.length)
-      l == r
-    end
+        self_rgb  = self[0, 3]
+        other_rgb = other[0, 3]
+        return false unless self_rgb == other_rgb
+
+        (self[3] || 255) == (other[3] || 255)
+      end
 
     alias eql? ==
   end

@@ -81,10 +81,12 @@ module ImageUtil
     autoload :Libpng, "image_util/codec/libpng"
     autoload :Libturbojpeg, "image_util/codec/libturbojpeg"
     autoload :Pam, "image_util/codec/pam"
+    autoload :Ppm, "image_util/codec/ppm"
     autoload :ImageMagick, "image_util/codec/image_magick"
     autoload :RubySixel, "image_util/codec/ruby_sixel"
 
     register_codec :Pam, :pam
+    register_codec :Ppm, :ppm
     register_codec :Libpng, :png
     register_codec :Libturbojpeg, :jpeg
     register_encoder :ImageMagick, :sixel

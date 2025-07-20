@@ -1,39 +1,72 @@
 # ImageUtil
 
-TODO: Delete this and the text below, and describe your gem
+ImageUtil provides a minimal in-memory image container and a set of utilities for handling raw pixel data in Ruby. It is aimed at small scripts and tools that need to manipulate images without relying on heavy external dependencies.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/image_util`. To experiment with that code, run `bin/console` for an interactive prompt.
+Features include:
+
+* Representation of images with arbitrary dimensions.
+* Support for 8, 16 or 32 bit components and RGB or RGBA color values.
+* A `Color` helper class capable of parsing numbers, arrays and HTML style strings.
+* Conversion of an image to PAM or SIXEL for quick previews in compatible terminals.
+* Convenience methods for iterating over pixel locations and setting values.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+The gem is not yet published on RubyGems. To use it, add the repository to your `Gemfile`:
 
-Install the gem and add to the application's Gemfile by executing:
-
-```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem 'image_util', git: 'https://github.com/rbutils/image_util.git'
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Then run `bundle install`.
+
+You can also build and install the gem manually:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+git clone https://github.com/rbutils/image_util.git
+cd image_util
+bundle exec rake install
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'image_util'
+
+# create a 4×4 image using 8‑bit RGBA colors
+i = ImageUtil::Image.new(4, 4)
+
+# set the top‑left pixel to red
+i[0, 0] = ImageUtil::Color[255, 0, 0]
+
+# display the image in a SIXEL-capable terminal
+puts i.to_sixel
+```
+
+Images can also be iterated over or modified using ranges:
+
+```ruby
+# fill an area with blue
+i[0..1, 0..1] = ImageUtil::Color['#0000ff']
+
+# iterate over every pixel
+i.each_pixel do |pixel|
+  # pixel is an ImageUtil::Color instance
+end
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+After checking out the repo, run `bin/setup` to install dependencies. Then run
+`rake spec` to execute the tests. You can also run `bin/console` for an
+interactive prompt for experimenting with the library.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/image_util.
+Bug reports and pull requests are welcome on GitHub at
+<https://github.com/rbutils/image_util>.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the
+[MIT License](https://opensource.org/licenses/MIT).

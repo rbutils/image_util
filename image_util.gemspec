@@ -8,17 +8,20 @@ Gem::Specification.new do |spec|
   spec.authors = ["hmdne"]
   spec.email = ["54514036+hmdne@users.noreply.github.com"]
 
-  spec.summary = "TODO: Write a short summary, because RubyGems requires one."
-  spec.description = "TODO: Write a longer description or delete this line."
+  spec.summary = 'Minimal pixel buffer utilities'
+  spec.description = 'Provides Color and Image classes for manipulating raw image data and converting buffers to standard formats.'
   spec.homepage = "https://github.com/rbutils/image_util"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
+  spec.metadata['allowed_push_host'] = 'https://rubygems.org'
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/rbutils/image_util"
-  spec.metadata["changelog_uri"] = "https://github.com/rbutils/image_util/blob/master/CHANGELOG.md"
+  
+  spec.metadata['source_code_uri'] = 'https://github.com/rbutils/image_util'
+  
+  spec.metadata['changelog_uri'] = 'https://github.com/rbutils/image_util/blob/master/CHANGELOG.md'
+  
+  spec.metadata['bug_tracker_uri'] = 'https://github.com/rbutils/image_util/issues'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

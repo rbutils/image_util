@@ -29,9 +29,8 @@ module ImageUtil
       def height = @image.height || 1
 
       def build_palette
-        @palette = [[0, 0, 0, 0]]
-        @map     = { [0, 0, 0, 0] => 0 }
-        @index   = Array.new(height) { Array.new(width, 0) }
+        histogram = Hash.new(0)
+        pixels    = Array.new(height) { Array.new(width) }
 
         @image.each_pixel_location do |loc|
           color = @image[*loc]
@@ -40,25 +39,53 @@ module ImageUtil
                   else
                     [color.r, color.g, color.b, 255]
                   end
-          idx   = map_color(rgba)
-          x     = loc[0]
-          y     = loc[1] || 0
-          @index[y][x] = idx
+          histogram[rgba] += 1
+          x = loc[0]
+          y = loc[1] || 0
+          pixels[y][x] = rgba
         end
 
-      end
+        reduce_palette(histogram)
 
-      def map_color(rgba)
-        unless @map.key?(rgba)
-          if @palette.length < MAX_COLORS
-            @map[rgba] = @palette.length
-            @palette << rgba
-          else
-            @map[rgba] = find_closest_index(rgba)
+        @palette = [[0, 0, 0, 0]] + histogram.keys
+        @map     = {}
+        @palette.each_with_index { |c, i| @map[c] = i }
+        @index = Array.new(height) { Array.new(width, 0) }
+
+        pixels.each_with_index do |row, y|
+          row.each_with_index do |rgba, x|
+            @index[y][x] = find_closest_index(rgba)
           end
         end
-        @map[rgba]
       end
+
+      def reduce_palette(hist)
+        while hist.length > MAX_COLORS - 1
+          pair = hist.keys.combination(2).min_by do |a, b|
+            freq = [hist[a], hist[b]].min
+            distance(a, b) * freq
+          end
+          a, b = pair
+          fa = hist.delete(a)
+          fb = hist.delete(b)
+          total = fa + fb
+          new_color = [
+            (a[0] * fa + b[0] * fb) / total,
+            (a[1] * fa + b[1] * fb) / total,
+            (a[2] * fa + b[2] * fb) / total,
+            (a[3] * fa + b[3] * fb) / total
+          ].map(&:round)
+          hist[new_color] += total
+        end
+      end
+
+      def distance(a, b)
+        (a[0] - b[0])**2 +
+        (a[1] - b[1])**2 +
+        (a[2] - b[2])**2 +
+        (a[3] - b[3])**2
+      end
+
 
 
       def find_closest_index(rgba)

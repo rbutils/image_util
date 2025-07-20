@@ -50,4 +50,10 @@ RSpec.describe ImageUtil::Converter::Sixel do
     sixel = described_class.convert(img)
     sixel.scan(/#\d+;2/).length.should == 51
   end
+
+  it 'uses generated palette instead of defaults' do
+    img = ImageUtil::Image.new(60,30) { |x,y| ImageUtil::Color[x/4, y/4] }
+    sixel = described_class.convert(img)
+    sixel.scan(/#\d+;2/).length.should == 121
+  end
 end

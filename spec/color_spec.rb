@@ -32,6 +32,14 @@ RSpec.describe ImageUtil::Color do
     ImageUtil::Color[1,2,3].should == ImageUtil::Color[1,2,3,255]
   end
 
+  it 'does not default rgb components' do
+    ImageUtil::Color[1,2].should_not == ImageUtil::Color[1,2,0]
+  end
+
+  it 'compares alpha channel when present' do
+    ImageUtil::Color[1,2,3,128].should_not == ImageUtil::Color[1,2,3]
+  end
+
   it 'raises on bad array values' do
     ->{ ImageUtil::Color.from([Object.new]) }.should raise_error(ArgumentError)
   end

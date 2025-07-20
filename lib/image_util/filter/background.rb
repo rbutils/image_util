@@ -3,14 +3,21 @@
 module ImageUtil
   module Filter
     module Background
-      def background!(color = Color[:black])
-        each_pixel_location do |loc|
-          self[*loc] = Color[color] + self[*loc]
-        end
-        self
-      end
+      def background(bgcolor = Color[:black])
+        return self if color_length == 3
 
-      def background(color = Color[:black]) = dup.tap { |i| i.background!(color) }
+        unless color_length == 4
+          raise ArgumentError, "background only supported on RGB or RGBA images"
+        end
+
+        bg = Color.from(bgcolor)
+        img = Image.new(*dimensions, color_bits: color_bits, color_length: 3)
+        img.set_each_pixel_by_location do |loc|
+          over = bg + self[*loc]
+          Color.new(over.r, over.g, over.b)
+        end
+        img
+      end
     end
   end
 end

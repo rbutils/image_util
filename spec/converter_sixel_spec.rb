@@ -23,11 +23,20 @@ RSpec.describe ImageUtil::Converter::Sixel do
     sixel.include?('#0;2;0;0;0;4').should be true
   end
 
-  it 'limits palette when too many colors are used' do
-    img = ImageUtil::Image.new(256)
-    256.times { |i| img[i] = ImageUtil::Color[i,0,0] }
+  it 'encodes transparency using palette index 0' do
+    img = ImageUtil::Image.new(1,2)
+    img[0,0] = ImageUtil::Color[255,0,0]
+    img[0,1] = ImageUtil::Color[0,0,0,0]
     sixel = described_class.convert(img)
-    sixel.scan(/#\d+;2/).length.should == 256
+    sixel.include?('#0;2;0;0;0;4').should be true
+    (sixel =~ /#0A/).nil?.should be false
+  end
+
+  it 'limits palette when too many colors are used' do
+    img = ImageUtil::Image.new(300)
+    300.times { |i| img[i] = ImageUtil::Color[i % 256, i % 256, i % 256] }
+    sixel = described_class.convert(img)
+    sixel.scan(/#\d+;2/).length.should <= 256
   end
 
   it 'encodes transparent pixels' do

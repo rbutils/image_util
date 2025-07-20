@@ -36,13 +36,14 @@ module ImageUtil
         @image.each_pixel_location do |loc|
           color = @image[*loc]
           rgba  = [color.r, color.g, color.b, color.a]
-          idx    = map_color(rgba)
-          x      = loc[0]
-          y      = loc[1] || 0
+          qrgba = quantize(rgba)
+          idx   = map_color(qrgba)
+          x     = loc[0]
+          y     = loc[1] || 0
           @index[y][x] = idx
         end
 
-        # palette size is implicitly limited by map_color
+        # palette size is implicitly limited by quantization
       end
 
       def map_color(rgba)
@@ -55,6 +56,15 @@ module ImageUtil
           end
         end
         @map[rgba]
+      end
+
+      def quantize(rgba)
+        r, g, b, a = rgba
+        r = ((r.to_f / 51).round * 51).clamp(0, 255)
+        g = ((g.to_f / 51).round * 51).clamp(0, 255)
+        b = ((b.to_f / 51).round * 51).clamp(0, 255)
+        a = a < 128 ? 0 : 255
+        [r, g, b, a]
       end
 
       def find_closest_index(rgba)

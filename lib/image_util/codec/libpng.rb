@@ -4,7 +4,13 @@ module ImageUtil
       require "ffi"
 
       extend FFI::Library
-      ffi_lib ["libpng16.so.16", "libpng16.so", "libpng16", "libpng.so", "libpng", "png16", "png"]
+      ffi_lib [
+        "libpng16.so.16", # Linux
+        "libpng16-16.dll", "libpng16.dll", # Windows
+        "libpng16.16.dylib", "libpng16.dylib", # macOS
+        "libpng16.so", "libpng.so", "libpng.dll", "libpng.dylib", # generic
+        "libpng16", "libpng", "png16", "png"
+      ]
 
       PNG_IMAGE_VERSION = 1
 

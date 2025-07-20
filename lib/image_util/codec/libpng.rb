@@ -1,16 +1,24 @@
 module ImageUtil
   module Codec
     module Libpng
-      require "ffi"
+      SUPPORTED_FORMATS = [:png].freeze
 
-      extend FFI::Library
-      ffi_lib [
-        "libpng16.so.16", # Linux
-        "libpng16-16.dll", "libpng16.dll", # Windows
-        "libpng16.16.dylib", "libpng16.dylib", # macOS
-        "libpng16.so", "libpng.so", "libpng.dll", "libpng.dylib", # generic
-        "libpng16", "libpng", "png16", "png"
-      ]
+      begin
+        require "ffi"
+
+        extend FFI::Library
+        ffi_lib [
+          "libpng16.so.16", # Linux
+          "libpng16-16.dll", "libpng16.dll", # Windows
+          "libpng16.16.dylib", "libpng16.dylib", # macOS
+          "libpng16.so", "libpng.so", "libpng.dll", "libpng.dylib", # generic
+          "libpng16", "libpng", "png16", "png"
+        ]
+
+        AVAILABLE = true
+      rescue LoadError
+        AVAILABLE = false
+      end
 
       PNG_IMAGE_VERSION = 1
 
@@ -21,26 +29,38 @@ module ImageUtil
       PNG_FORMAT_RGB  = PNG_FORMAT_FLAG_COLOR
       PNG_FORMAT_RGBA = PNG_FORMAT_FLAG_COLOR | PNG_FORMAT_FLAG_ALPHA
 
-      class PngImage < FFI::Struct
-        layout :opaque, :pointer,
-               :version, :uint32,
-               :width, :uint32,
-               :height, :uint32,
-               :format, :uint32,
-               :flags, :uint32,
-               :colormap_entries, :uint32,
-               :warning_or_error, :uint32,
-               :message, [:char, 64]
-      end
+      if AVAILABLE
+        class PngImage < FFI::Struct
+          layout :opaque, :pointer,
+                 :version, :uint32,
+                 :width, :uint32,
+                 :height, :uint32,
+                 :format, :uint32,
+                 :flags, :uint32,
+                 :colormap_entries, :uint32,
+                 :warning_or_error, :uint32,
+                 :message, [:char, 64]
+        end
 
-      attach_function :png_image_write_to_memory, %i[pointer pointer pointer int pointer int pointer], :int
-      attach_function :png_image_begin_read_from_memory, %i[pointer pointer size_t], :int
-      attach_function :png_image_finish_read, %i[pointer pointer pointer int pointer], :int
-      attach_function :png_image_free, [:pointer], :void
+        attach_function :png_image_write_to_memory, %i[pointer pointer pointer int pointer int pointer], :int
+        attach_function :png_image_begin_read_from_memory, %i[pointer pointer size_t], :int
+        attach_function :png_image_finish_read, %i[pointer pointer pointer int pointer], :int
+        attach_function :png_image_free, [:pointer], :void
+      end
 
       module_function
 
-      def encode(image)
+      def supported?(format = nil)
+        return false unless AVAILABLE
+
+        return true if format.nil?
+
+        SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+      end
+
+      def encode(_format, image)
+        raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
+
         unless image.is_a?(Image)
           raise ArgumentError, "image must be an ImageUtil::Image"
         end
@@ -84,11 +104,13 @@ module ImageUtil
         png_image_free(img) if img
       end
 
-      def encode_io(image, io)
-        io << encode(image)
+      def encode_io(format, image, io)
+        io << encode(format, image)
       end
 
-      def decode(data)
+      def decode(_format, data)
+        raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
+
         img = PngImage.new
         img[:version] = PNG_IMAGE_VERSION
 
@@ -111,8 +133,8 @@ module ImageUtil
         png_image_free(img) if img
       end
 
-      def decode_io(io)
-        decode(io.read)
+      def decode_io(format, io)
+        decode(format, io.read)
       end
 
       Codec.register(:png, self)

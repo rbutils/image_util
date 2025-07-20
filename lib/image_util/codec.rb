@@ -12,7 +12,14 @@ module ImageUtil
       end
 
       def supported?(format)
-        registry.key?(format.to_s.downcase)
+        codec = registry[format.to_s.downcase]
+        return false unless codec
+
+        if codec.respond_to?(:supported?)
+          codec.supported?(format)
+        else
+          true
+        end
       end
 
       def fetch(format)
@@ -21,28 +28,28 @@ module ImageUtil
       end
 
       def encode(format, image, **kwargs)
-        fetch(format).encode(image, **kwargs)
+        fetch(format).encode(format, image, **kwargs)
       end
 
       def decode(format, data, **kwargs)
-        fetch(format).decode(data, **kwargs)
+        fetch(format).decode(format, data, **kwargs)
       end
 
       def encode_io(format, image, io, **kwargs)
         codec = fetch(format)
         if codec.respond_to?(:encode_io)
-          codec.encode_io(image, io, **kwargs)
+          codec.encode_io(format, image, io, **kwargs)
         else
-          io << codec.encode(image, **kwargs)
+          io << codec.encode(format, image, **kwargs)
         end
       end
 
       def decode_io(format, io, **kwargs)
         codec = fetch(format)
         if codec.respond_to?(:decode_io)
-          codec.decode_io(io, **kwargs)
+          codec.decode_io(format, io, **kwargs)
         else
-          codec.decode(io.read, **kwargs)
+          codec.decode(format, io.read, **kwargs)
         end
       end
     end

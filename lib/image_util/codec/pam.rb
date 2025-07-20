@@ -3,9 +3,17 @@ require "stringio"
 module ImageUtil
   module Codec
     module Pam
+      SUPPORTED_FORMATS = [:pam].freeze
+
       module_function
 
-      def encode(image, fill_to: nil)
+      def supported?(format = nil)
+        return true if format.nil?
+
+        SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+      end
+
+      def encode(_format, image, fill_to: nil)
         unless image.dimensions.length <= 2
           raise ArgumentError, "can't convert to PAM more than 2 dimensions"
         end
@@ -36,15 +44,15 @@ module ImageUtil
         header + image.buffer.get_string + fill_buffer
       end
 
-      def encode_io(image, io, **kwargs)
-        io << encode(image, **kwargs)
+      def encode_io(format, image, io, **kwargs)
+        io << encode(format, image, **kwargs)
       end
 
-      def decode(data)
-        decode_io(StringIO.new(data))
+      def decode(format, data)
+        decode_io(format, StringIO.new(data))
       end
 
-      def decode_io(io)
+      def decode_io(_format, io)
         header = {}
         while (line = io.gets)
           line = line.chomp

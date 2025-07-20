@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-RSpec.describe ImageUtil::Codec do
+RSpec.describe ImageUtil::Codec::Libpng do
+  before do
+    skip 'libpng not available' unless described_class.supported?
+  end
+
   it 'encodes and decodes a PNG image' do
     img = ImageUtil::Image.new(2, 1) { |x, _y| ImageUtil::Color[x, 0, 0] }
     data = described_class.encode(:png, img)

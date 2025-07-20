@@ -140,11 +140,11 @@ module ImageUtil
     def length = dimensions.last
 
     def to_pam(fill_to: nil)
-      Codec::Pam.encode(self, fill_to: fill_to)
+      Codec.encode(:pam, self, fill_to: fill_to)
     end
 
     def to_sixel
-      Codec::ImageMagick.encode(self)
+      Codec.encode(:sixel, self)
     end
 
     alias inspect to_sixel

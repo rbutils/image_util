@@ -3,7 +3,7 @@
 module ImageUtil
   module Filter
     module Background
-      def background!(bgcolor)
+      def background(bgcolor)
         return self if color_length == 3
 
         unless color_length == 4
@@ -16,14 +16,7 @@ module ImageUtil
           over = bg + self[*loc]
           Color.new(over.r, over.g, over.b)
         end
-        initialize_from_buffer(img.buffer)
-        self
-      end
-
-      def background(bgcolor)
-        return self if color_length == 3
-
-        dup.tap { |i| i.background!(bgcolor) }
+        img
       end
     end
   end

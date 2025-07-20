@@ -79,3 +79,6 @@ Lint/UnusedBlockArgument:
 Naming/AccessorMethodName:
   Enabled: false
 
+Style/SingleLineMethods:
+  Enabled: false
+

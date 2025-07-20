@@ -2,6 +2,7 @@
 
 module ImageUtil
   module Codec
+    # rubocop:disable Metrics/ModuleLength
     module Libturbojpeg
       SUPPORTED_FORMATS = %i[jpeg jpg].freeze
 
@@ -27,9 +28,25 @@ module ImageUtil
       if AVAILABLE
         attach_function :tjInitCompress, [], :pointer
         attach_function :tjInitDecompress, [], :pointer
-        attach_function :tjCompress2, %i[pointer pointer int int int int pointer pointer int int int], :int
-        attach_function :tjDecompressHeader3, %i[pointer pointer ulong pointer pointer pointer pointer], :int
-        attach_function :tjDecompress2, %i[pointer pointer ulong pointer int int int int int], :int
+        attach_function :tjCompress2,
+                        %i[pointer pointer int int int int pointer pointer int int int],
+                        :int
+
+        begin
+          attach_function :tjDecompressHeader3,
+                          %i[pointer pointer ulong pointer pointer pointer pointer],
+                          :int
+          DECOMPRESS_HEADER_FUNC = :tjDecompressHeader3
+        rescue FFI::NotFoundError
+          attach_function :tjDecompressHeader2,
+                          %i[pointer pointer ulong pointer pointer pointer],
+                          :int
+          DECOMPRESS_HEADER_FUNC = :tjDecompressHeader2
+        end
+
+        attach_function :tjDecompress2,
+                        %i[pointer pointer ulong pointer int int int int int],
+                        :int
         attach_function :tjDestroy, [:pointer], :int
         attach_function :tjFree, [:pointer], :void
       end
@@ -96,7 +113,13 @@ module ImageUtil
         subsamp_ptr = FFI::MemoryPointer.new(:int)
         cs_ptr = FFI::MemoryPointer.new(:int)
 
-        res = tjDecompressHeader3(handle, jpeg_buf, data.bytesize, width_ptr, height_ptr, subsamp_ptr, cs_ptr)
+        header_args = [handle, jpeg_buf, data.bytesize, width_ptr, height_ptr]
+        if DECOMPRESS_HEADER_FUNC == :tjDecompressHeader3
+          header_args += [subsamp_ptr, cs_ptr]
+        else
+          header_args << subsamp_ptr
+        end
+        res = public_send(DECOMPRESS_HEADER_FUNC, *header_args)
         raise StandardError, "header decode failed" if res != 0
 
         width = width_ptr.read_int
@@ -121,5 +144,6 @@ module ImageUtil
       Codec.register(:jpeg, self)
       Codec.register(:jpg, self)
     end
+    # rubocop:enable Metrics/ModuleLength
   end
 end

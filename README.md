@@ -56,6 +56,23 @@ i.each_pixel do |pixel|
 end
 ```
 
+### Codecs
+
+ImageUtil includes a small registry of codecs for converting images to and from
+common formats.
+
+```ruby
+png = ImageUtil::Codec.encode(:png, i)
+back = ImageUtil::Codec.decode(:png, png)
+
+File.open("img.pam", "wb") do |f|
+  ImageUtil::Codec.encode_io(:pam, i, f)
+end
+```
+
+Use `ImageUtil::Codec.supported?(format)` to check if a particular format is
+available. Unsupported formats raise `ImageUtil::Codec::UnsupportedFormatError`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run

@@ -55,12 +55,12 @@ module ImageUtil
     end
 
     autoload :Libpng, "image_util/codec/libpng"
-    autoload :Libjpeg, "image_util/codec/libjpeg"
+    autoload :Libturbojpeg, "image_util/codec/libturbojpeg"
     autoload :Pam, "image_util/codec/pam"
     autoload :ImageMagick, "image_util/codec/image_magick"
 
     Libpng
-    Libjpeg
+    Libturbojpeg
     Pam
     ImageMagick
   end

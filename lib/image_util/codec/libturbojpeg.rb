@@ -2,8 +2,8 @@
 
 module ImageUtil
   module Codec
-    module Libjpeg
-      SUPPORTED_FORMATS = [:jpeg, :jpg].freeze
+    module Libturbojpeg
+      SUPPORTED_FORMATS = %i[jpeg jpg].freeze
 
       begin
         require "ffi"
@@ -45,7 +45,7 @@ module ImageUtil
       end
 
       def encode(_format, image, quality: 75)
-        raise UnsupportedFormatError, "libjpeg not available" unless AVAILABLE
+        raise UnsupportedFormatError, "libturbojpeg not available" unless AVAILABLE
 
         unless image.is_a?(Image)
           raise ArgumentError, "image must be an ImageUtil::Image"
@@ -85,7 +85,7 @@ module ImageUtil
       end
 
       def decode(_format, data)
-        raise UnsupportedFormatError, "libjpeg not available" unless AVAILABLE
+        raise UnsupportedFormatError, "libturbojpeg not available" unless AVAILABLE
 
         handle = tjInitDecompress
         raise StandardError, "tjInitDecompress failed" if handle.null?
@@ -123,4 +123,3 @@ module ImageUtil
     end
   end
 end
-

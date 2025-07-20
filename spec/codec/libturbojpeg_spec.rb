@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-RSpec.describe ImageUtil::Codec::Libjpeg do
+RSpec.describe ImageUtil::Codec::Libturbojpeg do
   before do
-    skip 'libjpeg not available' unless described_class.supported?
+    skip 'libturbojpeg not available' unless described_class.supported?
   end
 
   it 'encodes and decodes a JPEG image' do

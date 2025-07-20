@@ -2,7 +2,6 @@ module ImageUtil
   module Converter
     class Sixel
       MAX_COLORS = 256
-      QUANT      = 6
 
       def self.convert(image)
         new(image).convert
@@ -65,44 +64,29 @@ module ImageUtil
       end
 
       def quantize_histogram(hist)
-        bins = Hash.new { |h,k| h[k] = [0,0,0,0] } # rsum, gsum, bsum, count
-        hist.each do |rgba, count|
-          next if rgba[3] == 0
-          key = quant_key(rgba)
-          bin = bins[key]
-          bin[0] += rgba[0] * count
-          bin[1] += rgba[1] * count
-          bin[2] += rgba[2] * count
-          bin[3] += count
-        end
+        sorted = hist.sort_by { |_, count| -count }
+        keep = sorted.take(MAX_COLORS - 1)
 
-        quant_hist = {}
         bin_map = {}
-        bins.each do |key, vals|
-          r = (vals[0] / vals[3].to_f).round
-          g = (vals[1] / vals[3].to_f).round
-          b = (vals[2] / vals[3].to_f).round
-          color = [r, g, b, 255]
-          quant_hist[color] = vals[3]
-          bin_map[key] = color
+        palette_colors = keep.map(&:first)
+        keep.each { |color, _| bin_map[color] = color }
+
+        sorted.drop(MAX_COLORS - 1).each do |color, _|
+          nearest = palette_colors.min_by { |c| dist(c, color) }
+          bin_map[color] = nearest
         end
 
-        [quant_hist, bin_map]
+        [keep.to_h, bin_map]
       end
 
-      def quant_key(rgba)
-        [
-          rgba[0] * (QUANT - 1) / 255,
-          rgba[1] * (QUANT - 1) / 255,
-          rgba[2] * (QUANT - 1) / 255
-        ]
+      def dist(c1, c2)
+        (c1[0] - c2[0])**2 + (c1[1] - c2[1])**2 + (c1[2] - c2[2])**2
       end
 
       def locate_index(rgba)
         return 0 if rgba[3] == 0
         if @quantize
-          key = quant_key(rgba)
-          pal_color = @bin_map[key]
+          pal_color = @bin_map[rgba]
           @map[pal_color]
         else
           @map[rgba]

@@ -56,4 +56,16 @@ RSpec.describe ImageUtil::Converter::Sixel do
     sixel = described_class.convert(img)
     sixel.scan(/#\d+;2/).length.should == 121
   end
+
+  it 'handles 256 color grayscale' do
+    img = ImageUtil::Image.new(256,1) { |x,_y| ImageUtil::Color[x,x,x] }
+    sixel = described_class.convert(img)
+    sixel.scan(/#\d+;2/).length.should == 256
+  end
+
+  it 'limits large palettes to 255 colors' do
+    img = ImageUtil::Image.new(256,256) { |x,y| ImageUtil::Color[x,y,60] }
+    sixel = described_class.convert(img)
+    sixel.scan(/#\d+;2/).length.should == 256
+  end
 end

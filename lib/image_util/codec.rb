@@ -57,5 +57,6 @@ module ImageUtil
     require_relative "codec/libpng"
     require_relative "codec/pam"
     require_relative "codec/image_magick"
+    require_relative "codec/ruby_sixel"
   end
 end

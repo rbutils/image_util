@@ -24,6 +24,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+      - name: Install native libraries
+        if: runner.os == 'Windows'
+        run: |
+          choco install --no-progress -y libpng
+          choco install --no-progress -y libjpeg-turbo
+        shell: powershell
       - name: Run the default task
         run: bundle exec rake
         shell: bash

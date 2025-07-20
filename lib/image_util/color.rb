@@ -100,5 +100,17 @@ module ImageUtil
     def pretty_print(q)
       q.text inspect
     end
+
+    def ==(other)
+      other = Color.from(other) rescue nil
+      return false unless other.is_a?(Color)
+
+      max_len = [length, other.length].max
+      l = self + [255] * (max_len - length)
+      r = other + [255] * (max_len - other.length)
+      l == r
+    end
+
+    alias eql? ==
   end
 end

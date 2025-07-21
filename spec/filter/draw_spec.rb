@@ -17,5 +17,11 @@ RSpec.describe ImageUtil::Image do
       img.draw_line!([0,0], [2,2], ImageUtil::Color[2], view: ImageUtil::View::Rounded)
       img[1,1].should == ImageUtil::Color[2]
     end
+
+    it 'handles lines not starting at the origin' do
+      img = described_class.new(5,5) { ImageUtil::Color[0] }
+      img.draw_line!([3,2], [4,3], ImageUtil::Color[1], view: ImageUtil::View::Interpolated)
+      img[4,3].should == ImageUtil::Color[1]
+    end
   end
 end

@@ -38,7 +38,21 @@ jobs:
             mingw-w64-x86_64-ninja
             mingw-w64-x86_64-libjpeg-turbo
             mingw-w64-x86_64-libpng
-            mingw-w64-x86_64-libsixel
+      - name: Build libsixel
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          git clone --depth 1 https://github.com/libsixel/libsixel
+          meson setup libsixel/build libsixel \
+            -Dpython=disabled \
+            -Dgdk-pixbuf2=disabled \
+            -Dgd=disabled \
+            -Dlibcurl=disabled \
+            -Dtests=disabled \
+            -Djpeg=disabled \
+            -Dpng=disabled
+          meson compile -C libsixel/build
+          meson install -C libsixel/build
       - name: Install native libraries (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libturbojpeg libsixel1

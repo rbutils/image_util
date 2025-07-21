@@ -84,8 +84,10 @@ module ImageUtil
       end
     end
 
+    def full_image_location = [ALL]*dimensions.length
+
     def all=(value)
-      self[*[ALL]*dimensions.length] = value
+      self[*full_image_location] = value
     end
 
     def []=(*location, value)
@@ -135,9 +137,11 @@ module ImageUtil
     def each(...)
       to_a.each(...)
     end
+  
     include Enumerable
     include Filter::Dither
     include Filter::Background
+    include Statistic::Color
 
     def length = dimensions.last
 
@@ -159,17 +163,23 @@ module ImageUtil
       end
     end
 
-    def each_pixel_location(locations = [ALL]*dimensions.length, ...)
+    def pixel_count(locations) = location_expand(locations).first.reduce(:*)
+
+    def each_pixel_location(locations = full_image_location, ...)
       location_expand(locations).last.each(...)
     end
 
-    def each_pixel(locations = [ALL] * dimensions.length, &_block)
+    def each_pixel(locations = full_image_location)
+      return enum_for(:each_pixel) { pixel_count(locations) } unless block_given?
+
       each_pixel_location(locations) do |location|
         yield self[*location]
       end
     end
 
-    def set_each_pixel_by_location(locations = [ALL] * dimensions.length, &_block)
+    def set_each_pixel_by_location(locations = full_image_location)
+      return enum_for(:set_each_pixel_by_location) { pixel_count(locations) } unless block_given?
+
       each_pixel_location(locations) do |location|
         value = yield location
         self[*location] = value if value

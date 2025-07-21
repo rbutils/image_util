@@ -25,7 +25,11 @@ module ImageUtil
           raise ArgumentError, "only 8-bit colors supported"
         end
 
-        img = image.dither(256)
+        img = if image.unique_color_count <= 256
+                image
+              else
+                image.dither(256)
+              end
 
         palette = []
         palette_map = {}

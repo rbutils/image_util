@@ -23,7 +23,7 @@ module ImageUtil
         @color_bytes = color_bits / 8
         @color_length = color_length
 
-        @buffer_size = @dimensions.reduce(1) { |a,b| a*b }
+        @buffer_size = @dimensions.reduce(&:*)
         @buffer_size *= @color_length
         @buffer_size *= @color_bytes
 

@@ -20,16 +20,11 @@ module ImageUtil
       public
 
       def dither!(count)
-        histogram = Hash.new(0)
-        each_pixel_location do |loc|
-          histogram[self[*loc].to_a] += 1
-        end
-        palette = histogram.sort_by { |_, v| -v }.first(count).map { |c, _| Color[*c] }
+        palette = histogram.sort_by { |_, v| -v }.first(count).map(&:first)
 
-        each_pixel_location do |loc|
+        set_each_pixel_by_location do |loc|
           color = self[*loc]
-          best = palette.min_by { |p| dither_distance_sq(color, p) }
-          self[*loc] = best
+          palette.min_by { |p| dither_distance_sq(color, p) }
         end
         self
       end

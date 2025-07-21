@@ -16,4 +16,4 @@ gem "ffi", "~> 1.16"
 gem "pry", "~> 0.15.2"
 gem "simplecov", "~> 0.22"
 
-gem "stackprof", "~> 0.2.27"
+gem "stackprof", "~> 0.2.27" unless Gem.win_platform?

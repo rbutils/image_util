@@ -82,3 +82,15 @@ Naming/AccessorMethodName:
 Style/SingleLineMethods:
   Enabled: false
 
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: false
+
+Style/RedundantBegin:
+  Enabled: false
+
+Style/SymbolProc:
+  Enabled: false
+

@@ -55,6 +55,9 @@ Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XT
 
 ![Sixel example](docs/samples/sixel.png)
 
+The built-in Ruby encoder now includes explicit pixel aspect ratio metadata.
+Without this, Windows Terminal would display images twice as tall as expected.
+
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of the earlier system packages.
 
 ## Color Values

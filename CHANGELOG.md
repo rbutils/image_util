@@ -1,4 +1,5 @@
 ## [Unreleased]
+- Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal
 
 ## [0.1.0] - 2025-07-21
 

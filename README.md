@@ -1,144 +1,122 @@
 # ImageUtil
 
-ImageUtil provides a minimal in-memory image container and a set of utilities for handling raw pixel data in Ruby. It is aimed at small scripts and tools that need to manipulate images without relying on heavy external dependencies.
+ImageUtil is a lightweight Ruby library focused on manipulating images directly in memory. Its primary goal is to help scripts visualize data right in the terminal by supporting SIXEL output alongside common image formats. The API is still evolving and should be considered unstable until version 1.0.
 
-Features include:
-
-* Representation of images with arbitrary dimensions.
-* Support for 8, 16 or 32 bit components and RGB or RGBA color values.
-* A `Color` helper class capable of parsing numbers, arrays and HTML style strings.
-* Conversion of an image to PAM or SIXEL for quick previews in compatible terminals.
-* Built-in SIXEL encoder that works without ImageMagick.
-* Convenience methods for iterating over pixel locations and setting values.
-* Overlaying colors with the `+` operator which blends using the alpha channel.
-* Automatic format detection when reading images from strings or files.
-* Alternate pixel views for interpolated or rounded coordinates.
-
-## Installation
-
-ImageUtil is available on RubyGems:
-
-```bash
-gem install image_util
-```
-
-Alternatively add it to your `Gemfile`:
-
-```ruby
-gem "image_util"
-```
-
-Run `bundle install` afterwards.
-
-You can also build and install the gem manually:
-
-```bash
-git clone https://github.com/rbutils/image_util.git
-cd image_util
-bundle exec rake install
-```
-
-## Usage
+## Creating an Image
 
 ```ruby
 require 'image_util'
 
-# create a 4×4 image using 8‑bit RGBA colors
-i = ImageUtil::Image.new(4, 4)
-
-# set the top‑left pixel to red
-i[0, 0] = ImageUtil::Color[255, 0, 0]
-
-# display the image in a SIXEL-capable terminal
-puts i.to_sixel
+# 40×40 RGBA image
+img = ImageUtil::Image.new(40, 40)
 ```
 
-Images can also be iterated over or modified using ranges:
+An optional block receives pixel coordinates and should return something that can be converted to a color. Dimensions of more than two axes are supported.
 
 ```ruby
-# fill an area with blue
-i[0..1, 0..1] = ImageUtil::Color['#0000ff']
-
-# iterate over every pixel
-i.each_pixel do |pixel|
-  # pixel is an ImageUtil::Color instance
-end
-
-# paste one image into another
-target = ImageUtil::Image.new(8, 8) { ImageUtil::Color[0] }
-source = ImageUtil::Image.new(2, 2) { ImageUtil::Color[255, 0, 0, 128] }
-target.paste!(source, 3, 3, respect_alpha: true)
-
-# draw a diagonal line
-i.draw_line!([0, 0], [3, 3], ImageUtil::Color['red'], view: ImageUtil::View::Rounded)
+img = ImageUtil::Image.new(4, 4) { |x, y| ImageUtil::Color[x * 64, y * 64, 0] }
 ```
 
-`View::Interpolated` provides subpixel access while `View::Rounded` snaps
-coordinates to the nearest pixel. These views are useful for drawing
-operations like the example above.
+## Color Values
 
-### Reading and Writing Images
+`ImageUtil::Color.from` accepts several inputs:
+
+- Another `Color` instance
+- Arrays of numeric components (`[r, g, b]` or `[r, g, b, a]`)
+- Numbers (used for all RGB channels)
+- Symbols or strings containing basic color names (`:red`, `'blue'`)
+- Hex strings like `'#abc'`, `'#aabbcc'` or `'#rrggbbaa'`
+
+Values outside `0..255` are clamped and floats are interpreted as fractions of 255.
+
+Note that whenever the library expects a color, it may be given in any form accepted by this function (also available as `ImageUtil::Color[]`).
+
+## Pixel Access
+
+Pixels can be accessed with integer coordinates or ranges. Subimages are returned when ranges are used.
 
 ```ruby
-# detect format automatically when loading from a file
-img = ImageUtil::Image.from_file("photo.png")
-
-# save using a specific codec
-img.to_file("out.jpg", :jpeg)
-
-# convert directly to a string
-data = img.to_string(:png)
+img[0, 0] = '#ff0000'
+patch = img[0..1, 0..1]
 ```
 
-### Filters
+Iteration helpers operate on arbitrary ranges:
 
 ```ruby
-# reduce palette to 32 colors
-dithered = img.dither(32)
-
-# composite two images without altering the originals
-result = base.paste(other, 10, 10)
-
-# apply a background color to an RGBA image
-flattened = img.background(ImageUtil::Color[255, 255, 255])
+img.each_pixel { |pixel| puts pixel.inspect }
 ```
 
-### Working with Views
+## Filters
+
+`ImageUtil::Image` ships with a few convenience filters. Each bang method
+modifies the image in place while the non-bang version returns a copy.
+
+### Background
+
+Flatten an RGBA image on a solid color.
 
 ```ruby
-# access using fractional coordinates
-interp = img.view(ImageUtil::View::Interpolated)
-interp[1.2, 2.8] = ImageUtil::Color[0, 0, 255]
-
-# round coordinates instead
-rounded = img.view(ImageUtil::View::Rounded)
-color = rounded[1.6, 0.3]
+img = ImageUtil::Image.new(128, 128) { |x, y| [255, 0, 0, x + y] }
+img.background([0, 0, 255])
 ```
 
-### Codecs
+![Background example](docs/samples/background.png)
 
-ImageUtil includes a small registry of codecs for converting images to and from
-common formats such as PNG, JPEG and SIXEL. The library ships with pure Ruby
-encoders and FFI wrappers around `libpng`, `libturbojpeg` and `libsixel` when
-available.
+### Paste
+
+Place one image over another. When `respect_alpha` is true, the pasted pixels are
+blended with the base image.
 
 ```ruby
-png = ImageUtil::Codec.encode(:png, i)
-back = ImageUtil::Codec.decode(:png, png)
-
-File.open("img.pam", "wb") do |f|
-  ImageUtil::Codec.encode_io(:pam, i, f)
-end
+base    = ImageUtil::Image.new(128, 128) { |x, y| [x, y, 50] }
+overlay = ImageUtil::Image.new(64, 64)  { |x, y| [255, 0, 0, (x + y) * 2] }
+base.paste!(overlay, 32, 32, respect_alpha: true)
 ```
 
-You can read images from files without specifying the format:
+![Paste example](docs/samples/paste.png)
+
+### Draw
+
+Draw simple shapes directly on the image.
 
 ```ruby
-image = ImageUtil::Image.from_file("picture.jpg")
+img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
+img.draw_line!([0, 0], [127, 127], :red)
+img.draw_line!([0, 127], [127, 0], :lime)
 ```
 
-Use `ImageUtil::Codec.supported?(format)` to check if a particular format is
-available. Unsupported formats raise `ImageUtil::Codec::UnsupportedFormatError`.
+![Draw example](docs/samples/draw.png)
+
+### Resize
+
+Scale an image to new dimensions.
+
+```ruby
+i = ImageUtil::Image.new(256, 256) { |x, y| [x, y, 30] }
+i[70, 70] = i.resize(64, 64); i
+```
+
+![Resize example](docs/samples/resize.png)
+
+### Dither
+
+Reduce the image to a limited palette.
+
+```ruby
+img = ImageUtil::Image.new(256, 64) { |x, y| [x, y * 4, 200] }
+img.dither(8)
+```
+
+![Dither example](docs/samples/dither.png)
+
+## SIXEL Output
+
+Images can be previewed in compatible terminals:
+
+```ruby
+puts img.to_sixel
+```
+
 
 ## Development
 

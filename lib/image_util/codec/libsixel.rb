@@ -5,7 +5,12 @@ module ImageUtil
     module Libsixel
       SUPPORTED_FORMATS = [:sixel].freeze
 
+      # https://github.com/libsixel/libsixel
       SIXEL_BUILTIN_XTERM256 = 3
+      SIXEL_PALETTE_MAX = 256
+      SIXEL_LARGE_NORM = 1
+      SIXEL_REP_CENTER_BOX = 1
+      SIXEL_QUALITY_HIGH = 1
       SIXEL_PIXELFORMAT_RGB888   = 3
       SIXEL_PIXELFORMAT_RGBA8888 = 0x11
 
@@ -26,7 +31,8 @@ module ImageUtil
 
         attach_function :sixel_output_new, %i[pointer write_function pointer pointer], :int
         attach_function :sixel_output_unref, [:pointer], :void
-        attach_function :sixel_dither_get, [:int], :pointer
+        attach_function :sixel_dither_new, %i[pointer int pointer], :int
+        attach_function :sixel_dither_initialize, %i[pointer pointer int int int int int int], :int
         attach_function :sixel_dither_unref, [:pointer], :void
         attach_function :sixel_encode, %i[pointer int int int pointer pointer], :int
 
@@ -66,12 +72,27 @@ module ImageUtil
 
         output = out_ptr.read_pointer
 
-        dither = sixel_dither_get(SIXEL_BUILTIN_XTERM256)
-        raise StandardError, "sixel_dither_get failed" if dither.null?
+        dither_ptr = FFI::MemoryPointer.new(:pointer)
+        res = sixel_dither_new(dither_ptr, SIXEL_PALETTE_MAX, nil)
+        raise StandardError, "sixel_dither_new failed" if res != 0
+
+        dither = dither_ptr.read_pointer
 
         pixels = image.buffer.get_string
         buf_ptr = FFI::MemoryPointer.new(:uchar, pixels.bytesize)
         buf_ptr.put_bytes(0, pixels)
+
+        res = sixel_dither_initialize(
+          dither,
+          buf_ptr,
+          image.width,
+          image.height,
+          fmt,
+          SIXEL_LARGE_NORM,
+          SIXEL_REP_CENTER_BOX,
+          SIXEL_QUALITY_HIGH
+        )
+        raise StandardError, "sixel_dither_initialize failed" if res != 0
 
         res = sixel_encode(buf_ptr, image.width, image.height, fmt, dither, output)
         raise StandardError, "sixel_encode failed" if res != 0

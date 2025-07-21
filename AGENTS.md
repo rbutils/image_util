@@ -7,5 +7,6 @@
 - Use RSpec's `should` syntax instead of `expect`.
 - For one-line methods, use the `def name = expression` style.
 - After adding new features or modifying existing ones, change documentation accordingly (especially README and especially CHANGELOG).
+- Don't discuss codec internals or bug fixes in README. Only list supported formats. Document bug fixes in the CHANGELOG, not in README.
 - Specs target at least 80% coverage as enforced by SimpleCov.
 - The library aims to remain lightweight and portable.

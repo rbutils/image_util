@@ -3,7 +3,7 @@
 module ImageUtil
   module Codec
     module ImageMagick
-      SUPPORTED_FORMATS = [:sixel].freeze
+      SUPPORTED_FORMATS = %i[sixel jpeg png].freeze
 
       extend Guard
 
@@ -26,10 +26,13 @@ module ImageUtil
       def encode(format, image)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
-        IO.popen("magick pam:- sixel:-", "r+") do |io|
-          io << Codec::Pam.encode(:pam, image, fill_to: 6)
-          io.close_write
-          io.read
+        fmt = format.to_s.downcase
+        pam = Codec::Pam.encode(:pam, image, fill_to: fmt == 'sixel' ? 6 : nil)
+
+        IO.popen(['magick', 'pam:-', "#{fmt}:-"], 'r+') do |proc_io|
+          proc_io << pam
+          proc_io.close_write
+          proc_io.read
         end
       end
 
@@ -37,12 +40,18 @@ module ImageUtil
         io << encode(format, image)
       end
 
-      def decode(*)
-        raise UnsupportedFormatError, "decode not supported for sixel"
+      def decode(format, data)
+        guard_supported_format!(format, SUPPORTED_FORMATS)
+
+        IO.popen(['magick', "#{format}:-", 'pam:-'], 'r+') do |proc_io|
+          proc_io << data
+          proc_io.close_write
+          Pam.decode(:pam, proc_io.read)
+        end
       end
 
-      def decode_io(*)
-        raise UnsupportedFormatError, "decode not supported for sixel"
+      def decode_io(format, io)
+        decode(format, io.read)
       end
     end
   end

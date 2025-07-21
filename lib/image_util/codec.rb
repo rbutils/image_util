@@ -62,15 +62,17 @@ module ImageUtil
       def find_codec(list, format, preferred = nil)
         fmt = format.to_s.downcase
         if preferred
-          list.each do |r|
-            next unless r[:formats].include?(fmt) && r[:codec].to_s == preferred.to_s
+          r = list.find { |e| e[:formats].include?(fmt) && e[:codec].to_s == preferred.to_s }
+          raise UnsupportedFormatError, "unsupported format #{format}" unless r
 
-            codec = const_get(r[:codec])
-            return codec if !codec.respond_to?(:supported?) || codec.supported?(fmt.to_sym)
-
+          codec = const_get(r[:codec])
+          unless !codec.respond_to?(:supported?) || codec.supported?(fmt.to_sym)
             raise UnsupportedFormatError, "unsupported format #{format}"
           end
+
+          return codec
         end
+
         list.each do |r|
           next unless r[:formats].include?(fmt)
 

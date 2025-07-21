@@ -64,7 +64,7 @@ This library supports generating Sixel with either `libsixel`, `ImageMagick` or 
 - Another `Color` instance
 - Arrays of numeric components (`[r, g, b]` or `[r, g, b, a]`)
 - Numbers (used for all RGB channels)
-- Symbols or strings containing basic color names (`:red`, `'blue'`)
+- Symbols or strings containing CSS color names (`:rebeccapurple`, 'papayawhip')
 - Hex strings like `'#abc'`, `'#aabbcc'` or `'#rrggbbaa'`
 
 When numeric components are given, integers are first clamped to the `0..255`

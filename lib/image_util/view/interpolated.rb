@@ -2,10 +2,9 @@
 
 module ImageUtil
   module View
-    # Has overriden methods: [] and []= that allow subpixel
-    # arguments. This will allow for antialiasing, drawing
-    # graphs, etc.
-    Subpixel = Data.define(:image) do
+    # Allows fractional coordinates by distributing values to
+    # neighbouring pixels using bilinear interpolation.
+    Interpolated = Data.define(:image) do
       def generate_subpixel_hash(location)
         arrays = location.map do |i|
           frac = i % 1

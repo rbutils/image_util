@@ -11,6 +11,7 @@ Features include:
 * Built-in SIXEL encoder that works without ImageMagick.
 * Convenience methods for iterating over pixel locations and setting values.
 * Overlaying colors with the `+` operator which blends using the alpha channel.
+* Alternate pixel views for interpolated or rounded coordinates.
 
 ## Installation
 
@@ -60,7 +61,14 @@ end
 target = ImageUtil::Image.new(8, 8) { ImageUtil::Color[0] }
 source = ImageUtil::Image.new(2, 2) { ImageUtil::Color[255, 0, 0, 128] }
 target.paste!(source, 3, 3, respect_alpha: true)
+
+# draw a diagonal line
+i.draw_line!([0, 0], [3, 3], ImageUtil::Color['red'], view: ImageUtil::View::Rounded)
 ```
+
+`View::Interpolated` provides subpixel access while `View::Rounded` snaps
+coordinates to the nearest pixel. These views are useful for drawing
+operations like the example above.
 
 ### Codecs
 

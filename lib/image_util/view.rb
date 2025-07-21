@@ -2,6 +2,7 @@
 
 module ImageUtil
   module View
-    autoload :Subpixel, "image_util/view/subpixel"
+    autoload :Interpolated, "image_util/view/interpolated"
+    autoload :Rounded, "image_util/view/rounded"
   end
 end

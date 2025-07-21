@@ -3,16 +3,16 @@
 module ImageUtil
   module Filter
     module Resize
-      def resize(new_width, new_height, view: View::Interpolated)
+      def resize(*new_dimensions, view: View::Interpolated)
         src = self.view(view)
 
-        factor_x = new_width == 1 ? 0.0 : (width - 1).to_f / (new_width - 1)
-        factor_y = new_height == 1 ? 0.0 : (height - 1).to_f / (new_height - 1)
+        factors = new_dimensions.zip(dimensions).map do |new_dim, old_dim|
+          new_dim == 1 ? 0.0 : (old_dim - 1).to_f / (new_dim - 1)
+        end
 
-        Image.new(new_width, new_height, color_bits: color_bits, color_length: color_length).tap do |out|
-          out.set_each_pixel_by_location do |x, y|
-            out[x, y] = src[x * factor_x, y * factor_y]
-          end
+        Image.new(*new_dimensions, color_bits: color_bits, color_length: color_length) do |loc|
+          src_loc = loc.zip(factors).map { |coord, factor| coord * factor }
+          src[*src_loc]
         end
       end
     end

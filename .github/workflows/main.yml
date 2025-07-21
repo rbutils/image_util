@@ -28,7 +28,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
-          update: true
+          update: false
           install: >-
             mingw-w64-x86_64-libjpeg-turbo
             mingw-w64-x86_64-libpng

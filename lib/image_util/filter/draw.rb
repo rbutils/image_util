@@ -5,6 +5,7 @@ module ImageUtil
     module Draw
       extend ImageUtil::Filter::Mixin
 
+      # rubocop:disable Metrics/ParameterLists
       def draw_2d_function!(
         color = Color[:black],
         limit = nil,
@@ -37,6 +38,7 @@ module ImageUtil
 
         self
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def draw_segment!(begin_loc, end_loc, color = Color[:black], view: View::Subpixel)
         begin_x, begin_y = begin_loc

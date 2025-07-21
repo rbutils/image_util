@@ -95,6 +95,16 @@ module ImageUtil
 
       def get_string = @buffer.get_string
 
+      def io_buffer = @buffer
+
+      def copy_1d(other, *location)
+        index = offset_of(*location)
+        length = [other.width, width - location.first].min
+        return if length <= 0
+
+        @buffer.copy(other.io_buffer, index, length * pixel_bytes)
+      end
+
       # Optimizations for most common usecases:
       def apply_singleton_optimizations!
         # rubocop:disable Style/GuardClause

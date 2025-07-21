@@ -42,4 +42,14 @@ RSpec.describe ImageUtil::Image::Buffer do
     buf32.set([0,0], [1,2,3])
     buf32.get([0,0]).should == ImageUtil::Color[1,2,3]
   end
+
+  it 'copies a 1d buffer onto another buffer' do
+    dest = described_class.new([3, 1], 8, 3)
+    src = described_class.new([2], 8, 3)
+    src.set([0], [1, 2, 3])
+    src.set([1], [4, 5, 6])
+    dest.copy_1d(src, 1, 0)
+    dest.get([1, 0]).should == ImageUtil::Color[1, 2, 3]
+    dest.get([2, 0]).should == ImageUtil::Color[4, 5, 6]
+  end
 end

@@ -3,6 +3,8 @@
 module ImageUtil
   module Filter
     module Dither
+      extend ImageUtil::Immutable
+
       private
 
       def dither_distance_sq(c1, c2)
@@ -29,7 +31,7 @@ module ImageUtil
         self
       end
 
-      def dither(count) = dup.tap { |i| i.dither!(count) }
+      define_immutable_version :dither
     end
   end
 end

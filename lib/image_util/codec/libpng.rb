@@ -2,9 +2,10 @@
 
 module ImageUtil
   module Codec
-    # rubocop:disable Metrics/ModuleLength
     module Libpng
       SUPPORTED_FORMATS = [:png].freeze
+
+      extend Guard
 
       begin
         require "ffi"
@@ -62,22 +63,11 @@ module ImageUtil
       end
 
       def encode(format, image)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
         raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
 
-        unless image.is_a?(Image)
-          raise ArgumentError, "image must be an ImageUtil::Image"
-        end
-
-        unless image.dimensions.length == 2
-          raise ArgumentError, "only 2D images supported"
-        end
-
-        unless image.color_bits == 8
-          raise ArgumentError, "only 8-bit colors supported"
-        end
+        guard_2d_image!(image)
+        guard_8bit_colors!(image)
 
         fmt = if image.color_length == 4
                 PNG_FORMAT_RGBA
@@ -115,9 +105,7 @@ module ImageUtil
       end
 
       def decode(format, data)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
         raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
 
         img = PngImage.new
@@ -146,6 +134,5 @@ module ImageUtil
         decode(format, io.read)
       end
     end
-    # rubocop:enable Metrics/ModuleLength
   end
 end

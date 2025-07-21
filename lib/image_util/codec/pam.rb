@@ -7,6 +7,8 @@ module ImageUtil
     module Pam
       SUPPORTED_FORMATS = [:pam].freeze
 
+      extend Guard
+
       module_function
 
       def supported?(format = nil)
@@ -16,9 +18,7 @@ module ImageUtil
       end
 
       def encode(format, image, fill_to: nil)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
         unless image.dimensions.length <= 2
           raise ArgumentError, "can't convert to PAM more than 2 dimensions"
         end
@@ -54,17 +54,13 @@ module ImageUtil
       end
 
       def decode(format, data)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
 
         decode_io(format, StringIO.new(data))
       end
 
       def decode_io(format, io)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
 
         header = {}
         while (line = io.gets)

@@ -5,6 +5,8 @@ module ImageUtil
     module ImageMagick
       SUPPORTED_FORMATS = [:sixel].freeze
 
+      extend Guard
+
       module_function
 
       def magick_available?
@@ -22,9 +24,7 @@ module ImageUtil
       end
 
       def encode(format, image)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
 
         IO.popen("magick pam:- sixel:-", "r+") do |io|
           io << Codec::Pam.encode(:pam, image, fill_to: 6)

@@ -5,6 +5,8 @@ module ImageUtil
     module RubySixel
       SUPPORTED_FORMATS = [:sixel].freeze
 
+      extend Guard
+
       module_function
 
       def supported?(format = nil)
@@ -14,16 +16,9 @@ module ImageUtil
       end
 
       def encode(format, image)
-        unless SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
-          raise UnsupportedFormatError, "unsupported format #{format}"
-        end
-        unless image.dimensions.length == 2
-          raise ArgumentError, "only 2D images supported"
-        end
-
-        unless image.color_bits == 8
-          raise ArgumentError, "only 8-bit colors supported"
-        end
+        guard_supported_format!(format, SUPPORTED_FORMATS)
+        guard_2d_image!(image)
+        guard_8bit_colors!(image)
 
         img = if image.unique_color_count <= 256
                 image

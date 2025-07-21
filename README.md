@@ -17,6 +17,25 @@ An optional block receives pixel coordinates and should return something that ca
 img = ImageUtil::Image.new(4, 4) { |x, y| ImageUtil::Color[x * 64, y * 64, 0] }
 ```
 
+## Loading and Saving
+
+Instead of building an image from scratch you can load one with
+`ImageUtil::Image.from_string` or `ImageUtil::Image.from_file`.
+Both helpers understand the built in codecs for `png`, `jpeg` and `pam`
+formats:
+
+```ruby
+img = ImageUtil::Image.from_file("logo.png")
+data = ImageUtil::Image.from_string(File.binread("logo.jpeg"))
+```
+
+The same formats can be written back using `to_string` or `to_file`.
+
+```ruby
+img.to_file("out.png", :png)
+binary = img.to_string(:jpeg)
+```
+
 ## Color Values
 
 `ImageUtil::Color.from` accepts several inputs:
@@ -115,6 +134,13 @@ Images can be previewed in compatible terminals:
 
 ```ruby
 puts img.to_sixel
+```
+
+In `irb` or `pry` the `inspect` method shows the image automatically, so you can
+just evaluate the object:
+
+```ruby
+img
 ```
 
 

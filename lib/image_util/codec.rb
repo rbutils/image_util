@@ -57,6 +57,14 @@ module ImageUtil
         end
       end
 
+      def detect(data)
+        Magic.detect(data)
+      end
+
+      def detect_io(io)
+        Magic.detect_io(io)
+      end
+
       private
 
       def find_codec(list, format, preferred = nil)
@@ -97,6 +105,7 @@ module ImageUtil
     autoload :Pam, "image_util/codec/pam"
     autoload :ImageMagick, "image_util/codec/image_magick"
     autoload :RubySixel, "image_util/codec/ruby_sixel"
+    autoload :Magic, "image_util/codec/magic"
 
     register_codec :Pam, :pam
     register_codec :Libpng, :png

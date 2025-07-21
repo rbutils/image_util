@@ -25,16 +25,34 @@ module ImageUtil
       allocate.tap { |i| i.initialize_from_buffer(...) }
     end
 
-    def self.from_string(data, format, codec: nil, **kwargs)
+    def self.from_string(data, format = nil, codec: nil, **kwargs)
+      format ||= Codec.detect(data)
+      raise ArgumentError, "could not detect format" unless format
       Codec.decode(format, data, codec: codec, **kwargs)
     end
 
-    def self.from_file(path_or_io, format, codec: nil, **kwargs)
-      if path_or_io.respond_to?(:read)
-        Codec.decode_io(format, path_or_io, codec: codec, **kwargs)
+    def self.from_file(path_or_io, format = nil, codec: nil, **kwargs)
+      if format
+        if path_or_io.respond_to?(:read)
+          Codec.decode_io(format, path_or_io, codec: codec, **kwargs)
+        else
+          File.open(path_or_io, "rb") do |io|
+            Codec.decode_io(format, io, codec: codec, **kwargs)
+          end
+        end
       else
-        File.open(path_or_io, "rb") do |io|
-          Codec.decode_io(format, io, codec: codec, **kwargs)
+        if path_or_io.respond_to?(:read)
+          fmt = Codec.detect_io(path_or_io)
+          path_or_io.rewind if path_or_io.respond_to?(:rewind)
+          raise ArgumentError, "could not detect format" unless fmt
+          Codec.decode_io(fmt, path_or_io, codec: codec, **kwargs)
+        else
+          File.open(path_or_io, "rb") do |io|
+            fmt = Codec.detect_io(io)
+            io.rewind
+            raise ArgumentError, "could not detect format" unless fmt
+            Codec.decode_io(fmt, io, codec: codec, **kwargs)
+          end
         end
       end
     end

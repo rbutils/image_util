@@ -104,6 +104,13 @@ RSpec.describe ImageUtil::Image do
     other[0,0].should == ImageUtil::Color[1,2,3,255]
   end
 
+  it 'infers format from string' do
+    img = described_class.new(1,1) { ImageUtil::Color[9,8,7] }
+    str = img.to_string(:pam)
+    other = described_class.from_string(str)
+    other[0,0].should == ImageUtil::Color[9,8,7,255]
+  end
+
   it 'writes to and reads from files' do
     img = described_class.new(1,1) { ImageUtil::Color[4,5,6] }
     Tempfile.create('img') do |f|
@@ -121,6 +128,16 @@ RSpec.describe ImageUtil::Image do
       img.to_file(path, :pam)
       other = described_class.from_file(path, :pam)
       other[0,0].should == ImageUtil::Color[7,8,9,255]
+    end
+  end
+
+  it 'infers format from file' do
+    img = described_class.new(1,1) { ImageUtil::Color[6,5,4] }
+    Tempfile.create('img') do |f|
+      img.to_file(f, :pam)
+      f.rewind
+      other = described_class.from_file(f)
+      other[0,0].should == ImageUtil::Color[6,5,4,255]
     end
   end
 

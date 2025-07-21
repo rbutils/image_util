@@ -12,4 +12,5 @@ module ImageUtil
   autoload :Codec, "image_util/codec"
   autoload :Filter, "image_util/filter"
   autoload :Statistic, "image_util/statistic"
+  autoload :View, "image_util/view"
 end

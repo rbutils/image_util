@@ -136,9 +136,11 @@ module ImageUtil
           @buf.set(location, value)
         end
       else
-        _, locations = location_expand(location)
-        locations.each do |loc|
-          self[*loc] = value
+        sizes, locations = location_expand(location)
+        if value.is_a?(Image)
+          paste!(value.resize(*sizes), *locations.first)
+        else
+          locations.each { |loc| self[*loc] = value }
         end
       end
     end

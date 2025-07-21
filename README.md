@@ -101,6 +101,8 @@ img[2, 2] = :yellow
 img.to_file("pixel_patch.png", :png)
 ```
 
+Assigning an image to a range automatically resizes it to fit before pasting.
+
 Iteration helpers operate on arbitrary ranges and share the same syntax used
 when indexing images.  `each_pixel` yields color objects, while
 `each_pixel_location` yields coordinate arrays.  `set_each_pixel_by_location`

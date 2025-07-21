@@ -65,6 +65,14 @@ RSpec.describe ImageUtil::Image do
     base[2,2].should == ImageUtil::Color[1]
   end
 
+  it 'resizes images when assigning to ranges' do
+    base = described_class.new(3,3) { ImageUtil::Color[0] }
+    other = described_class.new(1,1) { ImageUtil::Color[5] }
+    base[1..2, 1..2] = other
+    base[1,1].should == ImageUtil::Color[5]
+    base[2,2].should == ImageUtil::Color[5]
+  end
+
   it 'handles each_pixel_location' do
     img = described_class.new(2,2) { ImageUtil::Color[0] }
     locs = []

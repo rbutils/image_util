@@ -1,6 +1,7 @@
 ## [Unreleased]
 - Support for all CSS color names
 - Range assignments with images now resize the image before pasting
+- Circle drawing filter
 
 ## [0.1.0] - 2025-07-21
 

@@ -26,18 +26,18 @@ module ImageUtil
     end
 
     def detect_io(io)
-      begin
-        pos = io.pos
-        data = io.read(BYTES_NEEDED)
-        io.seek(pos)
-        [detect(data), io]
-      rescue Errno::ESPIPE, IOError
-        data = io.read(BYTES_NEEDED)
-        fmt = detect(data)
-        rest = io.read
-        new_io = StringIO.new((data || "") + (rest || ""))
-        [fmt, new_io]
-      end
+      
+      pos = io.pos
+      data = io.read(BYTES_NEEDED)
+      io.seek(pos)
+      [detect(data), io]
+    rescue Errno::ESPIPE, IOError
+      data = io.read(BYTES_NEEDED)
+      fmt = detect(data)
+      rest = io.read
+      new_io = StringIO.new((data || "") + (rest || ""))
+      [fmt, new_io]
+      
     end
   end
 end

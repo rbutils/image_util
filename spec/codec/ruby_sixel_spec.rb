@@ -22,4 +22,11 @@ RSpec.describe ImageUtil::Codec::RubySixel do
     ->{ described_class.decode(:sixel, '') }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
     ->{ described_class.decode_io(:sixel, StringIO.new) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
   end
+
+  it 'dithers images with many colors' do
+    img = ImageUtil::Image.new(300, 1) { |x, _| ImageUtil::Color[x % 256, x / 256, 0] }
+    data = described_class.encode(:sixel, img)
+    data.start_with?("\ePq").should be true
+    data.end_with?("\e\\").should be true
+  end
 end

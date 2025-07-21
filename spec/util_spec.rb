@@ -10,7 +10,9 @@ RSpec.describe ImageUtil::Util do
     fake_ctx = Struct.new(:echo_on_assignment).new(false)
     fake_irb = Module.new do
       define_singleton_method(:conf) { fake_conf }
+      # rubocop:disable Naming/MethodName
       define_singleton_method(:CurrentContext) { fake_ctx }
+      # rubocop:enable Naming/MethodName
     end
     stub_const('IRB', fake_irb)
 

@@ -30,6 +30,8 @@ module ImageUtil
         @io_buffer_types = ([@color_type]*@color_length).freeze
 
         @buffer = buffer || IO::Buffer.new(@buffer_size)
+
+        freeze
       end
 
       attr_reader :dimensions, :color_bits, :color_bytes, :color_length

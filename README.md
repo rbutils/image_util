@@ -36,9 +36,30 @@ img.to_file("out.png", :png)
 binary = img.to_string(:jpeg)
 ```
 
+## SIXEL Output
+
+Images can be previewed in compatible terminals:
+
+```ruby
+puts img.to_sixel
+```
+
+In `irb` or `pry` the `inspect` method shows the image automatically, so you can
+just evaluate the object:
+
+```ruby
+img
+```
+
+Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how it looks in Konsole:
+
+![Sixel example](docs/samples/sixel.png)
+
+This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of the earlier system packages.
+
 ## Color Values
 
-`ImageUtil::Color.from` accepts several inputs:
+`ImageUtil::Color.from` (also known as `ImageUtil::Color.[]`) accepts several inputs:
 
 - Another `Color` instance
 - Arrays of numeric components (`[r, g, b]` or `[r, g, b, a]`)
@@ -51,7 +72,13 @@ range. Float values are treated as fractions of 255, so `0.5` becomes `127.5`
 and `1.0` becomes `255`. After scaling, values are again clamped to this range.
 If the alpha channel is omitted it defaults to `255`.
 
-Note that whenever the library expects a color, it may be given in any form accepted by this function (also available as `ImageUtil::Color[]`).
+```ruby
+ImageUtil::Color[0.5] # => #808080
+ImageUtil::Color[:red] # => #ff0000
+ImageUtil::Color["#fc0"] # => #ffcc00
+```
+
+Note that whenever the library expects a color, it may be given in any form accepted by this function.
 
 ## Pixel Access
 
@@ -77,7 +104,7 @@ img.to_file("pixel_patch.png", :png)
 Iteration helpers operate on arbitrary ranges and share the same syntax used
 when indexing images.  `each_pixel` yields color objects, while
 `each_pixel_location` yields coordinate arrays.  `set_each_pixel_by_location`
-assigns the value returned by the block to every location.
+assigns the value returned by the block to every location (unless `nil` is returned).
 
 ```ruby
 # fill a checkerboard pattern
@@ -89,6 +116,8 @@ end
 # count how many black pixels were set
 black = img.each_pixel.count { |c| c == :black }
 ```
+
+Note that instead of manually calling `set_each_pixel_by_location`, you can just pass a block to `ImageUtil::Image.new`.
 
 ## Filters
 
@@ -136,8 +165,9 @@ img.draw_line!([0, 127], [127, 0], :lime)
 Scale an image to new dimensions.
 
 ```ruby
-i = ImageUtil::Image.new(256, 256) { |x, y| [x, y, 30] }
-i[70, 70] = i.resize(64, 64); i
+img = ImageUtil::Image.new(256, 256) { |x, y| [x, y, 30] }
+img[70, 70] = img.resize(64, 64)
+img
 ```
 
 ![Resize example](docs/samples/resize.png)
@@ -152,22 +182,6 @@ img.dither(8)
 ```
 
 ![Dither example](docs/samples/dither.png)
-
-## SIXEL Output
-
-Images can be previewed in compatible terminals:
-
-```ruby
-puts img.to_sixel
-```
-
-In `irb` or `pry` the `inspect` method shows the image automatically, so you can
-just evaluate the object:
-
-```ruby
-img
-```
-
 
 ## Development
 

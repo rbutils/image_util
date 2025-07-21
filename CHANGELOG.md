@@ -1,5 +1,8 @@
 ## [Unreleased]
-### Added
+
+## [0.1.0] - 2025-07-21
+
+- Initial release
 - Drop support for Ruby 3.1
 - Native SIXEL encoder
 - Background filter
@@ -12,7 +15,3 @@
 - Paste and Draw filters for compositing and drawing
 - Rounded and interpolated pixel views
 - `Image#view` helper for custom access
-
-## [0.1.0] - 2025-07-19
-
-- Initial release

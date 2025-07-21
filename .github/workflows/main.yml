@@ -24,15 +24,29 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Install native libraries (Windows)
+      - name: Install MSYS2 and dependencies
         if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
+          msystem: MINGW64
+          path-type: inherit
           update: false
           install: >-
+            git
+            base-devel
+            mingw-w64-x86_64-meson
+            mingw-w64-x86_64-ninja
             mingw-w64-x86_64-libjpeg-turbo
             mingw-w64-x86_64-libpng
-            mingw-w64-x86_64-libsixel
+      - name: Build and install libsixel
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: |
+          git clone --depth 1 https://github.com/libsixel/libsixel
+          cd libsixel
+          meson setup build --prefix=/mingw64
+          meson compile -C build
+          meson install -C build
       - name: Install native libraries (Linux)
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y libturbojpeg libsixel1
@@ -40,6 +54,11 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libsixel
       - name: Run the default task
+        if: runner.os == 'Windows'
+        run: bundle exec rake
+        shell: msys2 {0}
+      - name: Run the default task
+        if: runner.os != 'Windows'
         run: bundle exec rake
         shell: bash
 

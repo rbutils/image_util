@@ -37,6 +37,7 @@ module ImageUtil
     def self.from_file(path_or_io, format = nil, codec: nil, **kwargs)
       if format
         if path_or_io.respond_to?(:read)
+          path_or_io.binmode if path_or_io.respond_to?(:binmode)
           Codec.decode_io(format, path_or_io, codec: codec, **kwargs)
         else
           File.open(path_or_io, "rb") do |io|
@@ -44,6 +45,7 @@ module ImageUtil
           end
         end
       elsif path_or_io.respond_to?(:read)
+        path_or_io.binmode if path_or_io.respond_to?(:binmode)
         fmt, io = Magic.detect_io(path_or_io)
         raise ArgumentError, "could not detect format" unless fmt
 
@@ -183,6 +185,7 @@ module ImageUtil
 
     def to_file(path_or_io, format, codec: nil, **kwargs)
       if path_or_io.respond_to?(:write)
+        path_or_io.binmode if path_or_io.respond_to?(:binmode)
         Codec.encode_io(format, self, path_or_io, codec: codec, **kwargs)
       else
         File.open(path_or_io, "wb") do |io|

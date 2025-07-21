@@ -4,6 +4,7 @@ module ImageUtil
   module Codec
     module RubySixel
       SUPPORTED_FORMATS = [:sixel].freeze
+      CHAR_MAP = (0..63).map { |b| (63 + b).chr }.freeze
 
       extend Guard
 
@@ -31,9 +32,10 @@ module ImageUtil
 
         palette = []
         palette_map = {}
-        idx_image = Array.new(height) { Array.new(width) }
+        idx_image = Array.new(height * width)
 
         height.times do |y|
+          row = y * width
           width.times do |x|
             color = img[x, y]
             key = color.to_a
@@ -43,7 +45,7 @@ module ImageUtil
               palette_map[key] = idx
               palette << color
             end
-            idx_image[y][x] = idx
+            idx_image[row + x] = idx
           end
         end
 
@@ -57,13 +59,19 @@ module ImageUtil
             out << "##{idx}"
             run_char = nil
             run_len = 0
-            (0...width).each do |x|
+            x = 0
+            while x < width
               bits = 0
-              6.times do |i|
-                yy = y + i
-                bits |= 1 << i if yy < height && idx_image[yy][x] == idx
+              yy = y
+              i = 0
+              while i < 6
+                if yy < height && idx_image[yy * width + x] == idx
+                  bits |= 1 << i
+                end
+                yy += 1
+                i += 1
               end
-              char = (63 + bits).chr
+              char = CHAR_MAP[bits]
               if char == run_char
                 run_len += 1
               else
@@ -72,6 +80,7 @@ module ImageUtil
                 run_char = char
                 run_len = 1
               end
+              x += 1
             end
             out << "!#{run_len}" << run_char if run_len > 1
             out << run_char if run_len == 1

@@ -44,9 +44,29 @@ module ImageUtil
       def dither!(count)
         palette = histogram.sort_by { |_, v| -v - rand }.first(count).map(&:first)
 
+        cache = {}
+
+        nearest = lambda do |color|
+          cache[color] ||= begin
+            best = palette.first
+            best_dist = dither_distance_sq(color, best)
+            idx = 1
+            while idx < palette.length
+              c = palette[idx]
+              dist = dither_distance_sq(color, c)
+              if dist < best_dist
+                best = c
+                best_dist = dist
+              end
+              idx += 1
+            end
+            best
+          end
+        end
+
         set_each_pixel_by_location do |loc|
           color = self[*loc]
-          palette.min_by { |p| dither_distance_sq(color, p) }
+          nearest.call(color)
         end
         self
       end

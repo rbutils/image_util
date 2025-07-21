@@ -57,6 +57,14 @@ module ImageUtil
         end
       end
 
+      def detect(data)
+        Magic.detect(data)
+      end
+
+      def detect_io(io)
+        Magic.detect_io(io).first
+      end
+
       private
 
       def find_codec(list, format, preferred = nil)

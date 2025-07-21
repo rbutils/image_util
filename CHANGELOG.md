@@ -4,6 +4,7 @@
 - Native SIXEL encoder
 - Install libjpeg-turbo on Linux in CI
 - Background filter
+- Format auto-detection using magic numbers
 - Faster 1D paste using direct buffer copy
 
 ## [0.1.0] - 2025-07-19

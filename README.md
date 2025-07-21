@@ -11,6 +11,7 @@ Features include:
 * Built-in SIXEL encoder that works without ImageMagick.
 * Convenience methods for iterating over pixel locations and setting values.
 * Overlaying colors with the `+` operator which blends using the alpha channel.
+* Automatic format detection when reading images from strings or files.
 * Alternate pixel views for interpolated or rounded coordinates.
 
 ## Installation

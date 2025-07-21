@@ -14,9 +14,9 @@ RSpec.describe ImageUtil::Statistic::Color do
 
   it 'returns unique colors' do
     image.unique_colors.should match_array([
-      ImageUtil::Color[0, 0, 0, 255],
-      ImageUtil::Color[1, 0, 0, 255]
-    ])
+                                             ImageUtil::Color[0, 0, 0, 255],
+                                             ImageUtil::Color[1, 0, 0, 255]
+                                           ])
   end
 
   it 'counts unique colors' do

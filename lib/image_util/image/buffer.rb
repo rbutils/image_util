@@ -31,6 +31,8 @@ module ImageUtil
 
         @buffer = buffer || IO::Buffer.new(@buffer_size)
 
+        apply_singleton_optimizations!
+
         freeze
       end
 
@@ -92,6 +94,30 @@ module ImageUtil
       end
 
       def get_string = @buffer.get_string
+
+      # Optimizations for most common usecases:
+      def apply_singleton_optimizations!
+        # rubocop:disable Style/GuardClause
+        if OPT_OFFSET_OF.key?(@dimensions.length)
+          singleton_class.define_method(:offset_of, &OPT_OFFSET_OF[@dimensions.length])
+        end
+
+        if OPT_GET_INDEX.key?(@color_bits)
+          singleton_class.define_method(:get_index, &OPT_GET_INDEX[@color_bits])
+        end
+        # rubocop:enable Style/GuardClause
+      end
+
+      def width = dimensions[0]
+
+      OPT_OFFSET_OF = {
+        1 => ->(x) { x * pixel_bytes },
+        2 => ->(x,y) { (y * width + x) * pixel_bytes }
+      }.freeze
+
+      OPT_GET_INDEX = {
+        8 => ->(index) { Color.new(*@buffer.get_values(@io_buffer_types, index)) }
+      }.freeze
     end
   end
 end

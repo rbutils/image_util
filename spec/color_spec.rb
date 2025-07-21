@@ -44,6 +44,11 @@ RSpec.describe ImageUtil::Color do
     ImageUtil::Color[:blue].should == ImageUtil::Color[0,0,255]
   end
 
+  it 'converts CSS color names' do
+    ImageUtil::Color['papayawhip'].should == ImageUtil::Color[255,239,213]
+    ImageUtil::Color[:rebeccapurple].should == ImageUtil::Color[102,51,153]
+  end
+
   it 'clamps negative numbers' do
     ImageUtil::Color.from(-5).should == ImageUtil::Color[0,0,0]
   end

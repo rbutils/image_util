@@ -51,13 +51,13 @@ module ImageUtil
           begin_x, end_x, begin_y, end_y = end_x, begin_x, end_y, begin_y if begin_y > end_y
           a = (end_x - begin_x).to_f / (end_y - begin_y)
           draw_function!(color, begin_y..end_y, axis: :y, view: view) do |y|
-            begin_x + y * a
+            begin_x + (y - begin_y) * a
           end
         else
           begin_x, end_x, begin_y, end_y = end_x, begin_x, end_y, begin_y if begin_x > end_x
           a = (end_y - begin_y).to_f / (end_x - begin_x)
           draw_function!(color, begin_x..end_x, axis: :x, view: view) do |x|
-            begin_y + x * a
+            begin_y + (x - begin_x) * a
           end
         end
       end

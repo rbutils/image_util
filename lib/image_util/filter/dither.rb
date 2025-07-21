@@ -20,7 +20,7 @@ module ImageUtil
       public
 
       def dither!(count)
-        palette = histogram.sort_by { |_, v| -v }.first(count).map(&:first)
+        palette = histogram.sort_by { |_, v| -v - rand }.first(count).map(&:first)
 
         set_each_pixel_by_location do |loc|
           color = self[*loc]

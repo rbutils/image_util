@@ -158,6 +158,7 @@ Draw simple shapes directly on the image.
 img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
 img.draw_line!([0, 0], [127, 127], :red)
 img.draw_line!([0, 127], [127, 0], :lime)
+img.draw_circle!([64, 64], 30, :blue)
 ```
 
 ![Draw example](docs/samples/draw.png)

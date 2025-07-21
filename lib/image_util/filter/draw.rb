@@ -62,7 +62,29 @@ module ImageUtil
         end
       end
 
-      define_immutable_version :draw_function, :draw_line
+      def draw_circle!(center, radius, color = Color[:black], view: View::Interpolated)
+        fp = self.view(view)
+        cx, cy = center
+        min_x = (cx - radius).ceil
+        max_x = (cx + radius).floor
+        min_x.upto(max_x) do |x|
+          dy = Math.sqrt(radius * radius - (x - cx)**2)
+          fp[x, cy + dy] = color
+          fp[x, cy - dy] = color
+        end
+
+        min_y = (cy - radius).ceil
+        max_y = (cy + radius).floor
+        min_y.upto(max_y) do |y|
+          dx = Math.sqrt(radius * radius - (y - cy)**2)
+          fp[cx + dx, y] = color
+          fp[cx - dx, y] = color
+        end
+
+        self
+      end
+
+      define_immutable_version :draw_function, :draw_line, :draw_circle
 
       private
 

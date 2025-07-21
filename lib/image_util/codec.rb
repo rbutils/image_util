@@ -29,18 +29,18 @@ module ImageUtil
           decoders.any? { |r| r[:formats].include?(fmt) && codec_supported?(r[:codec], fmt) }
       end
 
-      def encode(format, image, **kwargs)
-        codec = find_codec(encoders, format)
+      def encode(format, image, codec: nil, **kwargs)
+        codec = find_codec(encoders, format, codec)
         codec.encode(format, image, **kwargs)
       end
 
-      def decode(format, data, **kwargs)
-        codec = find_codec(decoders, format)
+      def decode(format, data, codec: nil, **kwargs)
+        codec = find_codec(decoders, format, codec)
         codec.decode(format, data, **kwargs)
       end
 
-      def encode_io(format, image, io, **kwargs)
-        codec = find_codec(encoders, format)
+      def encode_io(format, image, io, codec: nil, **kwargs)
+        codec = find_codec(encoders, format, codec)
         if codec.respond_to?(:encode_io)
           codec.encode_io(format, image, io, **kwargs)
         else
@@ -48,8 +48,8 @@ module ImageUtil
         end
       end
 
-      def decode_io(format, io, **kwargs)
-        codec = find_codec(decoders, format)
+      def decode_io(format, io, codec: nil, **kwargs)
+        codec = find_codec(decoders, format, codec)
         if codec.respond_to?(:decode_io)
           codec.decode_io(format, io, **kwargs)
         else
@@ -59,8 +59,18 @@ module ImageUtil
 
       private
 
-      def find_codec(list, format)
+      def find_codec(list, format, preferred = nil)
         fmt = format.to_s.downcase
+        if preferred
+          list.each do |r|
+            next unless r[:formats].include?(fmt) && r[:codec].to_s == preferred.to_s
+
+            codec = const_get(r[:codec])
+            return codec if !codec.respond_to?(:supported?) || codec.supported?(fmt.to_sym)
+
+            raise UnsupportedFormatError, "unsupported format #{format}"
+          end
+        end
         list.each do |r|
           next unless r[:formats].include?(fmt)
 

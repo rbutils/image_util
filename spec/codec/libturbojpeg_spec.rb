@@ -20,31 +20,34 @@ RSpec.describe ImageUtil::Codec::Libturbojpeg do
   context 'with stubbed FFI' do
     before do
       stub_const("#{described_class.name}::AVAILABLE", true)
-      # rubocop:disable Naming/MethodName
-      described_class.define_singleton_method(:tjInitCompress) { FFI::Pointer.new(1) }
-      described_class.define_singleton_method(:tjInitDecompress) { FFI::Pointer.new(1) }
-      described_class.define_singleton_method(:tjDestroy) { |_ptr| }
-      described_class.define_singleton_method(:tjFree) { |_ptr| }
-      # rubocop:disable Metrics/ParameterLists
-      described_class.define_singleton_method(:tjCompress2) do |_handle, _src, _w, _pitch, _h, _fmt, ptrptr, sizeptr, *_|
+      allow(described_class).to receive(:tjInitCompress).and_return(FFI::Pointer.new(1))
+      allow(described_class).to receive(:tjInitDecompress).and_return(FFI::Pointer.new(1))
+      allow(described_class).to receive(:tjDestroy)
+      allow(described_class).to receive(:tjFree)
+      allow(described_class).to receive(:tjCompress2) do |*args|
+        ptrptr = args[6]
+        sizeptr = args[7]
         jpeg = 'JPEG'
         mem = FFI::MemoryPointer.from_string(jpeg)
         ptrptr.write_pointer(mem)
         sizeptr.write_ulong(jpeg.bytesize)
         0
       end
-      described_class.define_singleton_method(:tjDecompressHeader3) do |_h, _buf, _size, wptr, hptr, *_|
+      allow(described_class).to receive(:tjDecompressHeader3) do |*args|
+        wptr = args[3]
+        hptr = args[4]
         wptr.write_int(1)
         hptr.write_int(1)
         0
       end
-      described_class.define_singleton_method(:tjDecompress2) do |_h, _buf, _size, dst, w, _p, h, _fmt, _|
+      allow(described_class).to receive(:tjDecompress2) do |*args|
+        dst = args[3]
+        w = args[4]
+        h = args[6]
         dst.put_bytes(0, "\x00" * w * h * 4)
         0
       end
-      described_class.const_set(:DECOMPRESS_HEADER_FUNC, :tjDecompressHeader3)
-      # rubocop:enable Metrics/ParameterLists
-      # rubocop:enable Naming/MethodName
+      stub_const("#{described_class.name}::DECOMPRESS_HEADER_FUNC", :tjDecompressHeader3)
     end
 
     it 'encodes and decodes a JPEG image' do

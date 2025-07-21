@@ -26,14 +26,25 @@ module ImageUtil
                 image.dither(256)
               end
 
+        height = img.height || 1
+        width = img.width || 1
+
         palette = []
         palette_map = {}
-        img.each_pixel do |color|
-          key = color.to_a
-          next if palette_map.key?(key)
+        idx_image = Array.new(height) { Array.new(width) }
 
-          palette_map[key] = palette.length
-          palette << color
+        height.times do |y|
+          width.times do |x|
+            color = img[x, y]
+            key = color.to_a
+            idx = palette_map[key]
+            unless idx
+              idx = palette.length
+              palette_map[key] = idx
+              palette << color
+            end
+            idx_image[y][x] = idx
+          end
         end
 
         out = "\ePq".dup
@@ -41,11 +52,8 @@ module ImageUtil
           out << format("#%d;2;%d;%d;%d", idx, c.r * 100 / 255, c.g * 100 / 255, c.b * 100 / 255)
         end
 
-        height = img.height || 1
-        width = img.width || 1
-
         (0...height).step(6) do |y|
-          palette.each_with_index do |_c, idx|
+          palette.each_index do |idx|
             out << "##{idx}"
             run_char = nil
             run_len = 0
@@ -53,9 +61,7 @@ module ImageUtil
               bits = 0
               6.times do |i|
                 yy = y + i
-                if yy < height && palette_map[img[x, yy].to_a] == idx
-                  bits |= 1 << i
-                end
+                bits |= 1 << i if yy < height && idx_image[yy][x] == idx
               end
               char = (63 + bits).chr
               if char == run_char

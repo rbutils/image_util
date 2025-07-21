@@ -6,11 +6,11 @@ module ImageUtil
       SUPPORTED_FORMATS = [:sixel].freeze
 
       # https://github.com/libsixel/libsixel
-      SIXEL_BUILTIN_XTERM256 = 3
       SIXEL_PALETTE_MAX = 256
-      SIXEL_LARGE_NORM = 1
-      SIXEL_REP_CENTER_BOX = 1
-      SIXEL_QUALITY_HIGH = 1
+      SIXEL_LARGE_AUTO = 0
+      SIXEL_REP_AUTO = 0
+      SIXEL_QUALITY_AUTO = 0
+      SIXEL_DIFFUSE_AUTO = 0
       SIXEL_PIXELFORMAT_RGB888   = 3
       SIXEL_PIXELFORMAT_RGBA8888 = 0x11
 
@@ -33,6 +33,7 @@ module ImageUtil
         attach_function :sixel_output_unref, [:pointer], :void
         attach_function :sixel_dither_new, %i[pointer int pointer], :int
         attach_function :sixel_dither_initialize, %i[pointer pointer int int int int int int], :int
+        attach_function :sixel_dither_set_diffusion_type, %i[pointer int], :void
         attach_function :sixel_dither_unref, [:pointer], :void
         attach_function :sixel_encode, %i[pointer int int int pointer pointer], :int
 
@@ -73,7 +74,7 @@ module ImageUtil
         output = out_ptr.read_pointer
 
         dither_ptr = FFI::MemoryPointer.new(:pointer)
-        res = sixel_dither_new(dither_ptr, SIXEL_PALETTE_MAX, nil)
+        res = sixel_dither_new(dither_ptr, -1, nil)
         raise StandardError, "sixel_dither_new failed" if res != 0
 
         dither = dither_ptr.read_pointer
@@ -88,11 +89,13 @@ module ImageUtil
           image.width,
           image.height,
           fmt,
-          SIXEL_LARGE_NORM,
-          SIXEL_REP_CENTER_BOX,
-          SIXEL_QUALITY_HIGH
+          SIXEL_LARGE_AUTO,
+          SIXEL_REP_AUTO,
+          SIXEL_QUALITY_AUTO
         )
         raise StandardError, "sixel_dither_initialize failed" if res != 0
+
+        sixel_dither_set_diffusion_type(dither, SIXEL_DIFFUSE_AUTO)
 
         res = sixel_encode(buf_ptr, image.width, image.height, fmt, dither, output)
         raise StandardError, "sixel_encode failed" if res != 0

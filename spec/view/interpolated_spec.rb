@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'image_util/view'
 
-RSpec.describe ImageUtil::View::Subpixel do
+RSpec.describe ImageUtil::View::Interpolated do
   let(:image) { ImageUtil::Image.new(2, 2) { |x,y| ImageUtil::Color[x, y, 0] } }
   let(:view) { described_class.new(image) }
 

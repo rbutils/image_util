@@ -8,6 +8,24 @@ module ImageUtil
       def paste!(image, *location, respect_alpha: false)
         raise TypeError, "image must be an Image" unless image.is_a?(Image)
 
+        if !respect_alpha &&
+           image.dimensions.length == 1 &&
+           image.color_bits == color_bits &&
+           image.color_length == color_length &&
+           buffer.respond_to?(:copy_1d)
+          loc = location.map(&:to_i)
+          begin
+            check_bounds!(loc)
+          rescue IndexError
+            return self
+          end
+
+          if loc.first + image.length <= width
+            buffer.copy_1d(image.buffer, *loc)
+            return self
+          end
+        end
+
         last_dim = image.dimensions.length - 1
 
         image.each_with_index do |val, idx|

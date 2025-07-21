@@ -5,12 +5,13 @@ module ImageUtil
     module Draw
       extend ImageUtil::Filter::Mixin
 
-      def draw_2d_function!(
+      # rubocop:disable Metrics/ParameterLists
+      def draw_function!(
         color = Color[:black],
         limit = nil,
         axis:,
         draw_axis: nil,
-        view: View::Subpixel,
+        view: View::Interpolated,
         plane: [0,0]
       )
         fp = self.view(view)
@@ -37,8 +38,9 @@ module ImageUtil
 
         self
       end
+      # rubocop:enable Metrics/ParameterLists
 
-      def draw_segment!(begin_loc, end_loc, color = Color[:black], view: View::Subpixel)
+      def draw_line!(begin_loc, end_loc, color = Color[:black], view: View::Interpolated)
         begin_x, begin_y = begin_loc
         end_x, end_y = end_loc
 
@@ -48,19 +50,19 @@ module ImageUtil
         if dist_x < dist_y
           begin_x, end_x, begin_y, end_y = end_x, begin_x, end_y, begin_y if begin_y > end_y
           a = (end_x - begin_x).to_f / (end_y - begin_y)
-          draw_2d_function!(color, begin_y..end_y, axis: :y, view: view) do |y|
+          draw_function!(color, begin_y..end_y, axis: :y, view: view) do |y|
             begin_x + y * a
           end
         else
           begin_x, end_x, begin_y, end_y = end_x, begin_x, end_y, begin_y if begin_x > end_x
           a = (end_y - begin_y).to_f / (end_x - begin_x)
-          draw_2d_function!(color, begin_x..end_x, axis: :x, view: view) do |x|
+          draw_function!(color, begin_x..end_x, axis: :x, view: view) do |x|
             begin_y + x * a
           end
         end
       end
 
-      define_immutable_version :draw_function, :draw_segment
+      define_immutable_version :draw_function, :draw_line
 
       private
 

@@ -99,17 +99,17 @@ RSpec.describe ImageUtil::Image do
 
   it 'converts to string and back' do
     img = described_class.new(1,1) { ImageUtil::Color[1,2,3] }
-    str = img.to_string(format: :pam)
-    other = described_class.from_string(str, format: :pam)
+    str = img.to_string(:pam)
+    other = described_class.from_string(str, :pam)
     other[0,0].should == ImageUtil::Color[1,2,3,255]
   end
 
   it 'writes to and reads from files' do
     img = described_class.new(1,1) { ImageUtil::Color[4,5,6] }
     Tempfile.create('img') do |f|
-      img.to_file(f, format: :pam)
+      img.to_file(f, :pam)
       f.rewind
-      other = described_class.from_file(f, format: :pam)
+      other = described_class.from_file(f, :pam)
       other[0,0].should == ImageUtil::Color[4,5,6,255]
     end
   end
@@ -118,19 +118,19 @@ RSpec.describe ImageUtil::Image do
     img = described_class.new(1,1) { ImageUtil::Color[7,8,9] }
     Dir.mktmpdir do |dir|
       path = File.join(dir, 'tmp.pam')
-      img.to_file(path, format: :pam)
-      other = described_class.from_file(path, format: :pam)
+      img.to_file(path, :pam)
+      other = described_class.from_file(path, :pam)
       other[0,0].should == ImageUtil::Color[7,8,9,255]
     end
   end
 
   it 'respects preferred codec' do
     img = described_class.new(1,1)
-    img.to_string(format: :pam, codec: :Pam).lines.first.chomp.should == 'P7'
+    img.to_string(:pam, codec: :Pam).lines.first.chomp.should == 'P7'
   end
 
-  it 'falls back when preferred codec does not match' do
+  it 'raises when preferred codec is unsuitable' do
     img = described_class.new(1,1)
-    img.to_string(format: :pam, codec: :RubySixel).lines.first.chomp.should == 'P7'
+    -> { img.to_string(:pam, codec: :RubySixel) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
   end
 end

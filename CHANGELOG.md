@@ -1,5 +1,6 @@
 ## [Unreleased]
 - Support for all CSS color names
+- Range assignments with images now resize the image before pasting
 
 ## [0.1.0] - 2025-07-21
 

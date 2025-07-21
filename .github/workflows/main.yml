@@ -24,29 +24,18 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Set up MSYS2
+      - name: Install native libraries (Windows)
         if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          path-type: inherit
-          update: false
-          install: >-
-            mingw-w64-x86_64-libjpeg-turbo
-            mingw-w64-x86_64-libpng
-            mingw-w64-x86_64-libsixel
+        run: |
+          choco install --no-progress -y libpng
+          choco install --no-progress -y libjpeg-turbo
+        shell: powershell
       - name: Install native libraries (Linux)
         if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libjpeg-turbo8 libpng16-16 libsixel1
+        run: sudo apt-get update && sudo apt-get install -y libturbojpeg libsixel1
       - name: Install native libraries (macOS)
         if: runner.os == 'macOS'
         run: brew install libsixel libjpeg-turbo libpng
-      - name: Run the default task (Windows)
-        if: runner.os == 'Windows'
-        run: bundle exec rake
-        shell: msys2 {0}
       - name: Run the default task
         run: bundle exec rake
         shell: bash

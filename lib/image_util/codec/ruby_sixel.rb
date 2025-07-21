@@ -33,19 +33,26 @@ module ImageUtil
         palette = []
         palette_map = {}
         idx_image = Array.new(height * width)
+        buf = img.buffer
+        idx = 0
+        step = buf.pixel_bytes
 
         height.times do |y|
           row = y * width
           width.times do |x|
-            color = img[x, y]
-            key = color.to_a
-            idx = palette_map[key]
-            unless idx
-              idx = palette.length
-              palette_map[key] = idx
+            color = buf.get_index(idx)
+            key = (color[0] || 255) |
+                  ((color[1] || 255) << 8) |
+                  ((color[2] || 255) << 16) |
+                  ((color[3] || 255) << 24)
+            pal_idx = palette_map[key]
+            unless pal_idx
+              pal_idx = palette.length
+              palette_map[key] = pal_idx
               palette << color
             end
-            idx_image[row + x] = idx
+            idx_image[row + x] = pal_idx
+            idx += step
           end
         end
 

@@ -56,7 +56,7 @@ module ImageUtil
           end
         end
 
-        out = "\ePq".dup
+        out = "\ePq\"1;1;#{width};#{height}".dup
         palette.each_with_index do |c, idx|
           out << format("#%d;2;%d;%d;%d", idx, c.r * 100 / 255, c.g * 100 / 255, c.b * 100 / 255)
         end

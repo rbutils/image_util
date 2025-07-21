@@ -55,6 +55,7 @@ Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XT
 
 ![Sixel example](docs/samples/sixel.png)
 
+
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of the earlier system packages.
 
 ## Color Values

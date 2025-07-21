@@ -74,10 +74,20 @@ img[2, 2] = :yellow
 img.to_file("pixel_patch.png", :png)
 ```
 
-Iteration helpers operate on arbitrary ranges:
+Iteration helpers operate on arbitrary ranges and share the same syntax used
+when indexing images.  `each_pixel` yields color objects, while
+`each_pixel_location` yields coordinate arrays.  `set_each_pixel_by_location`
+assigns the value returned by the block to every location.
 
 ```ruby
-img.each_pixel { |pixel| puts pixel.inspect }
+# fill a checkerboard pattern
+img = ImageUtil::Image.new(8, 8) { :white }
+img.set_each_pixel_by_location do |x, y|
+  :black if (x + y).odd?
+end
+
+# count how many black pixels were set
+black = img.each_pixel.count { |c| c == :black }
 ```
 
 ## Filters

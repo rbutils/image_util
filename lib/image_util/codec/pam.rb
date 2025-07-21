@@ -41,7 +41,7 @@ module ImageUtil
           WIDTH #{image.width}
           HEIGHT #{fill_height}
           DEPTH #{image.color_length}
-          MAXVAL #{image.color_bits**2 - 1}
+          MAXVAL #{2**image.color_bits - 1}
           TUPLTYPE #{image.color_length == 3 ? "RGB" : "RGB_ALPHA"}
           ENDHDR
         PAM

@@ -55,6 +55,11 @@ i[0..1, 0..1] = ImageUtil::Color['#0000ff']
 i.each_pixel do |pixel|
   # pixel is an ImageUtil::Color instance
 end
+
+# paste one image into another
+target = ImageUtil::Image.new(8, 8) { ImageUtil::Color[0] }
+source = ImageUtil::Image.new(2, 2) { ImageUtil::Color[255, 0, 0, 128] }
+target.paste!(source, 3, 3, respect_alpha: true)
 ```
 
 ### Codecs

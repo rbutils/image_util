@@ -5,6 +5,8 @@ module ImageUtil
     autoload :Buffer, "image_util/image/buffer"
     autoload :PixelView, "image_util/image/pixel_view"
 
+    Util.irb_fixup
+
     ALL = nil..nil
 
     def initialize(*dimensions, color_bits: 8, color_length: 4, &block)
@@ -195,11 +197,9 @@ module ImageUtil
     alias inspect to_sixel
     
     def pretty_print(p)
-      Util.unlock_irb(p) do
-        p.flush
-        p.output << to_sixel
-        p.text("", 0)
-      end
+      p.flush
+      p.output << to_sixel
+      p.text("", 0)
     end
 
     def pixel_count(locations) = location_expand(locations).first.reduce(:*)

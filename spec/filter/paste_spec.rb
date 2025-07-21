@@ -18,6 +18,14 @@ RSpec.describe ImageUtil::Image do
       expected = ImageUtil::Color.new(*expected.map(&:to_i))
       base[0,0].should == expected
     end
+
+    it 'pastes a 1d image onto another image' do
+      base = described_class.new(3, 1) { ImageUtil::Color[0] }
+      line = described_class.new(2) { |loc| ImageUtil::Color[loc.first] }
+      base.paste!(line, 1, 0)
+      base[1,0].should == ImageUtil::Color[0]
+      base[2,0].should == ImageUtil::Color[1]
+    end
   end
 
   describe '#paste' do

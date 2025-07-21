@@ -25,6 +25,20 @@ module ImageUtil
       allocate.tap { |i| i.initialize_from_buffer(...) }
     end
 
+    def self.from_string(data, format:, codec: nil, **kwargs)
+      Codec.decode(format, data, codec: codec, **kwargs)
+    end
+
+    def self.from_file(path_or_io, format:, codec: nil, **kwargs)
+      if path_or_io.respond_to?(:read)
+        Codec.decode_io(format, path_or_io, codec: codec, **kwargs)
+      else
+        File.open(path_or_io, "rb") do |io|
+          Codec.decode_io(format, io, codec: codec, **kwargs)
+        end
+      end
+    end
+
     def buffer = @buf
     def dimensions = @buf.dimensions
     def width = dimensions[0]
@@ -147,6 +161,20 @@ module ImageUtil
 
     def to_pam(fill_to: nil)
       Codec.encode(:pam, self, fill_to: fill_to)
+    end
+
+    def to_string(format:, codec: nil, **kwargs)
+      Codec.encode(format, self, codec: codec, **kwargs)
+    end
+
+    def to_file(path_or_io, format:, codec: nil, **kwargs)
+      if path_or_io.respond_to?(:write)
+        Codec.encode_io(format, self, path_or_io, codec: codec, **kwargs)
+      else
+        File.open(path_or_io, "wb") do |io|
+          Codec.encode_io(format, self, io, codec: codec, **kwargs)
+        end
+      end
     end
 
     def to_sixel

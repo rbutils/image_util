@@ -47,7 +47,11 @@ module ImageUtil
         cache = {}
 
         nearest = lambda do |color|
-          cache[color] ||= begin
+          key = (color[0] || 255) |
+                ((color[1] || 255) << 8) |
+                ((color[2] || 255) << 16) |
+                ((color[3] || 255) << 24)
+          cache[key] ||= begin
             best = palette.first
             best_dist = dither_distance_sq(color, best)
             idx = 1
@@ -64,9 +68,24 @@ module ImageUtil
           end
         end
 
-        set_each_pixel_by_location do |loc|
-          color = self[*loc]
-          nearest.call(color)
+        if dimensions.length == 2
+          w = width
+          h = height
+          buf = buffer
+          idx = 0
+          step = buf.pixel_bytes
+          h.times do
+            w.times do
+              color = buf.get_index(idx)
+              buf.set_index(idx, nearest.call(color))
+              idx += step
+            end
+          end
+        else
+          set_each_pixel_by_location do |loc|
+            color = self[*loc]
+            nearest.call(color)
+          end
         end
         self
       end

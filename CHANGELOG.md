@@ -1,5 +1,8 @@
 ## [Unreleased]
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal
+- Support for all CSS color names
+- Range assignments with images now resize the image before pasting
+- Circle drawing filter
 
 ## [0.1.0] - 2025-07-21
 

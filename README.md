@@ -65,7 +65,7 @@ This library supports generating Sixel with either `libsixel`, `ImageMagick` or 
 - Another `Color` instance
 - Arrays of numeric components (`[r, g, b]` or `[r, g, b, a]`)
 - Numbers (used for all RGB channels)
-- Symbols or strings containing basic color names (`:red`, `'blue'`)
+- Symbols or strings containing CSS color names (`:rebeccapurple`, 'papayawhip')
 - Hex strings like `'#abc'`, `'#aabbcc'` or `'#rrggbbaa'`
 
 When numeric components are given, integers are first clamped to the `0..255`
@@ -101,6 +101,8 @@ img[0..1, 0..1] = corner
 img[2, 2] = :yellow
 img.to_file("pixel_patch.png", :png)
 ```
+
+Assigning an image to a range automatically resizes it to fit before pasting.
 
 Iteration helpers operate on arbitrary ranges and share the same syntax used
 when indexing images.  `each_pixel` yields color objects, while
@@ -157,6 +159,7 @@ Draw simple shapes directly on the image.
 img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
 img.draw_line!([0, 0], [127, 127], :red)
 img.draw_line!([0, 127], [127, 0], :lime)
+img.draw_circle!([64, 64], 30, :blue)
 ```
 
 ![Draw example](docs/samples/draw.png)

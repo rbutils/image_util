@@ -24,4 +24,22 @@ RSpec.describe ImageUtil::Image do
       img[4,3].should == ImageUtil::Color[1]
     end
   end
+
+  describe '#draw_circle!' do
+    it 'draws a circle using the provided center and radius' do
+      img = described_class.new(5,5) { ImageUtil::Color[0] }
+      img.draw_circle!([2,2], 1, ImageUtil::Color[3], view: ImageUtil::View::Rounded)
+      img[2,3].should == ImageUtil::Color[3]
+    end
+  end
+
+  describe '#draw_circle' do
+    it 'returns new image without modifying original' do
+      img = described_class.new(3,3) { ImageUtil::Color[0] }
+      dup = img.draw_circle([1,1], 1, ImageUtil::Color[4], view: ImageUtil::View::Rounded)
+      dup.should_not equal(img)
+      dup[1,2].should == ImageUtil::Color[4]
+      img[1,2].should == ImageUtil::Color[0]
+    end
+  end
 end

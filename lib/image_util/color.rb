@@ -6,6 +6,7 @@ module ImageUtil
       super(args)
     end
 
+    autoload :CSS_COLORS, "image_util/color/css_colors"
     def r = self[0]
     def g = self[1]
     def b = self[2]
@@ -69,13 +70,12 @@ module ImageUtil
           new($1.to_i(16), $2.to_i(16), $3.to_i(16))
         when /\A#(\h{2})(\h{2})(\h{2})(\h{2})\z/
           new($1.to_i(16), $2.to_i(16), $3.to_i(16), $4.to_i(16))
-        when "black" then new(0, 0, 0)
-        when "white" then new(255, 255, 255)
-        when "red" then new(255, 0, 0)
-        when "lime" then new(0, 255, 0)
-        when "blue" then new(0, 0, 255)
         else
-          raise ArgumentError, "wrong String passed as color (passed: #{value.inspect})"
+          if (rgb = CSS_COLORS[value.downcase])
+            new(*rgb)
+          else
+            raise ArgumentError, "wrong String passed as color (passed: #{value.inspect})"
+          end
         end
       when Symbol
         from(value.to_s)

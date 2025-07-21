@@ -78,12 +78,13 @@ module ImageUtil
       end
     end
 
+    autoload :Guard, "image_util/codec/_guard"
+
     autoload :Libpng, "image_util/codec/libpng"
     autoload :Libturbojpeg, "image_util/codec/libturbojpeg"
     autoload :Pam, "image_util/codec/pam"
     autoload :ImageMagick, "image_util/codec/image_magick"
     autoload :RubySixel, "image_util/codec/ruby_sixel"
-    autoload :Guard, "image_util/codec/guard"
 
     register_codec :Pam, :pam
     register_codec :Libpng, :png

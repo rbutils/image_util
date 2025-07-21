@@ -46,17 +46,32 @@ binary = img.to_string(:jpeg)
 - Symbols or strings containing basic color names (`:red`, `'blue'`)
 - Hex strings like `'#abc'`, `'#aabbcc'` or `'#rrggbbaa'`
 
-Values outside `0..255` are clamped and floats are interpreted as fractions of 255.
+When numeric components are given, integers are first clamped to the `0..255`
+range. Float values are treated as fractions of 255, so `0.5` becomes `127.5`
+and `1.0` becomes `255`. After scaling, values are again clamped to this range.
+If the alpha channel is omitted it defaults to `255`.
 
 Note that whenever the library expects a color, it may be given in any form accepted by this function (also available as `ImageUtil::Color[]`).
 
 ## Pixel Access
 
-Pixels can be accessed with integer coordinates or ranges. Subimages are returned when ranges are used.
+Pixels can be accessed with integer coordinates or ranges. When ranges are used
+a new `Image` containing that region is returned and can be modified separately.
 
 ```ruby
 img[0, 0] = '#ff0000'
 patch = img[0..1, 0..1]
+```
+
+For instance, you can extract a region, edit it and paste it back:
+
+```ruby
+img = ImageUtil::Image.new(4, 4) { [0, 0, 0] }
+corner = img[0..1, 0..1]
+corner.all = :green
+img[0..1, 0..1] = corner
+img[2, 2] = :yellow
+img.to_file("pixel_patch.png", :png)
 ```
 
 Iteration helpers operate on arbitrary ranges:

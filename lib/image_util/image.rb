@@ -42,14 +42,12 @@ module ImageUtil
         end
       else
         if path_or_io.respond_to?(:read)
-          fmt = Codec.detect_io(path_or_io)
-          path_or_io.rewind if path_or_io.respond_to?(:rewind)
+          fmt, io = Magic.detect_io(path_or_io)
           raise ArgumentError, "could not detect format" unless fmt
-          Codec.decode_io(fmt, path_or_io, codec: codec, **kwargs)
+          Codec.decode_io(fmt, io, codec: codec, **kwargs)
         else
           File.open(path_or_io, "rb") do |io|
-            fmt = Codec.detect_io(io)
-            io.rewind
+            fmt, io = Magic.detect_io(io)
             raise ArgumentError, "could not detect format" unless fmt
             Codec.decode_io(fmt, io, codec: codec, **kwargs)
           end

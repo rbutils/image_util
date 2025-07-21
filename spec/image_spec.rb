@@ -141,6 +141,18 @@ RSpec.describe ImageUtil::Image do
     end
   end
 
+  it 'handles pipes when detecting format' do
+    img = described_class.new(1,1) { ImageUtil::Color[3,2,1] }
+    Tempfile.create('img') do |f|
+      img.to_file(f, :pam)
+      f.rewind
+      IO.popen(['cat', f.path]) do |io|
+        other = described_class.from_file(io)
+        other[0,0].should == ImageUtil::Color[3,2,1,255]
+      end
+    end
+  end
+
   it 'respects preferred codec' do
     img = described_class.new(1,1)
     img.to_string(:pam, codec: :Pam).lines.first.chomp.should == 'P7'

@@ -3,7 +3,7 @@
 module ImageUtil
   module Filter
     module Dither
-      extend ImageUtil::Immutable
+      extend ImageUtil::Filter::Mixin
 
       private
 

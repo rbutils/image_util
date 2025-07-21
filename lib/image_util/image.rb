@@ -108,14 +108,7 @@ module ImageUtil
       if location.all?(Numeric)
         case value
         when Image
-          last_dim = value.dimensions.length - 1
-          value.each_with_index do |i, idx|
-            new_location = location.dup
-            new_location[last_dim] += idx
-            self[*new_location] = i
-          rescue IndexError
-            # do nothing, image overlaps
-          end
+          paste!(value, *location)
         else
           location = location.map(&:to_i)
           check_bounds!(location)

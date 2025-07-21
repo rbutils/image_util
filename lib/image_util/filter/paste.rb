@@ -8,16 +8,22 @@ module ImageUtil
       def paste!(image, *location, respect_alpha: false)
         raise TypeError, "image must be an Image" unless image.is_a?(Image)
 
-        image.each_pixel_location do |loc|
-          dest = location.zip(loc).map { |a, b| a + b }
+        last_dim = image.dimensions.length - 1
+
+        image.each_with_index do |val, idx|
+          new_loc = location.dup
+          new_loc[last_dim] += idx
+
           begin
-            if respect_alpha
-              self[*dest] += image[*loc]
+            if val.is_a?(Image)
+              paste!(val, *new_loc, respect_alpha: respect_alpha)
+            elsif respect_alpha
+              self[*new_loc] += val
             else
-              self[*dest] = image[*loc]
+              self[*new_loc] = val
             end
           rescue IndexError
-            # ignore pixels outside bounds
+            # do nothing, image overlaps
           end
         end
 

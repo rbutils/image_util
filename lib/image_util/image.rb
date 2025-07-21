@@ -155,6 +155,7 @@ module ImageUtil
     include Enumerable
     include Filter::Dither
     include Filter::Background
+    include Filter::Paste
     include Statistic::Color
 
     def length = dimensions.last

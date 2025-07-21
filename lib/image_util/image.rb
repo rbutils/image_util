@@ -28,6 +28,7 @@ module ImageUtil
     def self.from_string(data, format = nil, codec: nil, **kwargs)
       format ||= Codec.detect(data)
       raise ArgumentError, "could not detect format" unless format
+
       Codec.decode(format, data, codec: codec, **kwargs)
     end
 
@@ -40,17 +41,17 @@ module ImageUtil
             Codec.decode_io(format, io, codec: codec, **kwargs)
           end
         end
+      elsif path_or_io.respond_to?(:read)
+        fmt, io = Magic.detect_io(path_or_io)
+        raise ArgumentError, "could not detect format" unless fmt
+
+        Codec.decode_io(fmt, io, codec: codec, **kwargs)
       else
-        if path_or_io.respond_to?(:read)
-          fmt, io = Magic.detect_io(path_or_io)
+        File.open(path_or_io, "rb") do |io|
+          fmt, io = Magic.detect_io(io)
           raise ArgumentError, "could not detect format" unless fmt
+
           Codec.decode_io(fmt, io, codec: codec, **kwargs)
-        else
-          File.open(path_or_io, "rb") do |io|
-            fmt, io = Magic.detect_io(io)
-            raise ArgumentError, "could not detect format" unless fmt
-            Codec.decode_io(fmt, io, codec: codec, **kwargs)
-          end
         end
       end
     end

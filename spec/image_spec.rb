@@ -153,6 +153,22 @@ RSpec.describe ImageUtil::Image do
     end
   end
 
+  describe '#view' do
+    it 'yields view and returns self' do
+      img = described_class.new(1,1)
+      result = img.view(ImageUtil::View::Rounded) do |v|
+        v.should be_a(ImageUtil::View::Rounded)
+      end
+      result.should equal(img)
+    end
+
+    it 'returns view object without block' do
+      img = described_class.new(1,1)
+      v = img.view(ImageUtil::View::Rounded)
+      v.should be_a(ImageUtil::View::Rounded)
+    end
+  end
+
   it 'respects preferred codec' do
     img = described_class.new(1,1)
     img.to_string(:pam, codec: :Pam).lines.first.chomp.should == 'P7'
@@ -161,5 +177,17 @@ RSpec.describe ImageUtil::Image do
   it 'raises when preferred codec is unsuitable' do
     img = described_class.new(1,1)
     -> { img.to_string(:pam, codec: :RubySixel) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
+  end
+
+  it 'raises when format cannot be detected from string' do
+    -> { described_class.from_string("garbage") }.should raise_error(ArgumentError)
+  end
+
+  it 'raises when format cannot be detected from file' do
+    Tempfile.create("img") do |f|
+      f.write("garbage")
+      f.rewind
+      -> { described_class.from_file(f) }.should raise_error(ArgumentError)
+    end
   end
 end

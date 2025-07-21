@@ -213,5 +213,14 @@ module ImageUtil
         self[*location] = value if value
       end
     end
+
+    def view(obj)
+      if block_given?
+        yield obj.new(self)
+        self
+      else
+        obj.new(self)
+      end
+    end
   end
 end

@@ -55,10 +55,15 @@ jobs:
           meson install -C libsixel/build
       - name: Install native libraries (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libturbojpeg libsixel1
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libjpeg-turbo8 \
+            libpng16-16 \
+            libsixel1
       - name: Install native libraries (macOS)
         if: runner.os == 'macOS'
-        run: brew install libsixel
+        run: brew install libsixel libjpeg-turbo libpng
       - name: Run the default task
         if: runner.os == 'Windows'
         run: bundle exec rake

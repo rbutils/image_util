@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ImageUtil
   module View
     # Has overriden methods: [] and []= that allow subpixel
@@ -5,16 +7,17 @@ module ImageUtil
     # graphs, etc.
     Subpixel = Data.define(:image) do
       def generate_subpixel_hash(location)
-        array = location.map do |i|
-          if i % 1 == 0
-            [[i.floor, 1]]
+        arrays = location.map do |i|
+          frac = i % 1
+          if frac.zero?
+            [[i.floor, 1.0]]
           else
-            [[i.floor, i % 1], [i.floor + 1, 1 - i % 1]]
+            [[i.floor, 1 - frac], [i.floor + 1, frac]]
           end
         end
 
         hash = {}
-        array.shift.product(*array) do |combination|
+        arrays.shift.product(*arrays) do |combination|
           loc, weight = combination.transpose
           hash[loc] = weight.reduce(:*)
         end
@@ -22,11 +25,13 @@ module ImageUtil
       end
 
       def [](*location)
-        generate_subpixel_hash(location).map do |loc, weight|
-          image[*loc].map { |i| i * weight }
-        end.reduce([]) do |accum, color|
-          color.zip(accum).map { |c,a| a + (c || 0) }
-        end.then { |a| Color.new(*a) }
+        accum = Array.new(image.color_length, 0.0)
+        generate_subpixel_hash(location).each do |loc, weight|
+          image[*loc].each_with_index do |val, idx|
+            accum[idx] += val * weight
+          end
+        end
+        Color.new(*accum)
       end
 
       def []=(*location, value)
@@ -38,4 +43,4 @@ module ImageUtil
       end
     end
   end
-end 
+end

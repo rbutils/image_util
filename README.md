@@ -16,13 +16,19 @@ Features include:
 
 ## Installation
 
-The gem is not yet published on RubyGems. To use it, add the repository to your `Gemfile`:
+ImageUtil is available on RubyGems:
 
-```ruby
-gem 'image_util', git: 'https://github.com/rbutils/image_util.git'
+```bash
+gem install image_util
 ```
 
-Then run `bundle install`.
+Alternatively add it to your `Gemfile`:
+
+```ruby
+gem "image_util"
+```
+
+Run `bundle install` afterwards.
 
 You can also build and install the gem manually:
 
@@ -71,10 +77,50 @@ i.draw_line!([0, 0], [3, 3], ImageUtil::Color['red'], view: ImageUtil::View::Rou
 coordinates to the nearest pixel. These views are useful for drawing
 operations like the example above.
 
+### Reading and Writing Images
+
+```ruby
+# detect format automatically when loading from a file
+img = ImageUtil::Image.from_file("photo.png")
+
+# save using a specific codec
+img.to_file("out.jpg", :jpeg)
+
+# convert directly to a string
+data = img.to_string(:png)
+```
+
+### Filters
+
+```ruby
+# reduce palette to 32 colors
+dithered = img.dither(32)
+
+# composite two images without altering the originals
+result = base.paste(other, 10, 10)
+
+# apply a background color to an RGBA image
+flattened = img.background(ImageUtil::Color[255, 255, 255])
+```
+
+### Working with Views
+
+```ruby
+# access using fractional coordinates
+interp = img.view(ImageUtil::View::Interpolated)
+interp[1.2, 2.8] = ImageUtil::Color[0, 0, 255]
+
+# round coordinates instead
+rounded = img.view(ImageUtil::View::Rounded)
+color = rounded[1.6, 0.3]
+```
+
 ### Codecs
 
 ImageUtil includes a small registry of codecs for converting images to and from
-common formats.
+common formats such as PNG, JPEG and SIXEL. The library ships with pure Ruby
+encoders and FFI wrappers around `libpng`, `libturbojpeg` and `libsixel` when
+available.
 
 ```ruby
 png = ImageUtil::Codec.encode(:png, i)
@@ -83,6 +129,12 @@ back = ImageUtil::Codec.decode(:png, png)
 File.open("img.pam", "wb") do |f|
   ImageUtil::Codec.encode_io(:pam, i, f)
 end
+```
+
+You can read images from files without specifying the format:
+
+```ruby
+image = ImageUtil::Image.from_file("picture.jpg")
 ```
 
 Use `ImageUtil::Codec.supported?(format)` to check if a particular format is

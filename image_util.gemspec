@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["hmdne"]
   spec.email = ["54514036+hmdne@users.noreply.github.com"]
 
-  spec.summary = 'Minimal pixel buffer utilities'
-  spec.description = 'Provides Color and Image classes for manipulating raw image data and converting buffers to standard formats.'
+  spec.summary = 'Simple pixel buffers with SIXEL and codec helpers'
+  spec.description = 'Lightweight Color and Image classes for manipulating pixels. Provides SIXEL output plus FFI bindings for libpng, libturbojpeg and libsixel.'
   spec.homepage = "https://github.com/rbutils/image_util"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
@@ -20,8 +20,9 @@ Gem::Specification.new do |spec|
   spec.metadata['source_code_uri'] = 'https://github.com/rbutils/image_util'
   
   spec.metadata['changelog_uri'] = 'https://github.com/rbutils/image_util/blob/master/CHANGELOG.md'
-  
+  spec.metadata['documentation_uri'] = 'https://github.com/rbutils/image_util#readme'
   spec.metadata['bug_tracker_uri'] = 'https://github.com/rbutils/image_util/issues'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

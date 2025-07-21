@@ -4,7 +4,6 @@
 - Range assignments with images now resize the image before pasting
 - Circle drawing filter
 - ImageMagick codec can encode and decode `png`, `jpeg` and `sixel`
-- Fixed ImageMagick codec API so `encode` and `decode` are primary methods
 
 ## [0.1.0] - 2025-07-21
 

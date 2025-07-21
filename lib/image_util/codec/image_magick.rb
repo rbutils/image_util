@@ -27,9 +27,9 @@ module ImageUtil
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
         fmt = format.to_s.downcase
-        pam = Codec::Pam.encode(:pam, image, fill_to: fmt == 'sixel' ? 6 : nil)
+        pam = Codec::Pam.encode(:pam, image, fill_to: fmt == "sixel" ? 6 : nil)
 
-        IO.popen(['magick', 'pam:-', "#{fmt}:-"], 'r+') do |proc_io|
+        IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+") do |proc_io|
           proc_io << pam
           proc_io.close_write
           proc_io.read
@@ -43,7 +43,7 @@ module ImageUtil
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
-        IO.popen(['magick', "#{format}:-", 'pam:-'], 'r+') do |proc_io|
+        IO.popen(["magick", "#{format}:-", "pam:-"], "r+") do |proc_io|
           proc_io << data
           proc_io.close_write
           Pam.decode(:pam, proc_io.read)

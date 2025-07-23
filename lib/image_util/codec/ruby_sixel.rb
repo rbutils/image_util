@@ -24,7 +24,7 @@ module ImageUtil
         img = if image.unique_color_count <= 256
                 image
               else
-                image.dither(256)
+                image.palette_reduce(256)
               end
 
         height = img.height || 1

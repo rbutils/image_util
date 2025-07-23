@@ -2,7 +2,7 @@
 
 module ImageUtil
   module Filter
-    module Dither
+    module Palette
       extend ImageUtil::Filter::Mixin
 
       # A more descriptive name for this structure would be
@@ -148,7 +148,7 @@ module ImageUtil
         end
       end
 
-      def dither!(count)
+      def palette_reduce!(count)
         colors = unique_colors
 
         return self if colors.length <= count
@@ -191,7 +191,7 @@ module ImageUtil
         self
       end
 
-      define_immutable_version :dither
+      define_immutable_version :palette_reduce
     end
   end
 end

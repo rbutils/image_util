@@ -218,16 +218,16 @@ img
 
 ![Resize example](docs/samples/resize.png)
 
-### Dither
+### Palette
 
 Reduce the image to a limited palette.
 
 ```ruby
 img = ImageUtil::Image.new(128, 128) { |x, y| [x * 2, y * 2, 200] }
-img.dither(64)
+img.palette_reduce(64)
 ```
 
-![Dither example](docs/samples/dither.png)
+![Palette reduce example](docs/samples/pdither.png)
 
 ### Transform
 

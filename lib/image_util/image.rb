@@ -169,7 +169,7 @@ module ImageUtil
     end
   
     include Enumerable
-    include Filter::Dither
+    include Filter::Palette
     include Filter::Background
     include Filter::Paste
     include Filter::Draw

@@ -2,7 +2,7 @@
 
 module ImageUtil
   module Filter
-    autoload :Dither, "image_util/filter/dither"
+    autoload :Palette, "image_util/filter/palette"
     autoload :Background, "image_util/filter/background"
     autoload :Paste, "image_util/filter/paste"
     autoload :Draw, "image_util/filter/draw"

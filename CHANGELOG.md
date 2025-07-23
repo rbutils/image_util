@@ -3,8 +3,9 @@
 - Terminal detection for graphic protocols
 - Support Kitty graphics protocol
 - Rename `color_length` to a more appropriate name `channels`
-- Transform filter with rotate and flip operations (rotation now supports any axis pair)
+- Transform filter with rotate and flip operations
 - Fallback PNG codec via chunky_png
+- Rename `dither!` to `palette_reduce!`
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

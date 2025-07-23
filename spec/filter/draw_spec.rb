@@ -9,6 +9,14 @@ RSpec.describe ImageUtil::Image do
       img[1,1].should == ImageUtil::Color[1]
       img[2,2].should == ImageUtil::Color[1]
     end
+
+    it 'infers draw axis and limit end' do
+      img = described_class.new(3,3) { ImageUtil::Color[0] }
+      img.draw_function!(ImageUtil::Color[2], 0.., axis: :y, view: ImageUtil::View::Rounded) { |y| y }
+      img[0,0].should == ImageUtil::Color[2]
+      img[1,1].should == ImageUtil::Color[2]
+      img[2,2].should == ImageUtil::Color[2]
+    end
   end
 
   describe '#draw_line!' do
@@ -22,6 +30,12 @@ RSpec.describe ImageUtil::Image do
       img = described_class.new(5,5) { ImageUtil::Color[0] }
       img.draw_line!([3,2], [4,3], ImageUtil::Color[1], view: ImageUtil::View::Interpolated)
       img[4,3].should == ImageUtil::Color[1]
+    end
+
+    it 'handles steep lines' do
+      img = described_class.new(3,4) { ImageUtil::Color[0] }
+      img.draw_line!([1,0], [2,3], ImageUtil::Color[3], view: ImageUtil::View::Rounded)
+      img[2,3].should == ImageUtil::Color[3]
     end
   end
 

@@ -53,4 +53,21 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
     decoded.dimensions.should == [1, 1]
     proc_io.string.should == 'JPG'
   end
+
+  it 'returns false for unsupported format' do
+    described_class.supported?(:foo).should be false
+  end
+
+  context 'when ImageMagick is not available' do
+    before do
+      allow(described_class).to receive(:magick_available?).and_call_original
+      described_class.instance_variable_set(:@magick_available, nil)
+      allow(described_class).to receive(:system).and_return(false)
+    end
+
+    it 'reports unsupported for any format' do
+      described_class.supported?(:png).should be false
+      described_class.supported?(nil).should be false
+    end
+  end
 end

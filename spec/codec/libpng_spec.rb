@@ -2,7 +2,25 @@ require 'spec_helper'
 
 RSpec.describe ImageUtil::Codec::Libpng do
   before do
-    skip 'libpng not available' unless described_class.supported?
+    described_class.const_set(:AVAILABLE, true)
+    allow(described_class).to receive(:png_image_write_to_memory) do |img, out_ptr, size_ptr, _flags, buf_ptr, row_stride, _|
+      header = "\x89PNG\r\n\x1a\n".b
+      size_ptr.write_ulong(header.bytesize)
+      out_ptr&.put_bytes(0, header) if out_ptr && out_ptr.respond_to?(:put_bytes)
+      1
+    end
+    allow(described_class).to receive(:png_image_begin_read_from_memory) do |img, data_ptr, size|
+      img[:width] = 2
+      img[:height] = 1
+      1
+    end
+    allow(described_class).to receive(:png_image_finish_read) do |img, _ptr, buf_ptr, row_stride, _|
+      # two pixels: [0,0,0,255] and [1,0,0,255]
+      pixels = "\x00\x00\x00\xff\x01\x00\x00\xff"
+      buf_ptr.put_bytes(0, pixels)
+      1
+    end
+    allow(described_class).to receive(:png_image_free)
   end
 
   it 'encodes and decodes a PNG image' do

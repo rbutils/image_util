@@ -6,7 +6,7 @@ module ImageUtil
   module Terminal
     module_function
 
-    def detect_support(termin, termout)
+    def detect_support(termin = $stdin, termout = $stdout)
       return [] if !termin.tty? || !termout.tty?
       
       supported = termout.instance_variable_get(:@imageutil_support_cache)
@@ -20,8 +20,8 @@ module ImageUtil
       end and supported << :kitty
 
       # Send sixel query
-      query_terminal(termin, termout, "\e[?2;1;0S".b) do |resp|
-        resp.include?("\e[?2;0;".b)
+      query_terminal(termin, termout, "\e[0c".b) do |resp|
+        resp.include?(";4".b)
       end and supported << :sixel
 
       termout.instance_variable_set(:@imageutil_support_cache, supported)

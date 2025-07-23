@@ -30,27 +30,68 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
     proc_io.string.bytes.should == pam.bytes
   end
 
-  it 'decodes using ImageMagick' do
+  it 'encodes GIF animation' do
+    anim = ImageUtil::Image.new(1, 1, 2) { |_, _, z| ImageUtil::Color[z * 255] }
+    frame0 = ImageUtil::Codec::Pam.encode(:pam, ImageUtil::Image.from_buffer(anim.buffer.last_dimension_split[0]))
+    frame1 = ImageUtil::Codec::Pam.encode(:pam, ImageUtil::Image.from_buffer(anim.buffer.last_dimension_split[1]))
+
     proc_io = StringIO.new
+    def proc_io.read; 'GOUT' end
+    allow(IO).to receive(:popen).and_yield(proc_io)
+    allow(Dir).to receive(:mktmpdir).and_yield('/tmp')
+    writes = []
+    allow(File).to receive(:binwrite) { |path, data| writes << [path, data] }
+
+    out = described_class.encode(:gif, anim)
+    out.should == 'GOUT'
+    writes.map(&:first).should == ['/tmp/0.pam', '/tmp/1.pam']
+    writes[0][1].bytes.should == frame0.bytes
+    writes[1][1].bytes.should == frame1.bytes
+  end
+
+  it 'decodes using ImageMagick' do
+    proc_io = StringIO.new(pam)
     def proc_io.close_write; end
-    pam_str = pam
-    proc_io.define_singleton_method(:read) { pam_str }
+    def proc_io.<<(_str); end
     allow(IO).to receive(:popen).and_yield(proc_io)
 
     decoded = described_class.decode(:png, 'PNG')
     decoded.dimensions.should == [1, 1]
-    proc_io.string.should == 'PNG'
   end
 
   it 'decodes JPEG' do
-    proc_io = StringIO.new
+    proc_io = StringIO.new(pam)
     def proc_io.close_write; end
-    pam_str = pam
-    proc_io.define_singleton_method(:read) { pam_str }
+    def proc_io.<<(_str); end
     allow(IO).to receive(:popen).and_yield(proc_io)
 
     decoded = described_class.decode(:jpeg, 'JPG')
     decoded.dimensions.should == [1, 1]
-    proc_io.string.should == 'JPG'
+  end
+
+  it 'decodes animated GIF' do
+    frame = ImageUtil::Image.new(1, 1) { ImageUtil::Color[0] }
+    pam0 = ImageUtil::Codec::Pam.encode(:pam, frame)
+    pam1 = ImageUtil::Codec::Pam.encode(:pam, frame)
+    proc_io = StringIO.new(pam0 + pam1)
+    def proc_io.close_write; end
+    def proc_io.<<(_str); end
+    allow(IO).to receive(:popen).and_yield(proc_io)
+
+    decoded = described_class.decode(:gif, 'GIF')
+    decoded.dimensions.should == [1, 1, 2]
+  end
+
+  it 'decodes animated PNG' do
+    frame = ImageUtil::Image.new(1, 1) { ImageUtil::Color[0] }
+    pam0 = ImageUtil::Codec::Pam.encode(:pam, frame)
+    pam1 = ImageUtil::Codec::Pam.encode(:pam, frame)
+    proc_io = StringIO.new(pam0 + pam1)
+    def proc_io.close_write; end
+    def proc_io.<<(_str); end
+    allow(IO).to receive(:popen).and_yield(proc_io)
+
+    decoded = described_class.decode(:apng, 'APNG')
+    decoded.dimensions.should == [1, 1, 2]
   end
 end

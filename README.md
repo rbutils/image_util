@@ -23,8 +23,8 @@ img = ImageUtil::Image.new(128, 128) { |x, y| ImageUtil::Color[x, y, 40] }
 
 Instead of building an image from scratch you can load one with
 `ImageUtil::Image.from_string` or `ImageUtil::Image.from_file`.
-Both helpers understand the built in codecs for `png`, `jpeg` and `pam`
-formats:
+Both helpers understand the built in codecs for `png`, `jpeg`, `pam`, `gif`
+and `apng` formats:
 
 ```ruby
 img = ImageUtil::Image.from_file("logo.png")

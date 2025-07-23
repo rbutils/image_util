@@ -7,7 +7,8 @@ module ImageUtil
     MAGIC_NUMBERS = {
       pam: "P7\n".b,
       png: "\x89PNG\r\n\x1a\n".b,
-      jpeg: "\xFF\xD8".b
+      jpeg: "\xFF\xD8".b,
+      gif: "GIF8".b
     }.freeze
 
     BYTES_NEEDED = MAGIC_NUMBERS.values.map(&:bytesize).max
@@ -19,11 +20,18 @@ module ImageUtil
     def detect(data)
       return nil unless data
 
+      if data.start_with?(MAGIC_NUMBERS[:png]) && data.byteslice(0, 256).include?("acTL")
+        return :apng
+      end
+
       MAGIC_NUMBERS.each do |fmt, magic|
         return fmt if data.start_with?(magic)
         crlf_magic = magic.gsub("\n", "\r\n")
         return fmt if crlf_magic != magic && data.start_with?(crlf_magic)
       end
+
+      return :png if data.start_with?(MAGIC_NUMBERS[:png])
+
       nil
     end
 

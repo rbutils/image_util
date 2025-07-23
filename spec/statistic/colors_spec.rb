@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe ImageUtil::Statistic::Color do
+RSpec.describe ImageUtil::Statistic::Colors do
   let(:image) do
     ImageUtil::Image.new(2, 1) { |x, _y| ImageUtil::Color[x, 0, 0] }
   end

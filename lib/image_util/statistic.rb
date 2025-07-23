@@ -2,6 +2,6 @@
 
 module ImageUtil
   module Statistic
-    autoload :Color, "image_util/statistic/color"
+    autoload :Colors, "image_util/statistic/colors"
   end
 end

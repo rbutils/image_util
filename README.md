@@ -47,6 +47,19 @@ img.to_file("out.png", :png)
 binary = img.to_string(:jpeg)
 ```
 
+## Image Information
+
+After loading or creating an image, you can access information about it, like
+dimensions or color bits.
+
+```ruby
+img.dimensions # => [20,30]
+img.width # => 20
+img.height # => 30
+img.color_bits # => 8 (means every channel has 8 bits of color)
+img.channels # => 3 (RGB)
+```
+
 ## Terminal Output
 
 Images can be previewed in compatible terminals:

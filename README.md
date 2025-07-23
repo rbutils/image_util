@@ -76,7 +76,7 @@ img
 ```
 
 The library checks if the Kitty graphics protocol is available and falls back to SIXEL otherwise. Kitty graphics protocol is supported by Kitty, Konsole
-and a couple others. SIXEL, most notably, works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how SIXEL
+and a couple others. If an image has a third dimension, each slice becomes a frame in a Kitty animation that loops automatically. SIXEL, most notably, works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how SIXEL
 looks in Konsole:
 
 ![Sixel example](docs/samples/sixel.png)

@@ -69,6 +69,25 @@ module ImageUtil
         out
       end
 
+      def encode_animation(format, image, gap: 50)
+        guard_supported_format!(format, SUPPORTED_FORMATS)
+        guard_image_class!(image)
+        raise ArgumentError, "only 3D images supported" unless image.dimensions.length == 3
+        guard_8bit_colors!(image)
+
+        id = rand(1 << 30)
+        buffers = image.buffer.last_dimension_split
+        first, *rest = buffers
+
+        out = encode(format, Image.from_buffer(first), options: { a: "T", i: id, q: 2 })
+
+        rest.each do |buffer|
+          out << encode(format, Image.from_buffer(buffer), options: { a: "f", i: id, q: 2 })
+        end
+
+        out << "\e_Ga=a,i=#{id},s=3,v=1,z=#{gap}\e\\".b
+      end
+
       def decode(*)
         raise UnsupportedFormatError, "decode not supported for sixel"
       end

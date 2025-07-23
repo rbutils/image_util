@@ -76,41 +76,11 @@ module ImageUtil
         guard_8bit_colors!(image)
 
         id = rand(1 << 30)
-        bits = image.pixel_bytes * 8
-        width = image.width
-        height = image.height
+        frame_opts = { a: "f", i: id, z: gap, q: 2 }
 
         out = +""
-
-        image.length.times do |idx|
-          frame = image[Image::ALL, Image::ALL, idx]
-          rest = Base64.strict_encode64(frame.buffer.get_string)
-
-          first = true
-          loop do
-            payload = rest[...4096]
-            rest = rest[4096..]
-
-            opts = { a: "f", i: id }
-            if first
-              opts[:f] = bits
-              opts[:s] = width
-              opts[:v] = height
-              opts[:z] = gap
-              opts[:m] = 1 if rest
-            elsif rest
-              opts[:m] = 1
-            else
-              opts[:m] = 0
-            end
-
-            opts = opts.map { |k, v| "#{k}=#{v}" }.join(",")
-
-            out << "\e_G#{opts};#{payload}\e\\".b
-
-            first = false
-            break unless rest
-          end
+        image.buffer.last_dimension_split.each do |buffer|
+          out << encode(format, Image.from_buffer(buffer), options: frame_opts)
         end
 
         out << "\e_Ga=a,i=#{id},s=3,v=1\e\\".b

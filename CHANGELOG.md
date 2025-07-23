@@ -8,6 +8,7 @@
 - Rename `dither!` to `palette_reduce!`
 - Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable
 - Animated Kitty output for 3D images
+- Fix Kitty animations not looping by setting root frame gap
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

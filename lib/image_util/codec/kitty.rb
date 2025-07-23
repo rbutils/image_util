@@ -82,10 +82,10 @@ module ImageUtil
         out = encode(format, Image.from_buffer(first), options: { a: "T", i: id, q: 2 })
 
         rest.each do |buffer|
-          out << encode(format, Image.from_buffer(buffer), options: { a: "f", i: id, q: 2 })
+          out << encode(format, Image.from_buffer(buffer), options: { a: "f", i: id, q: 2, z: gap })
         end
 
-        out << "\e_Ga=a,i=#{id},s=3,v=1,z=#{gap}\e\\".b
+        out << "\e_Ga=a,i=#{id},r=1,s=3,v=1,z=#{gap}\e\\".b
       end
 
       def decode(*)

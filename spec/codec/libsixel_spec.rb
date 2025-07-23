@@ -14,7 +14,7 @@ RSpec.describe ImageUtil::Codec::Libsixel do
     end
     allow(described_class).to receive(:sixel_dither_initialize).and_return(0)
     allow(described_class).to receive(:sixel_dither_set_diffusion_type)
-    allow(described_class).to receive(:sixel_encode) do |_buf, _w, _h, _fmt, _d, _o|
+    allow(described_class).to receive(:sixel_encode) do |_buf, *_args|
       data = "\ePqEND\e\\"
       ptr = FFI::MemoryPointer.from_string(data)
       @writer.call(ptr, data.bytesize, nil)

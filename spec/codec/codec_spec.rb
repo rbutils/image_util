@@ -7,17 +7,17 @@ RSpec.describe ImageUtil::Codec do
 
   describe 'preferred codec selection' do
     before do
-      class TestCodec
+      codec = Class.new do
         def self.encode(*) = 'enc'
         def self.supported?(*) = true
       end
+      stub_const('TestCodec', codec)
       ImageUtil::Codec.register_codec TestCodec.name.to_sym, :tst
     end
 
     after do
       ImageUtil::Codec.encoders.pop
       ImageUtil::Codec.decoders.pop
-      Object.send(:remove_const, :TestCodec)
     end
 
     it 'uses preferred codec when supported' do

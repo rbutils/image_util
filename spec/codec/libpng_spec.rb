@@ -3,10 +3,10 @@ require 'spec_helper'
 RSpec.describe ImageUtil::Codec::Libpng do
   before do
     described_class.const_set(:AVAILABLE, true)
-    allow(described_class).to receive(:png_image_write_to_memory) do |img, out_ptr, size_ptr, _flags, buf_ptr, row_stride, _|
+    allow(described_class).to receive(:png_image_write_to_memory) do |img, out_ptr, size_ptr, *_|
       header = "\x89PNG\r\n\x1a\n".b
       size_ptr.write_ulong(header.bytesize)
-      out_ptr&.put_bytes(0, header) if out_ptr && out_ptr.respond_to?(:put_bytes)
+      out_ptr&.put_bytes(0, header)
       1
     end
     allow(described_class).to receive(:png_image_begin_read_from_memory) do |img, data_ptr, size|

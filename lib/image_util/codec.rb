@@ -106,8 +106,10 @@ module ImageUtil
     autoload :Libsixel, "image_util/codec/libsixel"
     autoload :ImageMagick, "image_util/codec/image_magick"
     autoload :RubySixel, "image_util/codec/ruby_sixel"
+    autoload :Kitty, "image_util/codec/kitty"
 
     register_codec :Pam, :pam
+    register_codec :Kitty, :kitty
     register_codec :Libpng, :png
     register_codec :Libturbojpeg, :jpeg
     register_encoder :Libsixel, :sixel

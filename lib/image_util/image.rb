@@ -201,12 +201,14 @@ module ImageUtil
       Codec.encode(:sixel, self)
     end
 
-    alias inspect to_sixel
-    
     def pretty_print(p)
-      p.flush
-      p.output << to_sixel
-      p.text("", 0)
+      if (image = Terminal.output_image($stdin, $stdout, self))
+        p.flush
+        p.output << image
+        p.text("", 0)
+      else
+        super
+      end
     end
 
     def pixel_count(locations) = location_expand(locations).first.reduce(:*)

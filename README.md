@@ -216,6 +216,17 @@ img.dither(64)
 
 ![Dither example](docs/samples/dither.png)
 
+### Transform
+
+Rotate or flip an image.
+
+```ruby
+img = ImageUtil::Image.new(64, 32) { |x, y| [x, y, 0] }
+img.flip!(:x)
+img.rotate!(90)
+img.rotate!(90, axes: [:x, :z])
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run

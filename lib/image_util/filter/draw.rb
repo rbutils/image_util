@@ -16,12 +16,12 @@ module ImageUtil
       )
         fp = self.view(view)
 
-        axis = axis_to_number(axis)
+        axis = Filter::Mixin.axis_to_number(axis)
         draw_axis ||= case axis
                       when 0 then 1
                       when 1 then 0
                       end
-        draw_axis = axis_to_number(draw_axis)
+        draw_axis = Filter::Mixin.axis_to_number(draw_axis)
 
         limit ||= (0..)
         limit = Range.new(limit.begin, dimensions[axis]-1, false) if limit.end == nil
@@ -87,13 +87,6 @@ module ImageUtil
       define_immutable_version :draw_function, :draw_line, :draw_circle
 
       private
-
-      def axis_to_number(axis)
-        axis = 0 if axis == :x
-        axis = 1 if axis == :y
-        axis = 2 if axis == :z
-        axis
-      end
     end
   end
 end

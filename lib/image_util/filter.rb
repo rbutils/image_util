@@ -7,6 +7,7 @@ module ImageUtil
     autoload :Paste, "image_util/filter/paste"
     autoload :Draw, "image_util/filter/draw"
     autoload :Resize, "image_util/filter/resize"
+    autoload :Transform, "image_util/filter/transform"
 
     autoload :Mixin, "image_util/filter/_mixin"
   end

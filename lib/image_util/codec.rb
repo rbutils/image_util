@@ -112,10 +112,10 @@ module ImageUtil
     register_codec :Pam, :pam
     register_codec :Kitty, :kitty
     register_codec :Libpng, :png
-    register_codec :ChunkyPng, :png
     register_codec :Libturbojpeg, :jpeg
     register_encoder :Libsixel, :sixel
     register_codec :ImageMagick, :png, :jpeg, :sixel
+    register_codec :ChunkyPng, :png
     register_encoder :RubySixel, :sixel
   end
 end

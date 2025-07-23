@@ -1,3 +1,6 @@
+## Unreleased
+- Replace Dither implementation with a much faster one
+
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal
 - Support for all CSS color names

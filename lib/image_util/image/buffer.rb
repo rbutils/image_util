@@ -62,7 +62,7 @@ module ImageUtil
 
       def get_index(index)
         value = @buffer.get_values(@io_buffer_types, index)
-        Color.from_buffer(value, @color_bits)
+        Color.from_buffer(value, @color_bits).freeze
       end
 
       def set(location, value)
@@ -126,7 +126,7 @@ module ImageUtil
       }.freeze
 
       OPT_GET_INDEX = {
-        8 => ->(index) { Color.new(*@buffer.get_values(@io_buffer_types, index)) }
+        8 => ->(index) { Color.new(*@buffer.get_values(@io_buffer_types, index)).freeze }
       }.freeze
     end
   end

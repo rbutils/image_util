@@ -10,6 +10,15 @@ module ImageUtil
           end
         end
       end
+
+      def axis_to_number(axis)
+        axis = 0 if axis == :x
+        axis = 1 if axis == :y
+        axis = 2 if axis == :z
+        axis
+      end
+
+      module_function :axis_to_number
     end
   end
 end

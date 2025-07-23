@@ -174,6 +174,7 @@ module ImageUtil
     include Filter::Paste
     include Filter::Draw
     include Filter::Resize
+    include Filter::Transform
     include Statistic::Color
 
     def length = dimensions.last

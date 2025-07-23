@@ -85,8 +85,6 @@ module ImageUtil
       end
 
       define_immutable_version :draw_function, :draw_line, :draw_circle
-
-      private
     end
   end
 end

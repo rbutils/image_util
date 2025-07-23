@@ -17,7 +17,9 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(format, image)
+      # Kitty format supports more options:
+      # https://sw.kovidgoyal.net/kitty/graphics-protocol/#control-data-reference
+      def encode(format, image, options: nil)
         guard_supported_format!(format, SUPPORTED_FORMATS)
         guard_2d_image!(image)
         guard_8bit_colors!(image)
@@ -32,17 +34,23 @@ module ImageUtil
 
         out = +""
 
+        options ||= begin
+          opts = {}
+          opts[:a] = "T" # immediately display
+          opts[:q] = 2   # don't report anything
+          opts
+        end
+
         loop do
           payload, rest = rest[...4096], rest[4096..] # rubocop:disable Style/ParallelAssignment
 
           opts = {}
 
           if first
+            opts = opts.merge(options)
             opts[:f] = bits
             opts[:s] = width
             opts[:v] = height
-            opts[:a] = "T" # immediately display
-            opts[:q] = 2   # don't report anything
             opts[:m] = 1 if rest
           elsif rest
             opts[:m] = 1

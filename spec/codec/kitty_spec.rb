@@ -19,6 +19,6 @@ RSpec.describe ImageUtil::Codec::Kitty do
 
   it 'does not support decoding' do
     -> { described_class.decode(:kitty, '') }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
-    -> { described_class.decode_io(:kitty, StringIO.new) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
+    -> { ImageUtil::Codec.decode_io(:kitty, StringIO.new, codec: described_class) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
   end
 end

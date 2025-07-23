@@ -20,7 +20,7 @@ RSpec.describe ImageUtil::Codec::RubySixel do
 
   it 'does not support decoding' do
     ->{ described_class.decode(:sixel, '') }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
-    ->{ described_class.decode_io(:sixel, StringIO.new) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
+    -> { ImageUtil::Codec.decode_io(:sixel, StringIO.new, codec: described_class) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
   end
 
   it 'dithers images with many colors' do

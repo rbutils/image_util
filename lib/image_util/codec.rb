@@ -114,7 +114,7 @@ module ImageUtil
     register_codec :Libpng, :png
     register_codec :Libturbojpeg, :jpeg
     register_encoder :Libsixel, :sixel
-    register_codec :ImageMagick, :png, :jpeg, :sixel
+    register_codec :ImageMagick, :png, :jpeg, :sixel, :gif, :apng
     register_codec :ChunkyPng, :png
     register_encoder :RubySixel, :sixel
   end

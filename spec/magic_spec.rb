@@ -8,6 +8,7 @@ RSpec.describe ImageUtil::Magic do
   it 'detects formats from magic numbers' do
     described_class.detect("\x89PNG\r\n\x1a\nrest".b).should == :png
     described_class.detect("P7\nrest".b).should == :pam
+    described_class.detect("GIF89a".b).should == :gif
   end
 
   it 'detects format from seekable io' do
@@ -29,5 +30,10 @@ RSpec.describe ImageUtil::Magic do
 
   it 'returns nil for unknown magic numbers' do
     described_class.detect('xyz'.b).should be_nil
+  end
+
+  it 'detects apng' do
+    data = "\x89PNG\r\n\x1a\n\0\0\0\x08acTL".b
+    described_class.detect(data).should == :apng
   end
 end

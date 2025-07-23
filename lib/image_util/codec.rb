@@ -101,6 +101,7 @@ module ImageUtil
     autoload :Guard, "image_util/codec/_guard"
 
     autoload :Libpng, "image_util/codec/libpng"
+    autoload :ChunkyPng, "image_util/codec/chunky_png"
     autoload :Libturbojpeg, "image_util/codec/libturbojpeg"
     autoload :Pam, "image_util/codec/pam"
     autoload :Libsixel, "image_util/codec/libsixel"
@@ -111,6 +112,7 @@ module ImageUtil
     register_codec :Pam, :pam
     register_codec :Kitty, :kitty
     register_codec :Libpng, :png
+    register_codec :ChunkyPng, :png
     register_codec :Libturbojpeg, :jpeg
     register_encoder :Libsixel, :sixel
     register_codec :ImageMagick, :png, :jpeg, :sixel

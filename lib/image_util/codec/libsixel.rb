@@ -106,15 +106,7 @@ module ImageUtil
         sixel_output_unref(output) if defined?(output) && output && !output.null?
       end
 
-      def encode_io(format, image, io)
-        io << encode(format, image)
-      end
-
       def decode(*)
-        raise UnsupportedFormatError, "decode not supported for sixel"
-      end
-
-      def decode_io(*)
         raise UnsupportedFormatError, "decode not supported for sixel"
       end
     end

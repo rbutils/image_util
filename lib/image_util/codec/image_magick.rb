@@ -36,10 +36,6 @@ module ImageUtil
         end
       end
 
-      def encode_io(format, image, io)
-        io << encode(format, image)
-      end
-
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
@@ -48,10 +44,6 @@ module ImageUtil
           proc_io.close_write
           Pam.decode(:pam, proc_io.read)
         end
-      end
-
-      def decode_io(format, io)
-        decode(format, io.read)
       end
     end
   end

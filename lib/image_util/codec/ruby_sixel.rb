@@ -100,15 +100,7 @@ module ImageUtil
         out
       end
 
-      def encode_io(format, image, io)
-        io << encode(format, image)
-      end
-
       def decode(*)
-        raise UnsupportedFormatError, "decode not supported for sixel"
-      end
-
-      def decode_io(*)
         raise UnsupportedFormatError, "decode not supported for sixel"
       end
     end

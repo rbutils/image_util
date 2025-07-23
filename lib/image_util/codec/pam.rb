@@ -49,10 +49,6 @@ module ImageUtil
         header + image.buffer.get_string + fill_buffer
       end
 
-      def encode_io(format, image, io, **kwargs)
-        io << encode(format, image, **kwargs)
-      end
-
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 

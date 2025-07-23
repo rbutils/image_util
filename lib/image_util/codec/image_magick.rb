@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "tmpdir"
-
 module ImageUtil
   module Codec
     module ImageMagick
@@ -40,13 +38,11 @@ module ImageUtil
           end
         else
           frames = image.buffer.last_dimension_split.map { |b| Image.from_buffer(b) }
-          Dir.mktmpdir do |dir|
-            paths = frames.each_with_index.map do |frame, idx|
-              path = File.join(dir, "#{idx}.pam")
-              File.binwrite(path, Codec::Pam.encode(:pam, frame))
-              path
-            end
-            IO.popen(["magick", *paths, "#{fmt}:-"], "rb") { |io| io.read }
+          stream = frames.map { |f| Codec::Pam.encode(:pam, f) }.join
+          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+") do |proc_io|
+            proc_io << stream
+            proc_io.close_write
+            proc_io.read
           end
         end
       end

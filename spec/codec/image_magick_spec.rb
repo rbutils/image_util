@@ -38,15 +38,10 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
     proc_io = StringIO.new
     def proc_io.read; 'GOUT' end
     allow(IO).to receive(:popen).and_yield(proc_io)
-    allow(Dir).to receive(:mktmpdir).and_yield('/tmp')
-    writes = []
-    allow(File).to receive(:binwrite) { |path, data| writes << [path, data] }
 
     out = described_class.encode(:gif, anim)
     out.should == 'GOUT'
-    writes.map(&:first).should == ['/tmp/0.pam', '/tmp/1.pam']
-    writes[0][1].bytes.should == frame0.bytes
-    writes[1][1].bytes.should == frame1.bytes
+    proc_io.string.bytes.should == (frame0 + frame1).bytes
   end
 
   it 'decodes using ImageMagick' do

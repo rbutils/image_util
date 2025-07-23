@@ -2,7 +2,6 @@
 
 module ImageUtil
   module Codec
-    # rubocop:disable Metrics/ModuleLength
     module Libturbojpeg
       SUPPORTED_FORMATS = [:jpeg].freeze
 
@@ -91,10 +90,6 @@ module ImageUtil
         tjDestroy(handle) if handle && !handle.null?
       end
 
-      def encode_io(format, image, io, **kwargs)
-        io << encode(format, image, **kwargs)
-      end
-
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
         raise UnsupportedFormatError, "libturbojpeg not available" unless AVAILABLE
@@ -131,11 +126,6 @@ module ImageUtil
       ensure
         tjDestroy(handle) if handle && !handle.null?
       end
-
-      def decode_io(format, io)
-        decode(format, io.read)
-      end
     end
-    # rubocop:enable Metrics/ModuleLength
   end
 end

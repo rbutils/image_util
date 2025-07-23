@@ -18,5 +18,7 @@ template = Regexp.escape(template).gsub(/\\-\\-.*?\\-\\-/, "([^`]*?)")
 template = Regexp.new(template, "m")
 
 readme.scan(template) do |code,title,filename|
+  # rubocop:disable Security/Eval
   eval(code).to_file("docs/samples/#{filename}", :png)
+  # rubocop:enable Security/Eval
 end

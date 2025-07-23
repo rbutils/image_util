@@ -10,3 +10,6 @@
 - Don't discuss codec internals or bug fixes in README. Only list supported formats. Document bug fixes in the CHANGELOG, not in README.
 - Specs target at least 80% coverage as enforced by SimpleCov.
 - The library aims to remain lightweight and portable.
+- Remember to always ensure rake tests pass and Rubocop doesn't complain.
+- If you are an OpenAI Codex, don't upload images! Tell me to use `rebuild-images-in-readme` script.
+- When adding files into collection directories (like codec/), if something isn't part of a collection (ie. isn't a codec, but is a mixin), ensure to name the file like `_something.rb`. Consult existing directory structure.

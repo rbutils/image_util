@@ -100,10 +100,6 @@ module ImageUtil
         png_image_free(img) if img
       end
 
-      def encode_io(format, image, io)
-        io << encode(format, image)
-      end
-
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
         raise UnsupportedFormatError, "libpng not available" unless AVAILABLE
@@ -128,10 +124,6 @@ module ImageUtil
         Image.from_buffer(buf)
       ensure
         png_image_free(img) if img
-      end
-
-      def decode_io(format, io)
-        decode(format, io.read)
       end
     end
   end

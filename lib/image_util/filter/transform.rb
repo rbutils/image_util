@@ -18,10 +18,11 @@ module ImageUtil
         self
       end
 
-      def rotate!(angle)
+      def rotate!(angle, axes: %i[x y])
+        axes = axes.map { |a| Filter::Mixin.axis_to_number(a) }
         turns = (angle.to_f / 90).round % 4
         turns += 4 if turns.negative?
-        turns.times { rotate90_once! }
+        turns.times { rotate90_once!(*axes) }
         self
       end
 
@@ -29,15 +30,15 @@ module ImageUtil
 
       private
 
-      def rotate90_once!
-        w = width
-        h = height
-        rest = dimensions[2..]
-        out = Image.new(h, w, *rest, color_bits: color_bits, channels: channels)
+      def rotate90_once!(axis1 = 0, axis2 = 1)
+        dims = dimensions
+        new_dims = dims.dup
+        new_dims[axis1], new_dims[axis2] = dims[axis2], dims[axis1] # rubocop:disable Style/ParallelAssignment
+        out = Image.new(*new_dims, color_bits: color_bits, channels: channels)
         each_pixel_location do |loc|
-          x = loc[0]
-          y = loc[1]
-          new_loc = [h - 1 - y, x, *loc[2..]]
+          new_loc = loc.dup
+          new_loc[axis1] = dims[axis2] - 1 - loc[axis2]
+          new_loc[axis2] = loc[axis1]
           out[*new_loc] = self[*loc]
         end
         initialize_from_buffer(out.buffer)

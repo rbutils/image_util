@@ -224,6 +224,7 @@ Rotate or flip an image.
 img = ImageUtil::Image.new(64, 32) { |x, y| [x, y, 0] }
 img.flip!(:x)
 img.rotate!(90)
+img.rotate!(90, axes: [:x, :z])
 ```
 
 ## Development

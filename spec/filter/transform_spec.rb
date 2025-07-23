@@ -41,6 +41,13 @@ RSpec.describe ImageUtil::Image do
       img.dimensions[0,2].should == [2,2]
       img[0,0,0,0,0,0,0,0].should == ImageUtil::Color[1]
     end
+
+    it 'rotates between arbitrary axes' do
+      img = described_class.new(2, 1, 2, channels: 1) { |x, _, z| ImageUtil::Color.new(x + z * 10) }
+      img.rotate!(90, axes: %i[x z])
+      img[0,0,0].should == ImageUtil::Color.new(10)
+      img[1,0,1].should == ImageUtil::Color.new(1)
+    end
   end
 
   describe '#rotate' do

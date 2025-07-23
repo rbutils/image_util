@@ -36,12 +36,12 @@ img.to_file("out.png", :png)
 binary = img.to_string(:jpeg)
 ```
 
-## SIXEL Output
+## Terminal Output
 
 Images can be previewed in compatible terminals:
 
 ```ruby
-puts img.to_sixel
+puts ImageUtil::Terminal.output_image($stdin, $stdout, img)
 ```
 
 In `irb` or `pry` the `inspect` method shows the image automatically, so you can
@@ -51,7 +51,7 @@ just evaluate the object:
 img
 ```
 
-Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how it looks in Konsole:
+The library checks if the Kitty graphics protocol is available and falls back to SIXEL otherwise. Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how it looks in Konsole:
 
 ![Sixel example](docs/samples/sixel.png)
 

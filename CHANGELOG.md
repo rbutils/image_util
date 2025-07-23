@@ -8,6 +8,7 @@
 - Rename `dither!` to `palette_reduce!`
 - Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable
 - ImageMagick codec can now read and write `gif` and `apng` including animations
+- GIF decoding now uses `-coalesce` to handle partial frames correctly
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

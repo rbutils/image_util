@@ -71,7 +71,7 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
     proc_io = StringIO.new(pam0 + pam1)
     def proc_io.close_write; end
     def proc_io.<<(_str); end
-    allow(IO).to receive(:popen).and_yield(proc_io)
+    IO.should_receive(:popen).with(["magick", "gif:-", "-coalesce", "pam:-"], "r+").and_yield(proc_io)
 
     decoded = described_class.decode(:gif, 'GIF')
     decoded.dimensions.should == [1, 1, 2]
@@ -84,7 +84,7 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
     proc_io = StringIO.new(pam0 + pam1)
     def proc_io.close_write; end
     def proc_io.<<(_str); end
-    allow(IO).to receive(:popen).and_yield(proc_io)
+    IO.should_receive(:popen).with(["magick", "apng:-", "-coalesce", "pam:-"], "r+").and_yield(proc_io)
 
     decoded = described_class.decode(:apng, 'APNG')
     decoded.dimensions.should == [1, 1, 2]

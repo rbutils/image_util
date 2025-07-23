@@ -50,7 +50,10 @@ module ImageUtil
       def decode(format, data)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
-        IO.popen(["magick", "#{format}:-", "pam:-"], "r+") do |proc_io|
+        cmd = ["magick", "#{format}:-"]
+        cmd << "-coalesce" if %i[gif apng].include?(format.to_s.downcase.to_sym)
+        cmd << "pam:-"
+        IO.popen(cmd, "r+") do |proc_io|
           proc_io << data
           proc_io.close_write
 

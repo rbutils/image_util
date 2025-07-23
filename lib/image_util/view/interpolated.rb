@@ -24,7 +24,7 @@ module ImageUtil
       end
 
       def [](*location)
-        accum = Array.new(image.color_length, 0.0)
+        accum = Array.new(image.channels, 0.0)
         generate_subpixel_hash(location).each do |loc, weight|
           image[*loc].each_with_index do |val, idx|
             accum[idx] += val * weight

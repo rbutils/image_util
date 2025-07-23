@@ -41,7 +41,7 @@ module ImageUtil
       end.then { |val| new(*val) }
     end
 
-    def to_buffer(color_bits, color_length)
+    def to_buffer(color_bits, channels)
       map do |i|
         case color_bits
         when 8
@@ -49,7 +49,7 @@ module ImageUtil
         else
           (i.to_f * 2**(color_bits - 8)).to_i
         end
-      end + [255] * (color_length - length)
+      end + [255] * (channels - length)
     end
 
     def self.from(value)

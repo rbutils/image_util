@@ -9,8 +9,8 @@ module ImageUtil
 
     ALL = nil..nil
 
-    def initialize(*dimensions, color_bits: 8, color_length: 4, &block)
-      @buf = Buffer.new(dimensions, color_bits, color_length)
+    def initialize(*dimensions, color_bits: 8, channels: 4, &block)
+      @buf = Buffer.new(dimensions, color_bits, channels)
 
       set_each_pixel_by_location(&block) if block_given?
     end
@@ -66,7 +66,7 @@ module ImageUtil
     def height = dimensions[1]
     def length = dimensions[2]
     def color_bits = @buf.color_bits
-    def color_length = @buf.color_length
+    def channels = @buf.channels
     def pixel_bytes = @buf.pixel_bytes
 
     def location_expand(location)
@@ -109,7 +109,7 @@ module ImageUtil
         new_dimensions, locations = location_expand(location)
         new_image = Image.new(*new_dimensions, 
                               color_bits: color_bits,
-                              color_length: color_length)
+                              channels: channels)
 
         locations.each_with_index do |i, idx|
           new_image.buffer.set_index(idx * @buf.pixel_bytes, @buf.get(i))

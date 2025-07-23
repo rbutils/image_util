@@ -23,7 +23,7 @@ module ImageUtil
           raise ArgumentError, "can't convert to PAM more than 2 dimensions"
         end
 
-        unless [3, 4].include?(image.color_length)
+        unless [3, 4].include?(image.channels)
           raise ArgumentError, "can't convert to PAM if color length isn't 3 or 4"
         end
 
@@ -40,9 +40,9 @@ module ImageUtil
           P7
           WIDTH #{image.width}
           HEIGHT #{fill_height}
-          DEPTH #{image.color_length}
+          DEPTH #{image.channels}
           MAXVAL #{2**image.color_bits - 1}
-          TUPLTYPE #{image.color_length == 3 ? "RGB" : "RGB_ALPHA"}
+          TUPLTYPE #{image.channels == 3 ? "RGB" : "RGB_ALPHA"}
           ENDHDR
         PAM
 

@@ -59,7 +59,7 @@ module ImageUtil
         guard_2d_image!(image)
         guard_8bit_colors!(image)
 
-        fmt = image.color_length == 4 ? SIXEL_PIXELFORMAT_RGBA8888 : SIXEL_PIXELFORMAT_RGB888
+        fmt = image.channels == 4 ? SIXEL_PIXELFORMAT_RGBA8888 : SIXEL_PIXELFORMAT_RGB888
 
         data = "".b
         writer = FFI::Function.new(:int, %i[pointer int pointer]) do |ptr, size, _|

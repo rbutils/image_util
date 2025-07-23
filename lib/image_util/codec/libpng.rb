@@ -69,7 +69,7 @@ module ImageUtil
         guard_2d_image!(image)
         guard_8bit_colors!(image)
 
-        fmt = if image.color_length == 4
+        fmt = if image.channels == 4
                 PNG_FORMAT_RGBA
               else
                 PNG_FORMAT_RGB
@@ -83,7 +83,7 @@ module ImageUtil
         img[:flags] = 0
         img[:colormap_entries] = 0
 
-        row_stride = image.width * image.color_length
+        row_stride = image.width * image.channels
         buffer_ptr = FFI::MemoryPointer.from_string(image.buffer.get_string)
         size_ptr = FFI::MemoryPointer.new(:size_t)
 

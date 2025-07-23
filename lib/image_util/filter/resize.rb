@@ -10,7 +10,7 @@ module ImageUtil
           new_dim == 1 ? 0.0 : (old_dim - 1).to_f / (new_dim - 1)
         end
 
-        Image.new(*new_dimensions, color_bits: color_bits, color_length: color_length) do |loc|
+        Image.new(*new_dimensions, color_bits: color_bits, channels: channels) do |loc|
           src_loc = loc.zip(factors).map { |coord, factor| coord * factor }
           src[*src_loc]
         end

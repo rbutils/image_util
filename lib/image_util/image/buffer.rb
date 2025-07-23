@@ -6,7 +6,7 @@ Warning[:experimental] = false
 module ImageUtil
   class Image
     class Buffer
-      def initialize(dimensions, color_bits, color_length, buffer = nil)
+      def initialize(dimensions, color_bits, channels, buffer = nil)
         @color_type = case color_bits
                       when 8
                         :U8
@@ -21,13 +21,13 @@ module ImageUtil
         @dimensions = dimensions.freeze
         @color_bits = color_bits
         @color_bytes = color_bits / 8
-        @color_length = color_length
+        @channels = channels
 
         @buffer_size = @dimensions.reduce(&:*)
-        @buffer_size *= @color_length
+        @buffer_size *= @channels
         @buffer_size *= @color_bytes
 
-        @io_buffer_types = ([@color_type]*@color_length).freeze
+        @io_buffer_types = ([@color_type]*@channels).freeze
 
         @buffer = buffer || IO::Buffer.new(@buffer_size)
 
@@ -36,7 +36,7 @@ module ImageUtil
         freeze
       end
 
-      attr_reader :dimensions, :color_bits, :color_bytes, :color_length
+      attr_reader :dimensions, :color_bits, :color_bytes, :channels
 
       def offset_of(*location)
         location.length == @dimensions.length or raise ArgumentError, "wrong number of dimensions"
@@ -50,7 +50,7 @@ module ImageUtil
         offset * pixel_bytes
       end
 
-      def pixel_bytes = @color_length * @color_bytes
+      def pixel_bytes = @channels * @color_bytes
 
       def initialize_copy(_other)
         @buffer = @buffer.dup
@@ -70,7 +70,7 @@ module ImageUtil
       end
 
       def set_index(index, value)
-        value = Color.from(value).to_buffer(@color_bits, @color_length)
+        value = Color.from(value).to_buffer(@color_bits, @channels)
         @buffer.set_values(@io_buffer_types, index, value)
       end
 
@@ -82,7 +82,7 @@ module ImageUtil
         Buffer.new(
           dimensions_without_last,
           @color_bits,
-          @color_length,
+          @channels,
           @buffer.slice(o0, o1 - o0)
         )
       end

@@ -70,7 +70,7 @@ module ImageUtil
         guard_2d_image!(image)
         guard_8bit_colors!(image)
 
-        fmt = image.color_length == 4 ? TJPF_RGBA : TJPF_RGB
+        fmt = image.channels == 4 ? TJPF_RGBA : TJPF_RGB
 
         handle = tjInitCompress
         raise StandardError, "tjInitCompress failed" if handle.null?

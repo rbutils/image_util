@@ -19,7 +19,7 @@ RSpec.describe ImageUtil::Codec::Pam do
   it 'raises when converting invalid images' do
     img = ImageUtil::Image.new(1,1,1)
     ->{ described_class.encode(:pam, img) }.should raise_error(ArgumentError)
-    img = ImageUtil::Image.new(1,1, color_length: 2)
+    img = ImageUtil::Image.new(1,1, channels: 2)
     ->{ described_class.encode(:pam, img) }.should raise_error(ArgumentError)
   end
 end

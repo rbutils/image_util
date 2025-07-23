@@ -27,7 +27,7 @@ RSpec.describe ImageUtil::Image do
   end
 
   it 'raises when color length is invalid' do
-    img = described_class.new(1,1, color_length: 1)
+    img = described_class.new(1,1, channels: 1)
     -> { img.to_pam }.should raise_error(ArgumentError)
   end
 

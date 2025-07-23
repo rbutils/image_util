@@ -11,7 +11,7 @@ module ImageUtil
         if !respect_alpha &&
            image.dimensions.length == 1 &&
            image.color_bits == color_bits &&
-           image.color_length == color_length &&
+           image.channels == channels &&
            buffer.respond_to?(:copy_1d)
           loc = location.map(&:to_i)
           begin

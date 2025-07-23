@@ -76,14 +76,16 @@ module ImageUtil
         guard_8bit_colors!(image)
 
         id = rand(1 << 30)
-        frame_opts = { a: "f", i: id, z: gap, q: 2 }
+        buffers = image.buffer.last_dimension_split
+        first, *rest = buffers
 
-        out = +""
-        image.buffer.last_dimension_split.each do |buffer|
-          out << encode(format, Image.from_buffer(buffer), options: frame_opts)
+        out = encode(format, Image.from_buffer(first), options: { a: "T", i: id, q: 2 })
+
+        rest.each do |buffer|
+          out << encode(format, Image.from_buffer(buffer), options: { a: "f", i: id, q: 2 })
         end
 
-        out << "\e_Ga=a,i=#{id},s=3,v=1\e\\".b
+        out << "\e_Ga=a,i=#{id},s=3,v=1,z=#{gap}\e\\".b
       end
 
       def decode(*)

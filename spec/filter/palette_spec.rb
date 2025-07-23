@@ -18,4 +18,30 @@ RSpec.describe ImageUtil::Filter::Palette do
       dup.unique_color_count.should == 1
     end
   end
+
+  describe ImageUtil::Filter::Palette::ColorOctree do
+    let(:octree) { described_class.new }
+
+    it 'converts numbers to bit arrays' do
+      octree.number_bits(5).should == [0,0,0,0,0,1,0,1]
+    end
+
+    it 'recreates numbers from bit arrays' do
+      octree.generate_key([1,0,1]).should == 5
+    end
+
+    it 'generates identical keys for optimized and generic paths' do
+      color3 = ImageUtil::Color[1,2,3]
+      color4 = ImageUtil::Color[1,2,3,4]
+      octree.key_array3(color3).should == octree.key_array(color3)
+      octree.key_array4(color4).should == octree.key_array(color4)
+    end
+
+    it 'builds a tree from colors and lists them back' do
+      colors = [ImageUtil::Color[1,0,0], ImageUtil::Color[0,2,0],
+                ImageUtil::Color[0,0,3,4]]
+      octree.build_from(colors)
+      octree.colors.should match_array(colors)
+    end
+  end
 end

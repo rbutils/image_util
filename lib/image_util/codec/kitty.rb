@@ -69,6 +69,53 @@ module ImageUtil
         out
       end
 
+      def encode_animation(format, image, gap: 50)
+        guard_supported_format!(format, SUPPORTED_FORMATS)
+        guard_image_class!(image)
+        raise ArgumentError, "only 3D images supported" unless image.dimensions.length == 3
+        guard_8bit_colors!(image)
+
+        id = rand(1 << 30)
+        bits = image.pixel_bytes * 8
+        width = image.width
+        height = image.height
+
+        out = +""
+
+        image.length.times do |idx|
+          frame = image[Image::ALL, Image::ALL, idx]
+          rest = Base64.strict_encode64(frame.buffer.get_string)
+
+          first = true
+          loop do
+            payload = rest[...4096]
+            rest = rest[4096..]
+
+            opts = { a: "f", i: id }
+            if first
+              opts[:f] = bits
+              opts[:s] = width
+              opts[:v] = height
+              opts[:z] = gap
+              opts[:m] = 1 if rest
+            elsif rest
+              opts[:m] = 1
+            else
+              opts[:m] = 0
+            end
+
+            opts = opts.map { |k, v| "#{k}=#{v}" }.join(",")
+
+            out << "\e_G#{opts};#{payload}\e\\".b
+
+            first = false
+            break unless rest
+          end
+        end
+
+        out << "\e_Ga=a,i=#{id},s=3,v=1\e\\".b
+      end
+
       def decode(*)
         raise UnsupportedFormatError, "decode not supported for sixel"
       end

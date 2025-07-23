@@ -52,7 +52,11 @@ module ImageUtil
       support = detect_support(termin, termout)
 
       if support.include? :kitty
-        image.to_string(:kitty)
+        if image.dimensions.length == 3
+          Codec::Kitty.encode_animation(:kitty, image)
+        else
+          image.to_string(:kitty)
+        end
       elsif support.include? :sixel
         image.to_string(:sixel)
       end

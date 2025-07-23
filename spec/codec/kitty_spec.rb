@@ -21,4 +21,11 @@ RSpec.describe ImageUtil::Codec::Kitty do
     -> { described_class.decode(:kitty, '') }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
     -> { ImageUtil::Codec.decode_io(:kitty, StringIO.new, codec: described_class) }.should raise_error(ImageUtil::Codec::UnsupportedFormatError)
   end
+
+  it 'encodes 3d image as kitty animation' do
+    img = ImageUtil::Image.new(1, 1, 2)
+    data = described_class.encode_animation(:kitty, img)
+    data.start_with?("\e_G").should be true
+    data.end_with?("\e\\").should be true
+  end
 end

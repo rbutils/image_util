@@ -35,5 +35,12 @@ RSpec.describe ImageUtil::Terminal do
       img.should_receive(:to_string).with(:sixel).and_return('S')
       described_class.output_image(termin, termout, img).should == 'S'
     end
+
+    it 'loops 3d images with kitty animations' do
+      img = ImageUtil::Image.new(1, 1, 2)
+      allow(described_class).to receive(:detect_support).and_return(%i[tty kitty])
+      ImageUtil::Codec::Kitty.should_receive(:encode_animation).with(:kitty, img).and_return('A')
+      described_class.output_image(termin, termout, img).should == 'A'
+    end
   end
 end

@@ -12,7 +12,7 @@ module ImageUtil
     def initialize(*dimensions, color_bits: 8, channels: 4, &block)
       @buf = Buffer.new(dimensions, color_bits, channels)
 
-      set_each_pixel_by_location(&block) if block_given?
+      set_each_pixel_by_location!(&block) if block_given?
     end
 
     def initialize_from_buffer(buffer)
@@ -226,8 +226,8 @@ module ImageUtil
       end
     end
 
-    def set_each_pixel_by_location(locations = full_image_location)
-      return enum_for(:set_each_pixel_by_location) { pixel_count(locations) } unless block_given?
+    def set_each_pixel_by_location!(locations = full_image_location)
+      return enum_for(:set_each_pixel_by_location!) { pixel_count(locations) } unless block_given?
 
       each_pixel_location(locations) do |location|
         value = yield location

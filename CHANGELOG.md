@@ -6,6 +6,7 @@
 - Transform filter with rotate and flip operations
 - Fallback PNG codec via chunky_png
 - Rename `dither!` to `palette_reduce!`
+- Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

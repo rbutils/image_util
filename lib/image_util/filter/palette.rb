@@ -184,7 +184,7 @@ module ImageUtil
           end
         end
 
-        set_each_pixel_by_location do |loc|
+        set_each_pixel_by_location! do |loc|
           equiv[self[*loc]]
         end
 

@@ -12,7 +12,7 @@ module ImageUtil
 
         bg = Color.from(bgcolor)
         img = Image.new(*dimensions, color_bits: color_bits, channels: 3)
-        img.set_each_pixel_by_location do |loc|
+        img.set_each_pixel_by_location! do |loc|
           over = bg + self[*loc]
           Color.new(over.r, over.g, over.b)
         end

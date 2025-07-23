@@ -80,9 +80,9 @@ RSpec.describe ImageUtil::Image do
     locs.should == [[0,1],[1,1]]
   end
 
-  it 'sets pixels using set_each_pixel_by_location' do
+  it 'sets pixels using set_each_pixel_by_location!' do
     img = described_class.new(2,1)
-    img.set_each_pixel_by_location { |loc| ImageUtil::Color[loc.first] }
+    img.set_each_pixel_by_location! { |loc| ImageUtil::Color[loc.first] }
     img[1,0].should == ImageUtil::Color[1,1,1]
   end
 

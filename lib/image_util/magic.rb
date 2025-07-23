@@ -30,8 +30,6 @@ module ImageUtil
         return fmt if crlf_magic != magic && data.start_with?(crlf_magic)
       end
 
-      return :png if data.start_with?(MAGIC_NUMBERS[:png])
-
       nil
     end
 

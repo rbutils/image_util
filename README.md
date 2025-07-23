@@ -14,8 +14,10 @@ img = ImageUtil::Image.new(40, 40)
 An optional block receives pixel coordinates and should return something that can be converted to a color. Dimensions of more than two axes are supported.
 
 ```ruby
-img = ImageUtil::Image.new(4, 4) { |x, y| ImageUtil::Color[x * 64, y * 64, 0] }
+img = ImageUtil::Image.new(128, 128) { |x, y| ImageUtil::Color[x, y, 40] }
 ```
+
+![Constructor example](docs/samples/constructor.png)
 
 ## Loading and Saving
 
@@ -28,6 +30,15 @@ formats:
 img = ImageUtil::Image.from_file("logo.png")
 data = ImageUtil::Image.from_string(File.binread("logo.jpeg"))
 ```
+
+A `from_file` method also supports passing IO objects:
+
+```ruby
+img = ImageUtil::Image.from_file(IO.popen("magick rose: png:"))
+img.draw_line([0,0], [69,45], :blue)
+```
+
+![Pipe load example](docs/samples/pipe.png)
 
 The same formats can be written back using `to_string` or `to_file`.
 
@@ -51,12 +62,14 @@ just evaluate the object:
 img
 ```
 
-The library checks if the Kitty graphics protocol is available and falls back to SIXEL otherwise. Most notably, SIXEL works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how it looks in Konsole:
+The library checks if the Kitty graphics protocol is available and falls back to SIXEL otherwise. Kitty graphics protocol is supported by Kitty, Konsole
+and a couple others. SIXEL, most notably, works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how SIXEL
+looks in Konsole:
 
 ![Sixel example](docs/samples/sixel.png)
 
-
-This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of the earlier system packages.
+This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of
+the earlier system packages.
 
 ## Color Values
 
@@ -94,15 +107,21 @@ patch = img[0..1, 0..1]
 For instance, you can extract a region, edit it and paste it back:
 
 ```ruby
-img = ImageUtil::Image.new(4, 4) { [0, 0, 0] }
-corner = img[0..1, 0..1]
+img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
+corner = img[0..32, 0..32]
 corner.all = :green
-img[0..1, 0..1] = corner
+img[0..32, 0..32] = corner
 img[2, 2] = :yellow
-img.to_file("pixel_patch.png", :png)
+# img.to_file("pixel_patch.png", :png)
+img
 ```
 
+![Range access example](docs/samples/range.png)
+
 Assigning an image to a range automatically resizes it to fit before pasting.
+
+On the other hand, if you assign a color to a range, it will fill all referenced
+pixels with that color (draw a rectangle).
 
 Iteration helpers operate on arbitrary ranges and share the same syntax used
 when indexing images.  `each_pixel` yields color objects, while
@@ -110,15 +129,22 @@ when indexing images.  `each_pixel` yields color objects, while
 assigns the value returned by the block to every location (unless `nil` is returned).
 
 ```ruby
+# create an all-black image
+img = ImageUtil::Image.new(128, 128) { :black }
+
 # fill a checkerboard pattern
-img = ImageUtil::Image.new(8, 8) { :white }
 img.set_each_pixel_by_location do |x, y|
-  :black if (x + y).odd?
+  :red if (x + y).odd?
 end
 
-# count how many black pixels were set
-black = img.each_pixel.count { |c| c == :black }
+# count how many red pixels were set
+black = img.each_pixel.count { |c| c == :red }
+
+# display img in terminal
+img
 ```
+
+![Iterator example](docs/samples/iterator.png)
 
 Note that instead of manually calling `set_each_pixel_by_location`, you can just pass a block to `ImageUtil::Image.new`.
 
@@ -132,7 +158,10 @@ modifies the image in place while the non-bang version returns a copy.
 Flatten an RGBA image on a solid color.
 
 ```ruby
+# create a transparent image gradient containing shades of red only
 img = ImageUtil::Image.new(128, 128) { |x, y| [255, 0, 0, x + y] }
+
+# put it on a blue background
 img.background([0, 0, 255])
 ```
 
@@ -169,8 +198,8 @@ img.draw_circle!([64, 64], 30, :blue)
 Scale an image to new dimensions.
 
 ```ruby
-img = ImageUtil::Image.new(256, 256) { |x, y| [x, y, 30] }
-img[70, 70] = img.resize(64, 64)
+img = ImageUtil::Image.new(128, 128) { |x, y| [x, y, 30] }
+img[20, 20] = img.resize(64, 64)
 img
 ```
 
@@ -181,8 +210,8 @@ img
 Reduce the image to a limited palette.
 
 ```ruby
-img = ImageUtil::Image.new(256, 64) { |x, y| [x, y * 4, 200] }
-img.dither(8)
+img = ImageUtil::Image.new(128, 128) { |x, y| [x * 2, y * 2, 200] }
+img.dither(64)
 ```
 
 ![Dither example](docs/samples/dither.png)

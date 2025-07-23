@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "image_util"
+
+readme = File.read("README.md")
+
+template = <<~MARKDOWN
+  ```ruby
+  --code--
+  ```
+
+  ![--title--](docs/samples/--filename--)
+MARKDOWN
+
+template = Regexp.escape(template).gsub(/\\-\\-.*?\\-\\-/, "([^`]*?)")
+template = Regexp.new(template, "m")
+
+readme.scan(template) do |code,title,filename|
+  eval(code).to_file("docs/samples/#{filename}", :png)
+end

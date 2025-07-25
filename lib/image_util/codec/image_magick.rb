@@ -24,19 +24,24 @@ module ImageUtil
 
           fmt = line[0,9].gsub(" ", "").downcase
           fmt.empty? ? nil : fmt
-        end
+
+          next unless fmt
+
+          [fmt, line[21,2]]
+        end.to_h
         @magick_formats
       rescue StandardError
-        @magick_formats = []
+        @magick_formats = {}
       end
 
-      def supported?(format = nil)
+      def supported?(format = nil, direction = "rw")
         return false unless magick_available?
 
         return true if format.nil?
 
         fmt = format.to_s.downcase
-        SUPPORTED_FORMATS.include?(fmt.to_sym) && magick_formats.include?(fmt)
+        SUPPORTED_FORMATS.include?(fmt.to_sym) && magick_formats.key?(fmt) &&
+          magick_formats[fmt].include?(direction.to_s)
       end
 
       def encode(format, image)

@@ -69,7 +69,7 @@ module ImageUtil
     def channels = @buf.channels
     def pixel_bytes = @buf.pixel_bytes
 
-    def location_expand(location)
+    def location_expand(location = full_image_location)
       counts = []
 
       location = location.reverse.map.with_index do |i,idx|
@@ -112,7 +112,7 @@ module ImageUtil
                               channels: channels)
 
         locations.each_with_index do |i, idx|
-          new_image.buffer.set_index(idx * @buf.pixel_bytes, @buf.get(i))
+          new_image.buffer.set_index(idx * pixel_bytes, @buf.get(i))
         end
 
         new_image
@@ -231,9 +231,23 @@ module ImageUtil
     def set_each_pixel_by_location!(locations = full_image_location)
       return enum_for(:set_each_pixel_by_location!) { pixel_count(locations) } unless block_given?
 
-      each_pixel_location(locations) do |location|
-        value = yield location
-        self[*location] = value if value
+      if locations == full_image_location
+        # Optimized path
+        pixels, locations = location_expand
+
+        iter = 0
+        pixels = pixels.reduce(:*)
+  
+        while iter < pixels
+          value = yield locations[iter]
+          buffer.set_index(iter * pixel_bytes, value) if value
+          iter += 1
+        end
+      else
+        each_pixel_location(locations) do |location|
+          value = yield location
+          self[*location] = value if value
+        end
       end
     end
 

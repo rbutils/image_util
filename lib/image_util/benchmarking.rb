@@ -7,7 +7,7 @@ module ImageUtil
     module_function
 
     # Benchmarks creating a 64×64×64 black image for the given time in seconds.
-    def image_creation(seconds = 1)
+    def image_creation(seconds = 5)
       ::Benchmark.ips do |x|
         x.warmup = 0
         x.time = seconds
@@ -15,7 +15,7 @@ module ImageUtil
       end
     end
 
-    def run(seconds = 1)
+    def run(seconds = 5)
       image_creation(seconds)
     end
   end

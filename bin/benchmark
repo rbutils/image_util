@@ -4,5 +4,4 @@
 require "bundler/setup"
 require "image_util"
 
-seconds = (ARGV[0] || 1).to_f
-ImageUtil::Benchmarking.run(seconds)
+ImageUtil::Benchmarking.run

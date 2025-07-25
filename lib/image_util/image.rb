@@ -177,6 +177,7 @@ module ImageUtil
     include Filter::Transform
     include Filter::Redimension
     include Statistic::Colors
+    extend Generator::BitmapText
 
     def length = dimensions.last
 

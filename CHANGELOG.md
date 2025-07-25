@@ -19,6 +19,7 @@
   redimension filter
 - Benchmarking subsystem with `bin/benchmark` using `benchmark-ips`
 - Improved heuristic for buffer resizing so multi-dimensional images stay intact
+- Add `BitmapFont` with a sample hand crafted font, add `bitmap_text` generator.
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

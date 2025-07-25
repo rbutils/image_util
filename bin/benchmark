@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/setup"
+require "image_util"
+
+iterations = (ARGV[0] || 5).to_i
+puts ImageUtil::Benchmarking.image_creation(iterations)

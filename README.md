@@ -251,6 +251,11 @@ img = ImageUtil::Image.new(200, 200)
 img.redimension!(300, 300, 2)
 ```
 
+## Benchmarking
+
+Run `bin/benchmark` to execute a small benchmark. It creates a `64×64×64`
+black image several times and prints timing information.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run

@@ -20,6 +20,7 @@
 - `bitmap_text` accepts multiline strings and supports colorization
 - `bitmap_text` supports left, center and right alignment
 - Add `BitmapText` filter for overlaying text onto images
+- `bitmap_text` filter now always respects an alpha channel when pasting text
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

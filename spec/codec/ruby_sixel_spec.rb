@@ -4,9 +4,15 @@ RSpec.describe ImageUtil::Codec::RubySixel do
   it 'encodes an image to sixel' do
     img = ImageUtil::Image.new(2, 1) { |x, _| ImageUtil::Color[x * 255, 0, 0] }
     data = described_class.encode(:sixel, img)
-    data.start_with?("\ePq\"1;1;2;1").should be true
+    data.start_with?("\ePq\"1;1;2;6").should be true
     data.end_with?("\e\\").should be true
     data.match?(/#\d+;2;100;0;0/).should be true
+  end
+
+  it 'encodes 1d images' do
+    img = ImageUtil::Image.new(2) { |loc| ImageUtil::Color[loc.first * 100, 0, 0] }
+    data = described_class.encode(:sixel, img)
+    data.start_with?("\ePq").should be true
   end
 
   it 'raises on bad input' do

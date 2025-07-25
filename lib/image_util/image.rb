@@ -180,8 +180,8 @@ module ImageUtil
 
     def length = dimensions.last
 
-    def to_pam(fill_to: nil)
-      Codec.encode(:pam, self, fill_to: fill_to)
+    def to_pam
+      Codec.encode(:pam, self)
     end
 
     def to_string(format, codec: nil, **kwargs)

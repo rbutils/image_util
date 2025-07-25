@@ -139,7 +139,7 @@ pixels with that color (draw a rectangle).
 
 Iteration helpers operate on arbitrary ranges and share the same syntax used
 when indexing images.  `each_pixel` yields color objects, while
-`each_pixel_location` yields coordinate arrays.  `set_each_pixel_by_location`
+`each_pixel_location` yields coordinate arrays.  `set_each_pixel_by_location!`
 assigns the value returned by the block to every location (unless `nil` is returned).
 
 ```ruby
@@ -147,7 +147,7 @@ assigns the value returned by the block to every location (unless `nil` is retur
 img = ImageUtil::Image.new(128, 128) { :black }
 
 # fill a checkerboard pattern
-img.set_each_pixel_by_location do |x, y|
+img.set_each_pixel_by_location! do |x, y|
   :red if (x + y).odd?
 end
 
@@ -235,7 +235,7 @@ img.palette_reduce(64)
 Rotate or flip an image.
 
 ```ruby
-img = ImageUtil::Image.new(64, 32) { |x, y| [x, y, 0] }
+img = ImageUtil::Image.new(128, 128) { |x, y| [x, y, 0] }
 img.flip!(:x)
 img.rotate!(90)
 # img.rotate!(90, axes: [:x, :z])
@@ -248,27 +248,34 @@ img.rotate!(90)
 Multiply all pixels by a color.
 
 ```ruby
-img = ImageUtil::Image.new(64, 32) { [255, 255, 255, 128] }
+img = ImageUtil::Image.new(128, 128) { [255, 255, 255, 128] }
 img * :red
 ```
+
+![Colors example](docs/samples/colors.png)
 
 ### Bitmap Text
 
 Overlay text using the bundled bitmap font.
 
 ```ruby
-img = ImageUtil::Image.new(64, 32) { [0, 0, 0] }
-img.bitmap_text!("Hi", 4, 4, color: :yellow)
+img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
+img.bitmap_text!("Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.", 4, 4, color: :blue)
 ```
+
+![Bitmap text example](docs/samples/bitmap_text.png)
 
 ### Redimension
 
 Change how many dimensions an image has or adjust their size.
 
 ```ruby
-img = ImageUtil::Image.new(200, 200)
-img.redimension!(300, 300, 2)
+img = ImageUtil::Image.new(64, 64) { :white }
+img.redimension!(128, 128) # can also add additional dimensions
+img.background(:blue)
 ```
+
+![Redimension example](docs/samples/redimension.png)
 
 ## Command Line
 

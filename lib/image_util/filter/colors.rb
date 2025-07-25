@@ -7,8 +7,8 @@ module ImageUtil
 
       def color_multiply!(color)
         col = Color.from(color)
-        each_pixel_location do |loc|
-          self[*loc] = self[*loc] * col
+        set_each_pixel_by_location! do |loc|
+          self[*loc] * col
         end
         self
       end

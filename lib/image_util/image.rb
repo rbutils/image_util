@@ -191,11 +191,16 @@ module ImageUtil
       Codec.encode(format, self, codec: codec, **kwargs)
     end
 
-    def to_file(path_or_io, format, codec: nil, **kwargs)
+    def to_file(path_or_io, format = nil, codec: nil, **kwargs)
       if path_or_io.respond_to?(:write)
+        raise ArgumentError, "format required" unless format
+
         path_or_io.binmode if path_or_io.respond_to?(:binmode)
         Codec.encode_io(format, self, path_or_io, codec: codec, **kwargs)
       else
+        format ||= Extension.detect(path_or_io)
+        raise ArgumentError, "could not detect format" unless format
+
         File.open(path_or_io, "wb") do |io|
           Codec.encode_io(format, self, io, codec: codec, **kwargs)
         end

@@ -253,8 +253,9 @@ img.redimension!(300, 300, 2)
 
 ## Benchmarking
 
-Run `bin/benchmark` to execute a small benchmark. It creates a `64×64×64`
-black image several times and prints timing information.
+Run `bin/benchmark` to execute a small benchmark. It repeatedly builds a
+`64×64×64` black image for a configurable duration and prints timing
+information.
 
 ## Development
 

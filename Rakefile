@@ -8,3 +8,8 @@ RSpec::Core::RakeTask.new(:spec)
 RuboCop::RakeTask.new
 
 task default: %i[spec rubocop]
+
+desc "Run benchmarks"
+task :bench do
+  ruby File.expand_path("bin/benchmark", __dir__)
+end

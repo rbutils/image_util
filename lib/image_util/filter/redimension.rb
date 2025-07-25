@@ -42,17 +42,15 @@ module ImageUtil
 
         dims = dimensions
 
-        if new_dimensions.length == dims.length
-          return false unless dims.length >= 2
-          changed = new_dimensions.each_index.reject { |i| new_dimensions[i] == dims[i] }
-          changed.length == 1 &&
-            changed.first == 1 &&
-            new_dimensions[1] >= dims[1]
-        elsif new_dimensions.length == dims.length + 1
-          new_dimensions[0, dims.length] == dims
-        else
-          false
-        end
+        min_len = [dims.length, new_dimensions.length].min
+        idx = 0
+        idx += 1 while idx < min_len && dims[idx] == new_dimensions[idx]
+
+        return false if idx == dims.length && idx == new_dimensions.length
+        return false unless (dims[(idx + 1)..] || []).all? { |d| d == 1 }
+        return false unless (dims[new_dimensions.length..] || []).all? { |d| d == 1 }
+
+        true
       end
 
       def resize_buffer!(new_dimensions)

@@ -18,13 +18,20 @@ module ImageUtil
 
       def encode(format, image)
         guard_supported_format!(format, SUPPORTED_FORMATS)
-        guard_2d_image!(image)
+        guard_image_class!(image)
         guard_8bit_colors!(image)
+        raise ArgumentError, "only 1d or 2d images supported" if image.dimensions.length > 2
 
-        img = if image.unique_color_count <= 256
-                image
+        img = image
+        if img.dimensions.length == 1
+          img = img.redimension(img.width, 1)
+        end
+        pad = (6 - (img.height % 6)) % 6
+        img = img.redimension(img.width, img.height + pad) if pad > 0
+        img = if img.unique_color_count <= 256
+                img
               else
-                image.palette_reduce(256)
+                img.palette_reduce(256)
               end
 
         height = img.height || 1

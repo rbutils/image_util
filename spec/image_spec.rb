@@ -99,10 +99,10 @@ RSpec.describe ImageUtil::Image do
     arr.should == [[ImageUtil::Color[0]], [ImageUtil::Color[1]]]
   end
 
-  it 'fills to height in pam' do
-    img = described_class.new(1,1) { ImageUtil::Color[0] }
-    pam = img.to_pam(fill_to: 6)
-    pam.lines[2].should include('HEIGHT 6')
+  it 'encodes 1D images to pam' do
+    img = described_class.new(2) { |x| ImageUtil::Color[x] }
+    pam = img.to_pam
+    pam.lines[2].should include('HEIGHT 1')
   end
 
   it 'converts to string and back' do

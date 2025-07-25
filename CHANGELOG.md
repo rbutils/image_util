@@ -14,6 +14,11 @@
 - Redimension filter to change image dimensions
 - Redimension attempts to resize the existing buffer when increasing height or
   adding a new dimension
+- Sixel and Kitty codecs accept 1D images
+- `Pam.encode` no longer accepts `fill_to`; Sixel codecs pad images using the
+  redimension filter
+- Benchmarking subsystem with `bin/benchmark` using `benchmark-ips`
+- Improved heuristic for buffer resizing so multi-dimensional images stay intact
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

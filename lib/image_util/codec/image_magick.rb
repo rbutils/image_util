@@ -29,7 +29,15 @@ module ImageUtil
         fmt = format.to_s.downcase
 
         if image.dimensions.length <= 2 || fmt == "sixel"
-          pam = Codec::Pam.encode(:pam, image, fill_to: fmt == "sixel" ? 6 : nil)
+          img = image
+          if img.dimensions.length == 1
+            img = img.redimension(img.width, 1)
+          end
+          if fmt == "sixel"
+            pad = (6 - (img.height % 6)) % 6
+            img = img.redimension(img.width, img.height + pad) if pad > 0
+          end
+          pam = Codec::Pam.encode(:pam, img)
 
           IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+") do |proc_io|
             proc_io << pam

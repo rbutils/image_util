@@ -8,6 +8,12 @@ RSpec.describe ImageUtil::Codec::Kitty do
     data.end_with?("\e\\").should be true
   end
 
+  it 'encodes 1d images' do
+    img = ImageUtil::Image.new(3) { |loc| ImageUtil::Color[loc.first * 40, 0, 0] }
+    data = described_class.encode(:kitty, img)
+    data.start_with?("\e_G").should be true
+  end
+
   it 'raises on bad input' do
     img = ImageUtil::Image.new(1, 1, 1)
     -> { described_class.encode(:kitty, img) }.should raise_error(ArgumentError)

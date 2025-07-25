@@ -56,10 +56,18 @@ module ImageUtil
         guard_supported_format!(format, SUPPORTED_FORMATS)
         raise UnsupportedFormatError, "libsixel not available" unless AVAILABLE
 
-        guard_2d_image!(image)
+        guard_image_class!(image)
         guard_8bit_colors!(image)
+        raise ArgumentError, "only 1d or 2d images supported" if image.dimensions.length > 2
 
-        fmt = image.channels == 4 ? SIXEL_PIXELFORMAT_RGBA8888 : SIXEL_PIXELFORMAT_RGB888
+        img = image
+        if img.dimensions.length == 1
+          img = img.redimension(img.width, 1)
+        end
+        pad = (6 - (img.height % 6)) % 6
+        img = img.redimension(img.width, img.height + pad) if pad > 0
+
+        fmt = img.channels == 4 ? SIXEL_PIXELFORMAT_RGBA8888 : SIXEL_PIXELFORMAT_RGB888
 
         data = "".b
         writer = FFI::Function.new(:int, %i[pointer int pointer]) do |ptr, size, _|
@@ -79,15 +87,15 @@ module ImageUtil
 
         dither = dither_ptr.read_pointer
 
-        pixels = image.buffer.get_string
+        pixels = img.buffer.get_string
         buf_ptr = FFI::MemoryPointer.new(:uchar, pixels.bytesize)
         buf_ptr.put_bytes(0, pixels)
 
         res = sixel_dither_initialize(
           dither,
           buf_ptr,
-          image.width,
-          image.height,
+          img.width,
+          img.height,
           fmt,
           SIXEL_LARGE_AUTO,
           SIXEL_REP_AUTO,
@@ -97,7 +105,7 @@ module ImageUtil
 
         sixel_dither_set_diffusion_type(dither, SIXEL_DIFFUSE_AUTO)
 
-        res = sixel_encode(buf_ptr, image.width, image.height, fmt, dither, output)
+        res = sixel_encode(buf_ptr, img.width, img.height, fmt, dither, output)
         raise StandardError, "sixel_encode failed" if res != 0
 
         data

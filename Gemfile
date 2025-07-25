@@ -18,4 +18,6 @@ gem "pry", "~> 0.15.2"
 gem "simplecov", "~> 0.22"
 gem "thor", "~> 1.2"
 
+gem "benchmark-ips", "~> 2.14"
+
 gem "stackprof", "~> 0.2.27" unless Gem.win_platform?

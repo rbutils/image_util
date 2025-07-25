@@ -12,7 +12,7 @@ module ImageUtil
       puts "Codecs:"
       codec_names.each do |name|
         mod = Codec.const_get(name)
-        supported = !mod.respond_to?(:supported?) || mod.supported?
+        supported = mod.supported?
         status = supported ? color("supported", 32, use_color) : color("not supported", 31, use_color)
         puts format("  %-#{width}s  %s", name, status)
       end
@@ -20,7 +20,7 @@ module ImageUtil
       puts "\nFormats:"
       format_names.each do |fmt|
         codec = default_codec(fmt)
-        codec_name = codec ? codec.to_s : "none"
+        codec_name = codec ? color(codec.to_s, 32, use_color) : color("none", 31, use_color)
         puts format("  %-#{width}s  %s", fmt, codec_name)
       end
 
@@ -31,8 +31,7 @@ module ImageUtil
     end
 
     no_commands do
-      def codec_names = Codec.constants.grep_v(/^_/).sort
-
+      def codec_names = Codec.constants.select { |name| Codec.const_get(name).respond_to?(:supported?) }
       def format_names = (Codec.encoders + Codec.decoders).flat_map { |r| r[:formats] }.uniq.sort
 
       def default_codec(fmt)

@@ -12,6 +12,7 @@ module ImageUtil
   autoload :Util, "image_util/util"
   autoload :Codec, "image_util/codec"
   autoload :Magic, "image_util/magic"
+  autoload :Extension, "image_util/extension"
   autoload :Filter, "image_util/filter"
   autoload :Generator, "image_util/generator"
   autoload :Statistic, "image_util/statistic"

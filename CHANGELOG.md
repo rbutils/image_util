@@ -22,6 +22,7 @@
 - Add `BitmapText` filter for overlaying text onto images
 - `bitmap_text` filter now always respects an alpha channel when pasting text
 - Open ImageMagick codec pipes in binary mode for Windows compatibility
+- Format inference from file extension in `Image#to_file`
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

@@ -177,6 +177,7 @@ module ImageUtil
     include Filter::Transform
     include Filter::Redimension
     include Filter::Colors
+    include Filter::BitmapText
     include Statistic::Colors
     extend Generator::BitmapText
 

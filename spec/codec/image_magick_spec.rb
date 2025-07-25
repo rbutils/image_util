@@ -32,6 +32,7 @@ RSpec.describe ImageUtil::Codec::ImageMagick do
   end
 
   it 'handles APNG animations' do
+    skip 'APNG not supported' unless described_class.supported?(:apng)
     anim = ImageUtil::Image.new(1, 1, 2) { |_, _, z| ImageUtil::Color[z * 255] }
     data = described_class.encode(:apng, anim)
     decoded = described_class.decode(:apng, data)

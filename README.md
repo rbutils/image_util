@@ -84,6 +84,7 @@ looks in Konsole:
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of
 the earlier system packages. Both Kitty and SIXEL outputs also accept one-dimensional images, treating them as height `1`.
 
+
 ## Color Values
 
 `ImageUtil::Color.from` (also known as `ImageUtil::Color.[]`) accepts several inputs:
@@ -251,17 +252,21 @@ img = ImageUtil::Image.new(200, 200)
 img.redimension!(300, 300, 2)
 ```
 
-## Benchmarking
+## Command Line
 
-Run `bin/benchmark` to execute a small benchmark. It repeatedly builds a
-`64×64×64` black image for a configurable duration and prints timing
-information.
+The gem includes a small `image_util` CLI. Run `image_util support` to list
+available codecs, default format handlers and detected terminal features.
+See [docs/cli.md](docs/cli.md) for details.
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run
 `rake spec` to execute the tests. You can also run `bin/console` for an
 interactive prompt for experimenting with the library.
+
+### Benchmarking
+
+Run `bin/benchmark` to execute a small benchmark.
 
 ## Contributing
 

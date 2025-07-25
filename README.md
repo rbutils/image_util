@@ -251,13 +251,17 @@ img = ImageUtil::Image.new(200, 200)
 img.redimension!(300, 300, 2)
 ```
 
+## Command Line
+
+The gem includes a small `image_util` CLI. Run `image_util support` to list
+available codecs and default format handlers. See [docs/cli.md](docs/cli.md) for
+details.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then run
 `rake spec` to execute the tests. You can also run `bin/console` for an
-interactive prompt for experimenting with the library. The `image_util` CLI
-provides a `support` command that lists available codecs and default format
-handlers.
+interactive prompt for experimenting with the library.
 
 ## Contributing
 

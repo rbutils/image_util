@@ -24,9 +24,9 @@ RSpec.describe ImageUtil::CLI do
     allow(ImageUtil::Codec::RubySixel).to receive(:supported?).and_return(false)
 
     output = capture_stdout { described_class.start(%w[support]) }
-    output.should include('Pam - supported')
-    output.should include('Kitty - not supported')
-    output.should include('png - ImageMagick')
-    output.should include('jpeg - Libturbojpeg')
+    output.should match(/Pam\s+supported/)
+    output.should match(/Kitty\s+not supported/)
+    output.should match(/png\s+ImageMagick/)
+    output.should match(/jpeg\s+Libturbojpeg/)
   end
 end

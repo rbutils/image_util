@@ -1,5 +1,6 @@
 ## Unreleased
 - Thor based CLI with a `support` command
+- Improved `support` output formatting and added CLI documentation
 - Replace Dither implementation with a much faster one
 - Terminal detection for graphic protocols
 - Support Kitty graphics protocol

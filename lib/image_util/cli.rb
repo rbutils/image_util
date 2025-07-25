@@ -6,18 +6,22 @@ module ImageUtil
   class CLI < Thor
     desc "support", "Display codec support and default codecs"
     def support
+      width = (codec_names + format_names).map(&:length).max
+      use_color = Terminal.detect_support.include?(:tty)
+
       puts "Codecs:"
       codec_names.each do |name|
         mod = Codec.const_get(name)
         supported = !mod.respond_to?(:supported?) || mod.supported?
-        status = supported ? "supported" : "not supported"
-        puts "  #{name} - #{status}"
+        status = supported ? color("supported", 32, use_color) : color("not supported", 31, use_color)
+        puts format("  %-#{width}s  %s", name, status)
       end
+
       puts "\nFormats:"
       format_names.each do |fmt|
         codec = default_codec(fmt)
         codec_name = codec ? codec.to_s : "none"
-        puts "  #{fmt} - #{codec_name}"
+        puts format("  %-#{width}s  %s", fmt, codec_name)
       end
     end
 
@@ -36,6 +40,10 @@ module ImageUtil
           return r[:codec]
         end
         nil
+      end
+
+      def color(text, code, enable)
+        enable ? "\e[#{code}m#{text}\e[0m" : text
       end
     end
   end

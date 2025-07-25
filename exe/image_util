@@ -2,6 +2,6 @@
 # frozen_string_literal: true
 
 require "bundler/setup"
-require "image_util/cli"
+require "image_util"
 
 ImageUtil::CLI.start(ARGV)

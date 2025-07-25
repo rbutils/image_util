@@ -15,6 +15,9 @@ module ImageUtil
         @magick_available = system("magick", "-version", out: File::NULL, err: File::NULL)
       end
 
+      # Some codecs, like APNG won't work on Windows :(
+      def win_platform? = Gem.win_platform?
+
       def magick_formats
         return @magick_formats if defined?(@magick_formats)
 
@@ -38,6 +41,8 @@ module ImageUtil
         return false unless magick_available?
 
         return true if format.nil?
+
+        return false if win_platform? && format == :apng
 
         fmt = format.to_s.downcase
         SUPPORTED_FORMATS.include?(fmt.to_sym) && magick_formats.key?(fmt) &&

@@ -23,10 +23,14 @@ RSpec.describe ImageUtil::CLI do
     allow(ImageUtil::Codec::ChunkyPng).to receive(:supported?).and_return(true)
     allow(ImageUtil::Codec::RubySixel).to receive(:supported?).and_return(false)
 
+    allow(ImageUtil::Terminal).to receive(:detect_support).and_return([:sixel])
+
     output = capture_stdout { described_class.start(%w[support]) }
     output.should match(/Pam\s+supported/)
     output.should match(/Kitty\s+not supported/)
     output.should match(/png\s+ImageMagick/)
     output.should match(/jpeg\s+Libturbojpeg/)
+    output.should match(/Terminal features:/)
+    output.should match(/sixel/)
   end
 end

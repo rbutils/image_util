@@ -4,7 +4,7 @@ require "thor"
 
 module ImageUtil
   class CLI < Thor
-    desc "support", "Display codec support and default codecs"
+    desc "support", "Display codec support, default codecs and terminal features"
     def support
       width = (codec_names + format_names).map(&:length).max
       use_color = Terminal.detect_support.include?(:tty)
@@ -22,6 +22,11 @@ module ImageUtil
         codec = default_codec(fmt)
         codec_name = codec ? codec.to_s : "none"
         puts format("  %-#{width}s  %s", fmt, codec_name)
+      end
+
+      puts "\nTerminal features:"
+      Terminal.detect_support.each do |feat|
+        puts "  #{color(feat, 34, use_color)}"
       end
     end
 

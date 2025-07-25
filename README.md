@@ -84,11 +84,6 @@ looks in Konsole:
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of
 the earlier system packages.
 
-`ImageUtil::Terminal.detect_support` reports which terminal capabilities are available:
-
-- `:tty` — basic text terminal
-- `:kitty` — Kitty graphics protocol
-- `:sixel` — SIXEL graphics protocol
 
 ## Color Values
 
@@ -260,8 +255,8 @@ img.redimension!(300, 300, 2)
 ## Command Line
 
 The gem includes a small `image_util` CLI. Run `image_util support` to list
-available codecs and default format handlers. See [docs/cli.md](docs/cli.md) for
-details.
+available codecs, default format handlers and detected terminal features.
+See [docs/cli.md](docs/cli.md) for details.
 
 ## Development
 

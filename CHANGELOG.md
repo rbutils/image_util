@@ -1,4 +1,4 @@
-## Unreleased
+## [0.3.0] - 2025-07-25
 - Rename `dither!` to `palette_reduce!`
 - Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable
 - Rename `color_length` to a more appropriate name `channels`
@@ -27,6 +27,7 @@
 - Force 8-bit output when decoding through ImageMagick to avoid 1-bit images on Windows
 - ImageMagick codec checks available formats before advertising APNG support
 - Add `Example` generator: `Image.example_rose`
+- Disable APNG on Windows until we find out something else than ImageMagick to support it
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

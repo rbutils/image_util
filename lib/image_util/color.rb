@@ -183,8 +183,8 @@ module ImageUtil
       when Numeric
         Color.new(r, g, b, (a * other).clamp(0, 255))
       when Color
-        Color.new(*map.with_index do |c,idx|
-          oc = other[idx] || idx == 3 ? 255 : 0
+        Color.new(*map.with_index do |c, idx|
+          oc = other[idx] || (idx == 3 ? 255 : 0)
           c * oc / 255
         end)
       else

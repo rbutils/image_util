@@ -9,6 +9,7 @@ module ImageUtil
     autoload :Resize, "image_util/filter/resize"
     autoload :Transform, "image_util/filter/transform"
     autoload :Redimension, "image_util/filter/redimension"
+    autoload :Colors, "image_util/filter/colors"
 
     autoload :Mixin, "image_util/filter/_mixin"
   end

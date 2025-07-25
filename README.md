@@ -82,7 +82,7 @@ looks in Konsole:
 ![Sixel example](docs/samples/sixel.png)
 
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of
-the earlier system packages.
+the earlier system packages. Both Kitty and SIXEL outputs also accept one-dimensional images, treating them as height `1`.
 
 ## Color Values
 

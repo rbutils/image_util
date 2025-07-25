@@ -21,14 +21,18 @@ module ImageUtil
       # https://sw.kovidgoyal.net/kitty/graphics-protocol/#control-data-reference
       def encode(format, image, options: nil)
         guard_supported_format!(format, SUPPORTED_FORMATS)
-        guard_2d_image!(image)
+        guard_image_class!(image)
         guard_8bit_colors!(image)
+        raise ArgumentError, "only 1d or 2d images supported" if image.dimensions.length > 2
 
-        bits = image.pixel_bytes * 8
-        width = image.width
-        height = image.height
+        img = image
+        img = img.redimension(img.width, 1) if img.dimensions.length == 1
 
-        rest = Base64.strict_encode64(image.buffer.get_string)
+        bits = img.pixel_bytes * 8
+        width = img.width
+        height = img.height
+
+        rest = Base64.strict_encode64(img.buffer.get_string)
 
         first = true
 

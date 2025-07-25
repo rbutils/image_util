@@ -17,7 +17,7 @@ module ImageUtil
         SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
       end
 
-      def encode(format, image, fill_to: nil)
+      def encode(format, image)
         guard_supported_format!(format, SUPPORTED_FORMATS)
         unless image.dimensions.length <= 2
           raise ArgumentError, "can't convert to PAM more than 2 dimensions"
@@ -27,26 +27,19 @@ module ImageUtil
           raise ArgumentError, "can't convert to PAM if color length isn't 3 or 4"
         end
 
-        fill_height = image.height || 1
-        fill_buffer = "".b
-        if fill_to
-          remaining = fill_height % fill_to
-          added = remaining.zero? ? 0 : fill_to - remaining
-          fill_height += added
-          fill_buffer = "\0".b * added * image.pixel_bytes * image.width
-        end
+        height = image.height || 1
 
         header = <<~PAM.b
           P7
           WIDTH #{image.width}
-          HEIGHT #{fill_height}
+          HEIGHT #{height}
           DEPTH #{image.channels}
           MAXVAL #{2**image.color_bits - 1}
           TUPLTYPE #{image.channels == 3 ? "RGB" : "RGB_ALPHA"}
           ENDHDR
         PAM
 
-        header + image.buffer.get_string + fill_buffer
+        header + image.buffer.get_string
       end
 
       def decode(format, data)

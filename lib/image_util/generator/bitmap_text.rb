@@ -3,7 +3,7 @@
 module ImageUtil
   module Generator
     module BitmapText
-      def bitmap_text(text, font: BitmapFont.default_font, color: nil)
+      def bitmap_text(text, font: BitmapFont.default_font, color: nil, align: :left)
         fnt = BitmapFont.cached_load(font)
         lines = text.split("\n")
 
@@ -16,7 +16,17 @@ module ImageUtil
         out = Image.new(width, height)
         y = 0
         rendered.each do |img|
-          out.paste!(img, 0, y)
+          x = case align
+              when :left
+                0
+              when :center
+                (width - img.width) / 2
+              when :right
+                width - img.width
+              else
+                raise ArgumentError, "invalid alignment #{align.inspect}"
+              end
+          out.paste!(img, x, y)
           y += img.height + 1
         end
 

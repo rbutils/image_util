@@ -252,6 +252,15 @@ img = ImageUtil::Image.new(64, 32) { [255, 255, 255, 128] }
 img * :red
 ```
 
+### Bitmap Text
+
+Render simple text using the bundled bitmap font. Text can be aligned left,
+center or right.
+
+```ruby
+img = ImageUtil::Image.bitmap_text("Hello\nWorld", align: :center, color: :red)
+```
+
 ### Redimension
 
 Change how many dimensions an image has or adjust their size.

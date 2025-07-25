@@ -243,6 +243,15 @@ img.rotate!(90)
 
 ![Transform example](docs/samples/transform.png)
 
+### Colors
+
+Multiply all pixels by a color.
+
+```ruby
+img = ImageUtil::Image.new(64, 32) { [255, 255, 255, 128] }
+img * :red
+```
+
 ### Redimension
 
 Change how many dimensions an image has or adjust their size.

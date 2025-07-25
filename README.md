@@ -84,6 +84,12 @@ looks in Konsole:
 This library supports generating Sixel with either `libsixel`, `ImageMagick` or using a pure-Ruby Sixel generator. For best performance, try to install one of
 the earlier system packages.
 
+`ImageUtil::Terminal.detect_support` reports which terminal capabilities are available:
+
+- `:tty` — basic text terminal
+- `:kitty` — Kitty graphics protocol
+- `:sixel` — SIXEL graphics protocol
+
 ## Color Values
 
 `ImageUtil::Color.from` (also known as `ImageUtil::Color.[]`) accepts several inputs:

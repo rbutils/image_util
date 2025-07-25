@@ -25,9 +25,10 @@ module ImageUtil
           fmt = line.split(/\s+/).first
           fmt&.delete("*")&.downcase
         end
-        @magick_formats
       rescue StandardError
-        @magick_formats = []
+        @magick_formats = nil
+      ensure
+        @magick_formats
       end
 
       def supported?(format = nil)
@@ -36,7 +37,10 @@ module ImageUtil
         return true if format.nil?
 
         fmt = format.to_s.downcase
-        SUPPORTED_FORMATS.include?(fmt.to_sym) && magick_formats.include?(fmt)
+        return false unless SUPPORTED_FORMATS.include?(fmt.to_sym)
+
+        available = magick_formats
+        available.nil? || available.include?(fmt)
       end
 
       def encode(format, image)

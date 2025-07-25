@@ -254,11 +254,11 @@ img * :red
 
 ### Bitmap Text
 
-Render simple text using the bundled bitmap font. Text can be aligned left,
-center or right.
+Overlay text using the bundled bitmap font.
 
 ```ruby
-img = ImageUtil::Image.bitmap_text("Hello\nWorld", align: :center, color: :red)
+img = ImageUtil::Image.new(64, 32) { [0, 0, 0] }
+img.bitmap_text!("Hi", 4, 4, color: :yellow)
 ```
 
 ### Redimension

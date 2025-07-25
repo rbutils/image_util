@@ -10,6 +10,7 @@ module ImageUtil
     autoload :Transform, "image_util/filter/transform"
     autoload :Redimension, "image_util/filter/redimension"
     autoload :Colors, "image_util/filter/colors"
+    autoload :BitmapText, "image_util/filter/bitmap_text"
 
     autoload :Mixin, "image_util/filter/_mixin"
   end

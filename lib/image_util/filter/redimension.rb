@@ -6,6 +6,15 @@ module ImageUtil
       extend ImageUtil::Filter::Mixin
 
       def redimension!(*new_dimensions)
+        if fast_redimension?(new_dimensions)
+          begin
+            resize_buffer!(new_dimensions)
+            return self
+          rescue StandardError
+            # fall back to generic implementation
+          end
+        end
+
         out = Image.new(*new_dimensions, color_bits: color_bits, channels: channels)
 
         copy_counts = new_dimensions.map.with_index do |dim, idx|
@@ -25,6 +34,34 @@ module ImageUtil
       define_immutable_version :redimension
 
       private
+
+      def fast_redimension?(new_dimensions)
+        io = buffer.io_buffer
+        return false unless io.respond_to?(:resize)
+        return false if io.external? || io.locked?
+
+        dims = dimensions
+
+        if new_dimensions.length == dims.length
+          return false unless dims.length >= 2
+          changed = new_dimensions.each_index.reject { |i| new_dimensions[i] == dims[i] }
+          changed.length == 1 &&
+            changed.first == 1 &&
+            new_dimensions[1] >= dims[1]
+        elsif new_dimensions.length == dims.length + 1
+          new_dimensions[0, dims.length] == dims
+        else
+          false
+        end
+      end
+
+      def resize_buffer!(new_dimensions)
+        new_size = new_dimensions.reduce(1, :*)
+        new_size *= channels
+        new_size *= color_bits / 8
+        buffer.io_buffer.resize(new_size)
+        initialize_from_buffer(Image::Buffer.new(new_dimensions, color_bits, channels, buffer.io_buffer))
+      end
 
       def each_coordinates(ranges, prefix = [], &block)
         if ranges.empty?

@@ -41,9 +41,10 @@ img.draw_line([0,0], [69,45], :blue)
 ![Pipe load example](docs/samples/pipe.png)
 
 The same formats can be written back using `to_string` or `to_file`.
+When saving to a file path, `to_file` can infer the format from the file extension.
 
 ```ruby
-img.to_file("out.png", :png)
+img.to_file("out.png")
 binary = img.to_string(:jpeg)
 ```
 

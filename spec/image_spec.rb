@@ -139,6 +139,16 @@ RSpec.describe ImageUtil::Image do
     end
   end
 
+  it 'infers format from extension' do
+    img = described_class.new(1,1) { ImageUtil::Color[1,2,3] }
+    Dir.mktmpdir do |dir|
+      path = File.join(dir, 'tmp.pam')
+      img.to_file(path)
+      other = described_class.from_file(path, :pam)
+      other[0,0].should == ImageUtil::Color[1,2,3,255]
+    end
+  end
+
   it 'infers format from file' do
     img = described_class.new(1,1) { ImageUtil::Color[6,5,4] }
     Tempfile.create('img') do |f|

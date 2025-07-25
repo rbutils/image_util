@@ -3,7 +3,6 @@
 module ImageUtil
   class Image
     autoload :Buffer, "image_util/image/buffer"
-    autoload :PixelView, "image_util/image/pixel_view"
 
     Util.irb_fixup
 
@@ -180,6 +179,7 @@ module ImageUtil
     include Filter::BitmapText
     include Statistic::Colors
     extend Generator::BitmapText
+    extend Generator::Example
 
     def length = dimensions.last
 

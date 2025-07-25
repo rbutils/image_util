@@ -174,11 +174,22 @@ module ImageUtil
       Color.new(out_r, out_g, out_b, out_a * 255)
     end
 
-    # Multiplies the alpha channel by the given factor and returns a new color.
+    # If given a Numeric argument, multiplies the alpha channel by the given factor
+    # and returns a new color.
+    #
+    # If given a color, create a new one by multiplying all channels.
     def *(other)
-      raise TypeError, "factor must be numeric" unless other.is_a?(Numeric)
-
-      Color.new(r, g, b, (a * other).clamp(0, 255))
+      case other
+      when Numeric
+        Color.new(r, g, b, (a * other).clamp(0, 255))
+      when Color
+        Color.new(*map.with_index do |c,idx|
+          oc = other[idx] || idx == 3 ? 255 : 0
+          c * oc / 255
+        end)
+      else
+        raise TypeError, "factor must be either numeric or color"
+      end
     end
   end
 end

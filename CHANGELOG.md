@@ -1,25 +1,21 @@
 ## Unreleased
-- Thor based CLI with a `support` command that lists codec support, default
-  format handlers and detected terminal features
-- Replace Dither implementation with a much faster one
-- Terminal detection for graphic protocols
-- Support Kitty graphics protocol
-- Rename `color_length` to a more appropriate name `channels`
-- Transform filter with rotate and flip operations
-- Fallback PNG codec via chunky_png
 - Rename `dither!` to `palette_reduce!`
 - Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable
+- Rename `color_length` to a more appropriate name `channels`
+- Thor based CLI with a `support` command that lists codec support, default
+  format handlers and detected terminal features
+- Replace `palette_reduce!` implementation with a much faster one
+- Terminal detection for graphic protocols
+- Support Kitty graphics protocol
+- Transform filter with rotate and flip operations
+- Fallback PNG codec via chunky_png
 - ImageMagick codec can now read and write `gif` and `apng` including animations
-- GIF decoding now uses `-coalesce` to handle partial frames correctly
 - Redimension filter to change image dimensions
-- Redimension attempts to resize the existing buffer when increasing height or
-  adding a new dimension
 - Sixel and Kitty codecs accept 1D images
 - `Pam.encode` no longer accepts `fill_to`; Sixel codecs pad images using the
   redimension filter
-- Benchmarking subsystem with `bin/benchmark` using `benchmark-ips`
-- Improved heuristic for buffer resizing so multi-dimensional images stay intact
 - Add `BitmapFont` with a sample hand crafted font, add `bitmap_text` generator.
+- `Color#*` can now accept another `Color` to multiply channels
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

@@ -25,6 +25,7 @@
 - Format inference from file extension in `Image#to_file`
 - ImageMagick codec now reads PAM frames using the Pam codec
 - Force 8-bit output when decoding through ImageMagick to avoid 1-bit images on Windows
+- ImageMagick codec checks available formats before advertising APNG support
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

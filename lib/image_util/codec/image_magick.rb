@@ -15,12 +15,28 @@ module ImageUtil
         @magick_available = system("magick", "-version", out: File::NULL, err: File::NULL)
       end
 
+      def magick_formats
+        return @magick_formats if defined?(@magick_formats)
+
+        out = IO.popen(%w[magick -list format], &:read)
+        @magick_formats = out.lines.filter_map do |line|
+          next unless line.start_with?(" ")
+
+          fmt = line.split(/\s+/).first
+          fmt&.delete("*")&.downcase
+        end
+        @magick_formats
+      rescue StandardError
+        @magick_formats = []
+      end
+
       def supported?(format = nil)
         return false unless magick_available?
 
         return true if format.nil?
 
-        SUPPORTED_FORMATS.include?(format.to_s.downcase.to_sym)
+        fmt = format.to_s.downcase
+        SUPPORTED_FORMATS.include?(fmt.to_sym) && magick_formats.include?(fmt)
       end
 
       def encode(format, image)

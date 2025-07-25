@@ -28,6 +28,14 @@ RSpec.describe ImageUtil::Image do
       img[0,0,0].should == ImageUtil::Color[1]
       img[0,0,1].should == ImageUtil::Color.new(0,0,0,0)
     end
+
+    it 'handles extra dimensions when resizing height' do
+      img = described_class.new(2, 2, 2) { |x,y,z| ImageUtil::Color[x + y*10 + z*100] }
+      img.redimension!(2, 3, 2)
+      img.dimensions.should == [2, 3, 2]
+      img[0,0,1].should == ImageUtil::Color[100]
+      img[0,2,0].should == ImageUtil::Color.new(0,0,0,0)
+    end
   end
 
   describe '#redimension' do

@@ -60,7 +60,7 @@ module ImageUtil
 
         cmd = ["magick", "#{format}:-"]
         cmd << "-coalesce" if %i[gif apng].include?(format.to_s.downcase.to_sym)
-        cmd << "pam:-"
+        cmd += ["-depth", "8", "pam:-"]
         IO.popen(cmd, "r+b") do |proc_io|
           proc_io << data
           proc_io.close_write

@@ -26,15 +26,12 @@ module ImageUtil
 
       MAGIC_NUMBERS.each do |fmt, magic|
         return fmt if data.start_with?(magic)
-        crlf_magic = magic.gsub("\n", "\r\n")
-        return fmt if crlf_magic != magic && data.start_with?(crlf_magic)
       end
 
       nil
     end
 
-    def detect_io(io)
-      
+    def detect_io(io)      
       pos = io.pos
       data = io.read(BYTES_NEEDED)
       io.seek(pos)
@@ -45,7 +42,6 @@ module ImageUtil
       rest = io.read
       new_io = StringIO.new((data || "") + (rest || ""))
       [fmt, new_io]
-      
     end
   end
 end

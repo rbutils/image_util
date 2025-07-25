@@ -56,17 +56,16 @@ module ImageUtil
 
       def decode_frame(io)
         header = {}
-        line = io.gets
-        return nil unless line && line.delete("\r\n\0") == "P7"
-
-        line = io.gets
+        line = io.gets&.chomp
         return nil unless line
 
-        until line.delete("\r\n\0") == "ENDHDR"
-          clean = line.delete("\r\n\0")
-          key, val = clean.split(" ", 2)
+        line = io.gets&.chomp
+        return nil unless line
+
+        until line.chomp == "ENDHDR"
+          key, val = line.split(" ", 2)
           header[key] = val
-          line = io.gets
+          line = io.gets&.chomp
           return nil unless line
         end
 

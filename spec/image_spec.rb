@@ -86,6 +86,25 @@ RSpec.describe ImageUtil::Image do
     img[1,0].should == ImageUtil::Color[1,1,1]
   end
 
+  it 'counts pixels in a region' do
+    img = described_class.new(2,2)
+    img.pixel_count([0..1,0..0]).should == 2
+  end
+
+  it 'returns enumerators when no block is given' do
+    img = described_class.new(2,1) { |x| ImageUtil::Color[x] }
+    enum = img.each_pixel
+    enum.should be_a(Enumerator)
+    enum.map(&:r).should == [0, 1]
+
+    img2 = described_class.new(2,1)
+    enum2 = img2.set_each_pixel_by_location!
+    enum2.should be_a(Enumerator)
+    enum2.size.should == 2
+    enum2.each { |loc| ImageUtil::Color[loc.first] }
+    img2[1,0].should == ImageUtil::Color[1,1,1]
+  end
+
   it 'expands locations with nil bounds' do
     img = described_class.new(2,2)
     counts, locs = img.location_expand([nil..1, 0..nil])
@@ -126,6 +145,13 @@ RSpec.describe ImageUtil::Image do
       f.rewind
       other = described_class.from_file(f, :pam)
       other[0,0].should == ImageUtil::Color[4,5,6,255]
+    end
+  end
+
+  it 'requires format when writing to an IO' do
+    img = described_class.new(1,1)
+    Tempfile.create('img') do |f|
+      -> { img.to_file(f) }.should raise_error(ArgumentError)
     end
   end
 

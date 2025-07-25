@@ -11,7 +11,10 @@ module ImageUtil
       ::Benchmark.ips do |x|
         x.warmup = 0
         x.time = seconds
-        x.report("image_creation") { Image.new(64, 64, 64) { :black } }
+        x.report("from Symbol") { Image.new(64, 64, 64) { :black } }
+        x.report("from Array (4->4 channels)") { Image.new(64, 64, 64) { |x,y,z| [x,y,z,255] } }
+        x.report("from Array (3->4 channels)") { Image.new(64, 64, 64) { |x,y,z| [x,y,z] } }
+        x.report("from Array (3->3 channels)") { Image.new(64, 64, 64, channels: 3) { |x,y,z| [x,y,z] } }
       end
     end
 

@@ -62,9 +62,9 @@ module ImageUtil
         when Color
           return value.to_buffer(color_bits, channels)
         when Array
-          if channels == value.length && value.all?(Integer)
+          if channels == value.length && value.all? { |i| nice_int?(i) }
             return value
-          elsif channels == 4 && value.length == 3 && value.all?(Integer)
+          elsif channels == 4 && value.length == 3 && value.all? { |i| nice_int?(i) }
             return value + [255]
           end
         when Symbol, String
@@ -82,6 +82,13 @@ module ImageUtil
     end
 
     # rubocop:enable Metrics/BlockNesting
+    # rubocop:disable Style/ClassEqualityComparison
+
+    def self.nice_int?(i)
+      i.class == Integer && i >= 0 && i <= 255
+    end
+
+    # rubocop:enable Style/ClassEqualityComparison
 
     def self.from(value)
       case value

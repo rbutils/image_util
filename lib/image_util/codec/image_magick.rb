@@ -66,7 +66,7 @@ module ImageUtil
           proc_io.close_write
 
           frames = []
-          while (frame = read_pam_frame(proc_io))
+          while (frame = Codec::Pam.decode_frame(proc_io))
             frames << frame
           end
 
@@ -84,35 +84,6 @@ module ImageUtil
             img
           end
         end
-      end
-
-      def read_pam_frame(io)
-        header = {}
-        line = io.gets
-        return nil unless line && line.delete("\r\n\0") == "P7"
-
-        line = io.gets
-        return nil unless line
-
-        until line.delete("\r\n\0") == "ENDHDR"
-          clean = line.delete("\r\n\0")
-          key, val = clean.split(" ", 2)
-          header[key] = val
-          line = io.gets
-          return nil unless line
-        end
-
-        width = header["WIDTH"].to_i
-        height = header["HEIGHT"].to_i
-        depth = header["DEPTH"].to_i
-        maxval = header["MAXVAL"].to_i
-        bits = Math.log2(maxval + 1).to_i
-        bytes = width * height * depth * (bits / 8)
-        raw = io.read(bytes)
-        return nil unless raw && raw.bytesize == bytes
-
-        buf = Image::Buffer.new([width, height], bits, depth, IO::Buffer.for(raw))
-        Image.from_buffer(buf)
       end
     end
   end

@@ -51,20 +51,34 @@ module ImageUtil
       def decode_io(format, io)
         guard_supported_format!(format, SUPPORTED_FORMATS)
 
-        header = {}
-        while (line = io.gets)
-          line = line.chomp
-          break if line == "ENDHDR"
+        decode_frame(io)
+      end
 
-          key, val = line.split(" ", 2)
+      def decode_frame(io)
+        header = {}
+        line = io.gets
+        return nil unless line && line.delete("\r\n\0") == "P7"
+
+        line = io.gets
+        return nil unless line
+
+        until line.delete("\r\n\0") == "ENDHDR"
+          clean = line.delete("\r\n\0")
+          key, val = clean.split(" ", 2)
           header[key] = val
+          line = io.gets
+          return nil unless line
         end
+
         width = header["WIDTH"].to_i
         height = header["HEIGHT"].to_i
         depth = header["DEPTH"].to_i
         maxval = header["MAXVAL"].to_i
         color_bits = Math.log2(maxval + 1).to_i
-        raw = io.read
+        bytes = width * height * depth * (color_bits / 8)
+        raw = io.read(bytes)
+        return nil unless raw && raw.bytesize == bytes
+
         io_buf = IO::Buffer.for(raw)
         buf = Image::Buffer.new([width, height], color_bits, depth, io_buf)
         Image.from_buffer(buf)

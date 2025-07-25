@@ -22,8 +22,8 @@ module ImageUtil
         @magick_formats = out.lines.filter_map do |line|
           next unless line.start_with?(" ")
 
-          fmt = line.split(/\s+/).first
-          fmt&.delete("*")&.downcase
+          fmt = line[0,9].gsub(" ", "").downcase
+          fmt.empty? ? nil : fmt
         end
         @magick_formats
       rescue StandardError

@@ -8,7 +8,7 @@ module ImageUtil
       def bitmap_text!(text, *location, **kwargs)
         loc = location.dup
         loc += [0] * (dimensions.length - loc.length)
-        paste!(Image.bitmap_text(text, **kwargs), *loc)
+        paste!(Image.bitmap_text(text, **kwargs), *loc, respect_alpha: true)
       end
 
       define_immutable_version :bitmap_text

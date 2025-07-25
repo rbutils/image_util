@@ -260,7 +260,7 @@ Overlay text using the bundled bitmap font.
 
 ```ruby
 img = ImageUtil::Image.new(128, 128) { [0, 0, 0] }
-img.bitmap_text!("Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.", 4, 4, color: :blue)
+img.bitmap_text!("Lorem ipsum dolor sit\namet, consectetur adipiscing\nelit.", 2, 2, color: :blue)
 ```
 
 ![Bitmap text example](docs/samples/bitmap_text.png)

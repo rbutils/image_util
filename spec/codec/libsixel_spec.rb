@@ -13,7 +13,7 @@ RSpec.describe ImageUtil::Codec::Libsixel do
   end
 
   it 'encodes 1d images' do
-    img = ImageUtil::Image.new(3) { |x| ImageUtil::Color[x * 50, 0, 0] }
+    img = ImageUtil::Image.new(3) { |loc| ImageUtil::Color[loc.first * 50, 0, 0] }
     data = described_class.encode(:sixel, img)
     data.start_with?("\ePq").should be true
   end

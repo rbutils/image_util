@@ -27,6 +27,8 @@ module ImageUtil
         @buffer_size *= @channels
         @buffer_size *= @color_bytes
 
+        @pixel_bytes = @channels * @color_bytes
+
         @io_buffer_types = ([@color_type]*@channels).freeze
 
         @buffer = buffer || IO::Buffer.new(@buffer_size)
@@ -36,7 +38,7 @@ module ImageUtil
         freeze
       end
 
-      attr_reader :dimensions, :color_bits, :color_bytes, :channels
+      attr_reader :dimensions, :color_bits, :color_bytes, :channels, :pixel_bytes
 
       def offset_of(*location)
         location.length == @dimensions.length or raise ArgumentError, "wrong number of dimensions"
@@ -49,8 +51,6 @@ module ImageUtil
 
         offset * pixel_bytes
       end
-
-      def pixel_bytes = @channels * @color_bytes
 
       def initialize_copy(_other)
         @buffer = @buffer.dup
@@ -70,7 +70,7 @@ module ImageUtil
       end
 
       def set_index(index, value)
-        value = Color.from(value).to_buffer(@color_bits, @channels)
+        value = Color.from_any_to_buffer(value, @color_bits, @channels)
         @buffer.set_values(@io_buffer_types, index, value)
       end
 

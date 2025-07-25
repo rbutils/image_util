@@ -52,6 +52,37 @@ module ImageUtil
       end + [255] * (channels - length)
     end
 
+    # rubocop:disable Metrics/BlockNesting
+
+    # Optimized shortpath for a heavily hit fragment. Let's skip creating colors if
+    # they are to be output to buffer instantly.
+    def self.from_any_to_buffer(value, color_bits, channels)
+      if color_bits == 8
+        case value
+        when Color
+          return value.to_buffer(color_bits, channels)
+        when Array
+          if channels == value.length && value.all?(Integer)
+            return value
+          elsif channels == 4 && value.length == 3 && value.all?(Integer)
+            return value + [255]
+          end
+        when Symbol, String
+          s = value.to_sym
+          if CSS_COLORS.key?(s)
+            if channels == 3
+              return CSS_COLORS[s]
+            elsif channels == 4
+              return CSS_COLORS_4C[s]
+            end
+          end
+        end
+      end
+      from(value).to_buffer(color_bits, channels)
+    end
+
+    # rubocop:enable Metrics/BlockNesting
+
     def self.from(value)
       case value
       when Color
@@ -71,15 +102,19 @@ module ImageUtil
         when /\A#(\h{2})(\h{2})(\h{2})(\h{2})\z/
           new($1.to_i(16), $2.to_i(16), $3.to_i(16), $4.to_i(16))
         else
-          if (rgb = CSS_COLORS[value.downcase])
+          if (rgb = CSS_COLORS[value.downcase.to_sym])
             new(*rgb)
           else
             raise ArgumentError, "wrong String passed as color (passed: #{value.inspect})"
           end
         end
       when Symbol
-        from(value.to_s)
-      when Integer, Float, nil
+        if (rgb = CSS_COLORS[value])
+          new(*rgb)
+        else
+          from(value.to_s)
+        end
+      when Integer, Float, NilClass
         new(*[component_from_number(value)] * 3)
       else
         raise ArgumentError, "wrong type passed as color (passed: #{value.inspect})"

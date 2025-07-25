@@ -151,6 +151,8 @@ module ImageUtil
       "yellow" => [255, 255, 0],
       "yellowgreen" => [154, 205, 50],
       "rebeccapurple" => [102, 51, 153]
-    }.freeze
+    }.transform_values(&:freeze).transform_keys(&:to_sym).freeze
+
+    CSS_COLORS_4C = CSS_COLORS.transform_values { |i| (i + [255]).freeze }.freeze
   end
 end

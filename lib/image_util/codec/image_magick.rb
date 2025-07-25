@@ -39,7 +39,7 @@ module ImageUtil
           end
           pam = Codec::Pam.encode(:pam, img)
 
-          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+") do |proc_io|
+          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+b") do |proc_io|
             proc_io << pam
             proc_io.close_write
             proc_io.read
@@ -47,7 +47,7 @@ module ImageUtil
         else
           frames = image.buffer.last_dimension_split.map { |b| Image.from_buffer(b) }
           stream = frames.map { |f| Codec::Pam.encode(:pam, f) }.join
-          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+") do |proc_io|
+          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+b") do |proc_io|
             proc_io << stream
             proc_io.close_write
             proc_io.read
@@ -61,7 +61,7 @@ module ImageUtil
         cmd = ["magick", "#{format}:-"]
         cmd << "-coalesce" if %i[gif apng].include?(format.to_s.downcase.to_sym)
         cmd << "pam:-"
-        IO.popen(cmd, "r+") do |proc_io|
+        IO.popen(cmd, "r+b") do |proc_io|
           proc_io << data
           proc_io.close_write
 

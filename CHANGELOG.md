@@ -18,6 +18,7 @@
 - `Color#*` can now accept another `Color` to multiply channels
 - Add `Colors` filter with `color_multiply!` and alias `*`
 - `bitmap_text` accepts multiline strings and supports colorization
+- `bitmap_text` supports left, center and right alignment
 
 ## [0.2.0] - 2025-07-21
 - Ruby Sixel encoder now sets pixel aspect ratio metadata to display correctly in Windows Terminal

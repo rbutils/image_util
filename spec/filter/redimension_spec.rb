@@ -12,6 +12,22 @@ RSpec.describe ImageUtil::Image do
       img[0,1,0].should == ImageUtil::Color.new(0,0,0,0)
       img[0,0,1].should == ImageUtil::Color.new(0,0,0,0)
     end
+
+    it 'increases height efficiently' do
+      img = described_class.new(1, 1) { ImageUtil::Color[1] }
+      img.redimension!(1, 2)
+      img.dimensions.should == [1, 2]
+      img[0,0].should == ImageUtil::Color[1]
+      img[0,1].should == ImageUtil::Color.new(0,0,0,0)
+    end
+
+    it 'adds a dimension without modifying existing data' do
+      img = described_class.new(1, 1) { ImageUtil::Color[1] }
+      img.redimension!(1, 1, 2)
+      img.dimensions.should == [1, 1, 2]
+      img[0,0,0].should == ImageUtil::Color[1]
+      img[0,0,1].should == ImageUtil::Color.new(0,0,0,0)
+    end
   end
 
   describe '#redimension' do

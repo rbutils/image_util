@@ -5,8 +5,10 @@ module ImageUtil
     module BitmapText
       extend ImageUtil::Filter::Mixin
 
-      def bitmap_text!(text, x = 0, y = 0, **kwargs)
-        paste!(Image.bitmap_text(text, **kwargs), x, y)
+      def bitmap_text!(text, *location, **kwargs)
+        loc = location.dup
+        loc += [0] * (dimensions.length - loc.length)
+        paste!(Image.bitmap_text(text, **kwargs), *loc)
       end
 
       define_immutable_version :bitmap_text

@@ -12,6 +12,7 @@
 - Redimension filter to change image dimensions
 - Redimension attempts to resize the existing buffer when increasing height or
   adding a new dimension
+- Benchmarking subsystem with `bin/benchmark` using `benchmark-ips`
 - Improved heuristic for buffer resizing so multi-dimensional images stay intact
 
 ## [0.2.0] - 2025-07-21

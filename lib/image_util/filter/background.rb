@@ -3,6 +3,7 @@
 module ImageUtil
   module Filter
     module Background
+      extend ImageUtil::Filter::Mixin
       def background(bgcolor)
         return self if channels == 3
 
@@ -18,6 +19,8 @@ module ImageUtil
         end
         img
       end
+
+      define_mutable_version :background
     end
   end
 end

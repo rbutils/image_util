@@ -3,6 +3,7 @@
 module ImageUtil
   module Filter
     module Resize
+      extend ImageUtil::Filter::Mixin
       def resize(*new_dimensions, view: View::Interpolated)
         src = self.view(view)
 
@@ -15,6 +16,8 @@ module ImageUtil
           src[*src_loc]
         end
       end
+
+      define_mutable_version :resize
     end
   end
 end

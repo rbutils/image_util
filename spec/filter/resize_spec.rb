@@ -26,4 +26,13 @@ RSpec.describe ImageUtil::Image do
       out[0, 0, 1].r.should be_within(0.1).of(50)
     end
   end
+
+  describe '#resize!' do
+    it 'changes image dimensions in place' do
+      img = described_class.new(1, 1) { ImageUtil::Color[1] }
+      img.resize!(2, 2)
+      img.dimensions.should == [2, 2]
+      img[1, 1].should == ImageUtil::Color[1]
+    end
+  end
 end

@@ -177,7 +177,8 @@ Flatten an RGBA image on a solid color.
 img = ImageUtil::Image.new(128, 128) { |x, y| [255, 0, 0, x + y] }
 
 # put it on a blue background
-img.background([0, 0, 255])
+img.background!([0, 0, 255])
+# img.background([0, 0, 255]) # returns a new image
 ```
 
 ![Background example](docs/samples/background.png)
@@ -216,6 +217,7 @@ Scale an image to new dimensions.
 img = ImageUtil::Image.new(128, 128) { |x, y| [x, y, 30] }
 img[20, 20] = img.resize(64, 64)
 img
+# img.resize!(64, 64) # modifies in place
 ```
 
 ![Resize example](docs/samples/resize.png)

@@ -11,6 +11,15 @@ module ImageUtil
         end
       end
 
+      def define_mutable_version(*names)
+        names.each do |name|
+          define_method("#{name}!") do |*args, **kwargs, &block|
+            initialize_from_buffer(public_send(name, *args, **kwargs, &block).buffer)
+            self
+          end
+        end
+      end
+
       def axis_to_number(axis)
         axis = 0 if axis == :x
         axis = 1 if axis == :y

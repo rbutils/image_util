@@ -1,3 +1,8 @@
+## [Unreleased]
+- Add `define_mutable_version` helper to create bang versions from immutable
+  methods
+- Add `background!` and `resize!` filters
+
 ## [0.3.0] - 2025-07-25
 - Rename `dither!` to `palette_reduce!`
 - Rename `#set_each_pixel_by_location` to `#set_each_pixel_by_location!` since it's mutable

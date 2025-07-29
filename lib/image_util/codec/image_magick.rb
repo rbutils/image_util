@@ -64,20 +64,15 @@ module ImageUtil
             img = img.redimension(img.width, img.height + pad) if pad > 0
           end
           pam = Codec::Pam.encode(:pam, img)
-
-          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+b") do |proc_io|
-            proc_io << pam
-            proc_io.close_write
-            proc_io.read
-          end
         else
           frames = image.buffer.last_dimension_split.map { |b| Image.from_buffer(b) }
-          stream = frames.map { |f| Codec::Pam.encode(:pam, f) }.join
-          IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+b") do |proc_io|
-            proc_io << stream
-            proc_io.close_write
-            proc_io.read
-          end
+          pam = frames.map { |f| Codec::Pam.encode(:pam, f) }.join
+        end
+
+        IO.popen(["magick", "pam:-", "#{fmt}:-"], "r+b") do |proc_io|
+          proc_io << pam
+          proc_io.close_write
+          proc_io.read
         end
       end
 

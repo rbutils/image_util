@@ -13,6 +13,7 @@ module ImageUtil
       return supported if supported
 
       supported = [:tty]
+      supported << :iterm2 if ENV["TERM_PROGRAM"] == "iTerm.app" || ENV.key?("ITERM_SESSION_ID")
 
       # Send kitty query
       query_terminal(termin, termout, "\e_Gi=31,s=1,v=1,a=q,t=d,f=24;AAAA\e\\\e[c".b) do |resp|
@@ -53,6 +54,8 @@ module ImageUtil
 
       if support.include? :kitty
         image.to_string(:kitty)
+      elsif support.include? :iterm2
+        image.to_string(:iterm2)
       elsif support.include? :sixel
         image.to_string(:sixel)
       end

@@ -76,7 +76,7 @@ just evaluate the object:
 img
 ```
 
-The library checks if the Kitty graphics protocol is available and falls back to SIXEL otherwise. Kitty graphics protocol is supported by Kitty, Konsole
+The library checks if the Kitty graphics protocol is available, then the iTerm2 inline image protocol and falls back to SIXEL otherwise. Kitty graphics protocol is supported by Kitty, Konsole
 and a couple others. SIXEL, most notably, works in Windows Terminal, Konsole (KDE), iTerm2 (macOS), XTerm (launch with: `xterm -ti vt340`). Here's how SIXEL
 looks in Konsole:
 

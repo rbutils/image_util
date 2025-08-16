@@ -120,4 +120,43 @@ RSpec.describe ImageUtil::Color do
   it 'raises when multiplying with non numeric' do
     ->{ ImageUtil::Color[1,2,3] * Object.new }.should raise_error(TypeError)
   end
+
+  describe 'CSS_COLORS constant' do
+    it 'contains expected color names' do
+      ImageUtil::Color::CSS_COLORS.should have_key(:red)
+      ImageUtil::Color::CSS_COLORS.should have_key(:blue)
+      ImageUtil::Color::CSS_COLORS.should have_key(:green)
+      ImageUtil::Color::CSS_COLORS.should have_key(:black)
+      ImageUtil::Color::CSS_COLORS.should have_key(:white)
+    end
+
+    it 'has correct RGB values for basic colors' do
+      ImageUtil::Color::CSS_COLORS[:red].should == [255, 0, 0]
+      ImageUtil::Color::CSS_COLORS[:blue].should == [0, 0, 255]
+      ImageUtil::Color::CSS_COLORS[:green].should == [0, 128, 0]
+      ImageUtil::Color::CSS_COLORS[:black].should == [0, 0, 0]
+      ImageUtil::Color::CSS_COLORS[:white].should == [255, 255, 255]
+    end
+
+    it 'includes modern CSS colors like rebeccapurple' do
+      ImageUtil::Color::CSS_COLORS[:rebeccapurple].should == [102, 51, 153]
+    end
+
+    it 'is frozen for immutability' do
+      ImageUtil::Color::CSS_COLORS.should be_frozen
+      ImageUtil::Color::CSS_COLORS[:red].should be_frozen
+    end
+  end
+
+  describe 'CSS_COLORS_4C constant' do
+    it 'extends 3-component colors to 4-component with alpha' do
+      ImageUtil::Color::CSS_COLORS_4C[:red].should == [255, 0, 0, 255]
+      ImageUtil::Color::CSS_COLORS_4C[:blue].should == [0, 0, 255, 255]
+    end
+
+    it 'is frozen for immutability' do
+      ImageUtil::Color::CSS_COLORS_4C.should be_frozen
+      ImageUtil::Color::CSS_COLORS_4C[:red].should be_frozen
+    end
+  end
 end

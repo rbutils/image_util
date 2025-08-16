@@ -234,4 +234,37 @@ RSpec.describe ImageUtil::Image do
       -> { described_class.from_file(f) }.should raise_error(ArgumentError)
     end
   end
+
+  # Additional edge case tests for better coverage
+  it 'handles zero dimensions correctly' do
+    img = described_class.new(0, 1)
+    img.width.should == 0
+    img.height.should == 1
+  end
+
+  it 'handles out-of-bounds access on zero-width image' do
+    img = described_class.new(0, 1)
+    -> { img[0, 0] }.should raise_error(IndexError)
+  end
+
+  it 'handles 3D images correctly' do
+    img = described_class.new(2, 2, 2)
+    img.dimensions.length.should == 3
+    img.width.should == 2
+    img.height.should == 2
+    img.dimensions[2].should == 2
+  end
+
+  it 'iterates correctly over empty ranges' do
+    img = described_class.new(2, 2)
+    count = 0
+    img.each_pixel_location([0...0, 0...0]) { count += 1 }
+    count.should == 0
+  end
+
+  it 'handles negative range expansion' do
+    img = described_class.new(2, 2)
+    counts, = img.location_expand([-1..0, -1..0])
+    counts.should == [2, 2]
+  end
 end

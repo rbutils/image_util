@@ -24,7 +24,7 @@ module ImageUtil
       when Integer
         number.clamp(0, 255)
       when Float
-        (number * 255).clamp(0, 255)
+        number.clamp(0, 255)
       else
         raise ArgumentError, "wrong type passed as component (passed: #{number})"
       end

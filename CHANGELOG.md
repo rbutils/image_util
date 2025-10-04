@@ -1,4 +1,5 @@
 ## [Unreleased]
+- BREAKING: Float color components now share the 0..255 range with integers instead of being scaled from 0..1.
 - Add `define_mutable_version` helper to create bang versions from immutable
   methods
 - Add `background!` and `resize!` filters

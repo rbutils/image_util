@@ -96,13 +96,13 @@ the earlier system packages. Both Kitty and SIXEL outputs also accept one-dimens
 - Symbols or strings containing CSS color names (`:rebeccapurple`, 'papayawhip')
 - Hex strings like `'#abc'`, `'#aabbcc'` or `'#rrggbbaa'`
 
-When numeric components are given, integers are first clamped to the `0..255`
-range. Float values are treated as fractions of 255, so `0.5` becomes `127.5`
-and `1.0` becomes `255`. After scaling, values are again clamped to this range.
-If the alpha channel is omitted it defaults to `255`.
+When numeric components are given, values are clamped directly to the `0..255`
+range regardless of whether they are integers or floats. Floating point inputs
+are no longer scaled from `0..1`; instead they are treated in the same units as
+integers. If the alpha channel is omitted it defaults to `255`.
 
 ```ruby
-ImageUtil::Color[0.5] # => #808080
+ImageUtil::Color[128.5] # => #808080
 ImageUtil::Color[:red] # => #ff0000
 ImageUtil::Color["#fc0"] # => #ffcc00
 ```

@@ -10,7 +10,7 @@ RSpec.describe ImageUtil::Color do
   end
 
   it 'clamps float components' do
-    ImageUtil::Color.component_from_number(1.2).should == 255
+    ImageUtil::Color.component_from_number(300.2).should == 255
   end
 
   it 'returns nil for nil components' do
@@ -53,8 +53,8 @@ RSpec.describe ImageUtil::Color do
     ImageUtil::Color.from(-5).should == ImageUtil::Color[0,0,0]
   end
 
-  it 'handles floats' do
-    expected = ImageUtil::Color.new(127.5,127.5,127.5)
+  it 'handles floats without scaling' do
+    expected = ImageUtil::Color.new(0.5, 0.5, 0.5)
     ImageUtil::Color.from(0.5).should == expected
   end
 
@@ -93,8 +93,8 @@ RSpec.describe ImageUtil::Color do
 
   it 'overlays colors with +' do
     base = ImageUtil::Color[0, 0, 255]
-    overlay = ImageUtil::Color[255, 0, 0, 0.5]
-    (base + overlay).should == ImageUtil::Color.new(127.5, 0, 127.5, 255)
+    overlay = ImageUtil::Color[255, 0, 0, 128.0]
+    (base + overlay).should == ImageUtil::Color.new(128.0, 0, 127.0, 255)
   end
 
   it 'multiplies alpha with *' do

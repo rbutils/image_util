@@ -1,3 +1,6 @@
+## [0.5.0] - 2025-10-05
+- Add `ImageUtil::Inspectable` interface for other gems to use
+
 ## [0.4.0] - 2025-10-04
 - BREAKING: Float color components now share the 0..255 range with integers instead of being scaled from 0..1.
 - Add `define_mutable_version` helper to create bang versions from immutable methods

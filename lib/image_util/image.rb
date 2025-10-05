@@ -4,6 +4,8 @@ module ImageUtil
   class Image
     autoload :Buffer, "image_util/image/buffer"
 
+    include ImageUtil::Inspectable
+
     Util.irb_fixup
 
     ALL = nil..nil
@@ -211,14 +213,8 @@ module ImageUtil
       Codec.encode(:sixel, self)
     end
 
-    def pretty_print(p)
-      if (image = Terminal.output_image($stdin, $stdout, self))
-        p.flush
-        p.output << image
-        p.text("", 0)
-      else
-        super
-      end
+    def inspect_image
+      self
     end
 
     def pixel_count(locations) = location_expand(locations).first.reduce(:*)

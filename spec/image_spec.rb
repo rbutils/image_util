@@ -234,4 +234,9 @@ RSpec.describe ImageUtil::Image do
       -> { described_class.from_file(f) }.should raise_error(ArgumentError)
     end
   end
+
+  it 'returns itself for inspect_image' do
+    img = described_class.new(1,1)
+    img.inspect_image.should equal(img)
+  end
 end

@@ -5,6 +5,7 @@
 - BREAKING: Float color components now share the 0..255 range with integers instead of being scaled from 0..1.
 - Add `define_mutable_version` helper to create bang versions from immutable methods
 - Add `background!` and `resize!` filters
+- Support iTerm2 inline image protocol
 
 ## [0.3.0] - 2025-07-25
 - Rename `dither!` to `palette_reduce!`
